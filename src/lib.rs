@@ -8,7 +8,7 @@
 //! difficult, and it means you have to make this object a global static mut
 //! that the interrupt can access, which is unsafe.
 
-// #![cfg_attr(not(test), no_std)]
+#![cfg_attr(not(test), no_std)]
 
 // ****************************************************************************
 //
@@ -16,10 +16,10 @@
 //
 // ****************************************************************************
 
-// #[cfg(not(test))]
-// use core::marker::PhantomData;
+#[cfg(not(test))]
+use core::marker::PhantomData;
 
-// #[cfg(test)]
+#[cfg(test)]
 use std::marker::PhantomData;
 
 // ****************************************************************************
@@ -36,6 +36,7 @@ where
     register: u16,
     num_bits: u8,
     decode_state: DecodeState,
+    modifiers: Modifiers,
     _layout: PhantomData<T>,
 }
 
@@ -49,110 +50,112 @@ pub enum Error {
 
 #[derive(Debug, PartialEq, Eq, Copy, Clone)]
 pub enum KeyCode {
-    Escape,             // 76
-    F1,                 // 05
-    F2,                 // 06
-    F3,                 // 04
-    F4,                 // 0C
-    F5,                 // 03
-    F6,                 // 0B
-    F7,                 // 83
-    F8,                 // 0A
-    F9,                 // 01
-    F10,                // 09
-    F11,                // 78
-    F12,                // 07
-    PrintScreen,        // E012 E07C / E0F07C E0F012
-    ScrollLock,         // 7E
-    PauseBreak,         // E11477 E1F014 E077
-    BackTick,           // 0E
-    Key1,               // 16
-    Key2,               // 1e
-    Key3,               // 26
-    Key4,               // 25
-    Key5,               // 2E
-    Key6,               // 36
-    Key7,               // 3D
-    Key8,               // 3E
-    Key9,               // 46
-    Key0,               // 45
-    Minus,              // 4E
-    Equals,             // 55
-    Backspace,          // 66
-    Tab,                // 0D
-    Q,                  // 15
-    W,                  // 1D
-    E,                  // 24
-    R,                  // 2D
-    T,                  // 2C
-    Y,                  // 35
-    U,                  // 3C
-    I,                  // 43
-    O,                  // 44
-    P,                  // 4D
-    LeftSquareBracket,  // 54
-    RightSquareBracket, // 5B
-    Backslash,          // 5D
-    CapsLock,           // 58
-    A,                  // 1C
-    S,                  // 1B
-    D,                  // 23
-    F,                  // 2B
-    G,                  // 34
-    H,                  // 33
-    J,                  // 3B
-    K,                  // 42
-    L,                  // 4B
-    SemiColon,          // 4C
-    Quote,              // 52
-    Enter,              // 5A
-    LeftShift,          // 12
-    Z,                  // 1A
-    X,                  // 22
-    C,                  // 21
-    V,                  // 2A
-    B,                  // 32
-    N,                  // 31
-    M,                  // 3A
-    Comma,              // 41
-    Fullstop,           // 49
-    Slash,              // 4A
-    ShiftRight,         // 59
-    ControlLeft,        // 14
-    WindowsLeft,        // E01F
-    AltLeft,            // 11
-    Spacebar,           // 29
-    AltRight,           // E011
-    WindowsRight,       // E027
-    Menus,              // E02F
-    RightControl,       // E014
-    Insert,             // E070
-    Home,               // E06C
-    PageUp,             // E07D
-    Delete,             // E071
-    End,                // E069
-    PageDown,           // E07A
-    UpArrow,            // E075
-    LeftArrow,          // E06B
-    DownArrow,          // E072
-    RightArrow,         // E074
-    NumpadLock,         // 77
-    NumpadSlash,        // E04A
-    NumpadStar,         // 7C
-    NumpadMinus,        // 7B
-    Numpad7,            // 6C
-    Numpad8,            // 75
-    Numpad9,            // 7D
-    NumpadPlus,         // 79
-    Numpad4,            // 6B
-    Numpad5,            // 73
-    Numpad6,            // 74
-    Numpad1,            // 69
-    Numpad2,            // 72
-    Numpad3,            // 7A
-    Numpad0,            // 70
-    NumpadPeriod,       // 71
-    NumpadEnter,        // E05A
+    Escape,
+    F1,
+    F2,
+    F3,
+    F4,
+    F5,
+    F6,
+    F7,
+    F8,
+    F9,
+    F10,
+    F11,
+    F12,
+    PrintScreen,
+    ScrollLock,
+    PauseBreak,
+    BackTick,
+    Key1,
+    Key2,
+    Key3,
+    Key4,
+    Key5,
+    Key6,
+    Key7,
+    Key8,
+    Key9,
+    Key0,
+    Minus,
+    Equals,
+    Backspace,
+    Tab,
+    Q,
+    W,
+    E,
+    R,
+    T,
+    Y,
+    U,
+    I,
+    O,
+    P,
+    LeftSquareBracket,
+    RightSquareBracket,
+    Backslash,
+    CapsLock,
+    A,
+    S,
+    D,
+    F,
+    G,
+    H,
+    J,
+    K,
+    L,
+    SemiColon,
+    Quote,
+    Enter,
+    ShiftLeft,
+    Z,
+    X,
+    C,
+    V,
+    B,
+    N,
+    M,
+    Comma,
+    Fullstop,
+    Slash,
+    ShiftRight,
+    ControlLeft,
+    WindowsLeft,
+    AltLeft,
+    Spacebar,
+    AltRight,
+    WindowsRight,
+    Menus,
+    RightControl,
+    Insert,
+    Home,
+    PageUp,
+    Delete,
+    End,
+    PageDown,
+    UpArrow,
+    LeftArrow,
+    DownArrow,
+    RightArrow,
+    NumpadLock,
+    NumpadSlash,
+    NumpadStar,
+    NumpadMinus,
+    Numpad7,
+    Numpad8,
+    Numpad9,
+    NumpadPlus,
+    Numpad4,
+    Numpad5,
+    Numpad6,
+    Numpad1,
+    Numpad2,
+    Numpad3,
+    Numpad0,
+    NumpadPeriod,
+    NumpadEnter,
+    /// Not on US keyboards
+    HashTilde,
 }
 
 #[derive(Debug, PartialEq, Eq, Copy, Clone)]
@@ -168,8 +171,32 @@ pub struct KeyEvent {
 }
 
 pub trait KeyboardLayout {
-    fn map_key(code: u8) -> Result<KeyCode, Error>;
-    fn map_extended_key(code: u8) -> Result<KeyCode, Error>;
+    /// Convert a Scan Code Set 2 byte to our `KeyCode` enum
+    fn map_scancode(code: u8) -> Result<KeyCode, Error>;
+
+    /// Convert a Scan Code Set 2 extended byte (prefixed E0) to our `KeyCode`
+    /// enum.
+    fn map_extended_scancode(code: u8) -> Result<KeyCode, Error>;
+
+    /// Convert a `KeyCode` enum to a Unicode character, if possible.
+    /// KeyCode::A maps to `Some('a')` (or `Some('A')` if shifted), while
+    /// KeyCode::AltLeft returns `None`
+    fn map_keycode(keycode: KeyCode, modifiers: &Modifiers) -> DecodedKey;
+}
+
+#[derive(Debug)]
+pub struct Modifiers {
+    pub lshift: bool,
+    pub rshift: bool,
+    pub numlock: bool,
+    pub capslock: bool,
+    pub alt_gr: bool,
+}
+
+#[derive(Debug, PartialEq, Eq, Copy, Clone)]
+pub enum DecodedKey {
+    RawKey(KeyCode),
+    Unicode(char),
 }
 
 // ****************************************************************************
@@ -219,6 +246,13 @@ where
             register: 0,
             num_bits: 0,
             decode_state: DecodeState::Start,
+            modifiers: Modifiers {
+                lshift: false,
+                rshift: false,
+                numlock: true,
+                capslock: false,
+                alt_gr: false
+            },
             _layout: PhantomData,
         }
     }
@@ -241,7 +275,6 @@ where
                     // All keys start here
                     let code = match byte {
                         KEY_RELEASE_CODE => {
-                            println!("Key release!\n");
                             self.decode_state = DecodeState::Release;
                             return Ok(None);
                         }
@@ -249,7 +282,7 @@ where
                             self.decode_state = DecodeState::Extended;
                             return Ok(None);
                         }
-                        e => T::map_key(e)?,
+                        e => T::map_scancode(e)?,
                     };
                     Ok(Some(KeyEvent::new(code, KeyState::Down)))
                 }
@@ -260,23 +293,64 @@ where
                             self.decode_state = DecodeState::ExtendedRelease;
                             return Ok(None);
                         }
-                        e => T::map_extended_key(e)?,
+                        e => T::map_extended_scancode(e)?,
                     };
                     Ok(Some(KeyEvent::new(code, KeyState::Down)))
                 }
                 DecodeState::Release => {
                     // These are 'normal' keys being released
-                    let code = T::map_key(byte)?;
+                    let code = T::map_scancode(byte)?;
                     Ok(Some(KeyEvent::new(code, KeyState::Up)))
                 }
                 DecodeState::ExtendedRelease => {
                     // These are extended keys being release
-                    let code = T::map_extended_key(byte)?;
+                    let code = T::map_extended_scancode(byte)?;
                     Ok(Some(KeyEvent::new(code, KeyState::Up)))
                 }
             }
         } else {
             Ok(None)
+        }
+    }
+
+    pub fn process_keyevent(&mut self, ev: KeyEvent) -> Option<DecodedKey> {
+        match ev {
+            KeyEvent { code: KeyCode::ShiftLeft, state: KeyState::Down } => {
+                self.modifiers.lshift = true;
+                None
+            }
+            KeyEvent { code: KeyCode::ShiftRight, state: KeyState::Down } => {
+                self.modifiers.rshift = true;
+                None
+            }
+            KeyEvent { code: KeyCode::ShiftLeft, state: KeyState::Up } => {
+                self.modifiers.lshift = false;
+                None
+            }
+            KeyEvent { code: KeyCode::ShiftRight, state: KeyState::Up} => {
+                self.modifiers.rshift = false;
+                None
+            }
+            KeyEvent { code: KeyCode::CapsLock, state: KeyState::Down } => {
+                self.modifiers.capslock = !self.modifiers.capslock;
+                None
+            }
+            KeyEvent { code: KeyCode::NumpadLock, state: KeyState::Down } => {
+                self.modifiers.numlock = !self.modifiers.numlock;
+                None
+            }
+            KeyEvent { code: KeyCode::AltRight, state: KeyState::Down } => {
+                self.modifiers.alt_gr = true;
+                None
+            }
+            KeyEvent { code: KeyCode::AltRight, state: KeyState::Up } => {
+                self.modifiers.alt_gr = false;
+                None
+            }
+            KeyEvent { code: c, state: KeyState::Down } => {
+                Some(T::map_keycode(c, &self.modifiers))
+            }
+            _ => None,
         }
     }
 
@@ -326,13 +400,25 @@ impl KeyEvent {
 //
 // ****************************************************************************
 
+impl Modifiers {
+    pub fn is_shifted(&self) -> bool {
+        (self.lshift | self.rshift) ^ self.capslock
+    }
+}
+
 pub mod layouts {
     use super::*;
 
-    pub struct EnglishUk;
+    /// A standard United States 101-key (or 104-key including Windows keys) keyboard.
+    /// Has a 1-row high Enter key, with Backslash above.
+    pub struct Us104Key;
 
-    impl KeyboardLayout for EnglishUk {
-        fn map_key(code: u8) -> Result<KeyCode, Error> {
+    /// A standard United Kingdom 102-key (or 105-key including Windows keys) keyboard.
+    /// Has a 2-row high Enter key, with Backslash next to the left shift.
+    pub struct Uk105Key;
+
+    impl KeyboardLayout for Us104Key {
+        fn map_scancode(code: u8) -> Result<KeyCode, Error> {
             match code {
                 0x01 => Ok(KeyCode::F9),                 // 01
                 0x03 => Ok(KeyCode::F5),                 // 03
@@ -347,7 +433,7 @@ pub mod layouts {
                 0x0D => Ok(KeyCode::Tab),                // 0D
                 0x0E => Ok(KeyCode::BackTick),           // 0E
                 0x11 => Ok(KeyCode::AltLeft),            // 11
-                0x12 => Ok(KeyCode::LeftShift),          // 12
+                0x12 => Ok(KeyCode::ShiftLeft),          // 12
                 0x14 => Ok(KeyCode::ControlLeft),        // 14
                 0x15 => Ok(KeyCode::Q),                  // 15
                 0x16 => Ok(KeyCode::Key1),               // 16
@@ -423,7 +509,7 @@ pub mod layouts {
             }
         }
 
-        fn map_extended_key(code: u8) -> Result<KeyCode, Error> {
+        fn map_extended_scancode(code: u8) -> Result<KeyCode, Error> {
             match code {
                 0x11 => Ok(KeyCode::AltRight),     // E011
                 0x14 => Ok(KeyCode::RightControl), // E014
@@ -445,6 +531,393 @@ pub mod layouts {
                 _ => Err(Error::UnknownKeyCode),
             }
         }
+
+        fn map_keycode(keycode: KeyCode, modifiers: &Modifiers) -> DecodedKey {
+            match keycode {
+                KeyCode::BackTick => {
+                    if modifiers.is_shifted() {
+                        DecodedKey::Unicode('~')
+                    } else {
+                        DecodedKey::Unicode('`')
+                    }
+                }
+                KeyCode::Escape => DecodedKey::Unicode(0x1B.into()),
+                KeyCode::Key1 => if modifiers.is_shifted() {
+                    DecodedKey::Unicode('!')
+                } else {
+                    DecodedKey::Unicode('1')
+                },
+                KeyCode::Key2 => if modifiers.is_shifted() {
+                    DecodedKey::Unicode('@')
+                } else {
+                    DecodedKey::Unicode('2')
+                },
+                KeyCode::Key3 => if modifiers.is_shifted() {
+                    DecodedKey::Unicode('#')
+                } else {
+                    DecodedKey::Unicode('3')
+                },
+                KeyCode::Key4 => {
+                    if modifiers.is_shifted() {
+                        DecodedKey::Unicode('$')
+                    } else {
+                        DecodedKey::Unicode('4')
+                    }
+                }
+                KeyCode::Key5 => if modifiers.is_shifted() {
+                    DecodedKey::Unicode('%')
+                } else {
+                    DecodedKey::Unicode('5')
+                },
+                KeyCode::Key6 => if modifiers.is_shifted() {
+                    DecodedKey::Unicode('^')
+                } else {
+                    DecodedKey::Unicode('6')
+                },
+                KeyCode::Key7 => if modifiers.is_shifted() {
+                    DecodedKey::Unicode('&')
+                } else {
+                    DecodedKey::Unicode('7')
+                },
+                KeyCode::Key8 => if modifiers.is_shifted() {
+                    DecodedKey::Unicode('*')
+                } else {
+                    DecodedKey::Unicode('8')
+                },
+                KeyCode::Key9 => if modifiers.is_shifted() {
+                    DecodedKey::Unicode('(')
+                } else {
+                    DecodedKey::Unicode('9')
+                },
+                KeyCode::Key0 => if modifiers.is_shifted() {
+                    DecodedKey::Unicode(')')
+                } else {
+                    DecodedKey::Unicode('0')
+                },
+                KeyCode::Minus => if modifiers.is_shifted() {
+                    DecodedKey::Unicode('_')
+                } else {
+                    DecodedKey::Unicode('-')
+                },
+                KeyCode::Equals => if modifiers.is_shifted() {
+                    DecodedKey::Unicode('+')
+                } else {
+                    DecodedKey::Unicode('=')
+                },
+                KeyCode::Backspace => DecodedKey::Unicode(0x08.into()),
+                KeyCode::Tab => DecodedKey::Unicode(0x09.into()),
+                KeyCode::Q => if modifiers.is_shifted() {
+                    DecodedKey::Unicode('Q')
+                } else {
+                    DecodedKey::Unicode('q')
+                },
+                KeyCode::W => if modifiers.is_shifted() {
+                    DecodedKey::Unicode('W')
+                } else {
+                    DecodedKey::Unicode('w')
+                },
+                KeyCode::E => if modifiers.is_shifted() {
+                    DecodedKey::Unicode('E')
+                } else {
+                    DecodedKey::Unicode('e')
+                },
+                KeyCode::R => if modifiers.is_shifted() {
+                    DecodedKey::Unicode('R')
+                } else {
+                    DecodedKey::Unicode('r')
+                },
+                KeyCode::T => if modifiers.is_shifted() {
+                    DecodedKey::Unicode('T')
+                } else {
+                    DecodedKey::Unicode('t')
+                },
+                KeyCode::Y => if modifiers.is_shifted() {
+                    DecodedKey::Unicode('Y')
+                } else {
+                    DecodedKey::Unicode('y')
+                },
+                KeyCode::U => if modifiers.is_shifted() {
+                    DecodedKey::Unicode('U')
+                } else {
+                    DecodedKey::Unicode('u')
+                },
+                KeyCode::I => if modifiers.is_shifted() {
+                    DecodedKey::Unicode('I')
+                } else {
+                    DecodedKey::Unicode('i')
+                },
+                KeyCode::O => if modifiers.is_shifted() {
+                    DecodedKey::Unicode('O')
+                } else {
+                    DecodedKey::Unicode('o')
+                },
+                KeyCode::P => if modifiers.is_shifted() {
+                    DecodedKey::Unicode('P')
+                } else {
+                    DecodedKey::Unicode('p')
+                },
+                KeyCode::LeftSquareBracket => if modifiers.is_shifted() {
+                    DecodedKey::Unicode('{')
+                } else {
+                    DecodedKey::Unicode('[')
+                },
+                KeyCode::RightSquareBracket => if modifiers.is_shifted() {
+                    DecodedKey::Unicode('}')
+                } else {
+                    DecodedKey::Unicode(']')
+                },
+                KeyCode::Backslash => if modifiers.is_shifted() {
+                    DecodedKey::Unicode('|')
+                } else {
+                    DecodedKey::Unicode('\\')
+                },
+                KeyCode::A => if modifiers.is_shifted() {
+                    DecodedKey::Unicode('A')
+                } else {
+                    DecodedKey::Unicode('a')
+                },
+                KeyCode::S => if modifiers.is_shifted() {
+                    DecodedKey::Unicode('S')
+                } else {
+                    DecodedKey::Unicode('s')
+                },
+                KeyCode::D => if modifiers.is_shifted() {
+                    DecodedKey::Unicode('D')
+                } else {
+                    DecodedKey::Unicode('d')
+                },
+                KeyCode::F => if modifiers.is_shifted() {
+                    DecodedKey::Unicode('F')
+                } else {
+                    DecodedKey::Unicode('f')
+                },
+                KeyCode::G => if modifiers.is_shifted() {
+                    DecodedKey::Unicode('G')
+                } else {
+                    DecodedKey::Unicode('g')
+                },
+                KeyCode::H => if modifiers.is_shifted() {
+                    DecodedKey::Unicode('H')
+                } else {
+                    DecodedKey::Unicode('h')
+                },
+                KeyCode::J => if modifiers.is_shifted() {
+                    DecodedKey::Unicode('J')
+                } else {
+                    DecodedKey::Unicode('j')
+                },
+                KeyCode::K => if modifiers.is_shifted() {
+                    DecodedKey::Unicode('K')
+                } else {
+                    DecodedKey::Unicode('k')
+                },
+                KeyCode::L => if modifiers.is_shifted() {
+                    DecodedKey::Unicode('L')
+                } else {
+                    DecodedKey::Unicode('l')
+                },
+                KeyCode::SemiColon => if modifiers.is_shifted() {
+                    DecodedKey::Unicode(':')
+                } else {
+                    DecodedKey::Unicode(';')
+                },
+                KeyCode::Quote => if modifiers.is_shifted() {
+                    DecodedKey::Unicode('"')
+                } else {
+                    DecodedKey::Unicode('\'')
+                },
+                // Enter gives LF, not CRLF or CR
+                KeyCode::Enter => DecodedKey::Unicode(10.into()),
+                KeyCode::Z => if modifiers.is_shifted() {
+                    DecodedKey::Unicode('Z')
+                } else {
+                    DecodedKey::Unicode('z')
+                },
+                KeyCode::X => if modifiers.is_shifted() {
+                    DecodedKey::Unicode('X')
+                } else {
+                    DecodedKey::Unicode('x')
+                },
+                KeyCode::C => if modifiers.is_shifted() {
+                    DecodedKey::Unicode('C')
+                } else {
+                    DecodedKey::Unicode('c')
+                },
+                KeyCode::V => if modifiers.is_shifted() {
+                    DecodedKey::Unicode('V')
+                } else {
+                    DecodedKey::Unicode('v')
+                },
+                KeyCode::B => if modifiers.is_shifted() {
+                    DecodedKey::Unicode('B')
+                } else {
+                    DecodedKey::Unicode('b')
+                },
+                KeyCode::N => if modifiers.is_shifted() {
+                    DecodedKey::Unicode('N')
+                } else {
+                    DecodedKey::Unicode('n')
+                },
+                KeyCode::M => if modifiers.is_shifted() {
+                    DecodedKey::Unicode('M')
+                } else {
+                    DecodedKey::Unicode('m')
+                },
+                KeyCode::Comma => if modifiers.is_shifted() {
+                    DecodedKey::Unicode('<')
+                } else {
+                    DecodedKey::Unicode(',')
+                },
+                KeyCode::Fullstop => if modifiers.is_shifted() {
+                    DecodedKey::Unicode('>')
+                } else {
+                    DecodedKey::Unicode('.')
+                },
+                KeyCode::Slash => if modifiers.is_shifted() {
+                    DecodedKey::Unicode('?')
+                } else {
+                    DecodedKey::Unicode('/')
+                },
+                KeyCode::Spacebar => DecodedKey::Unicode(' '),
+                KeyCode::Delete => DecodedKey::Unicode(127.into()),
+                KeyCode::NumpadSlash => DecodedKey::Unicode('/'),
+                KeyCode::NumpadStar => DecodedKey::Unicode('*'),
+                KeyCode::NumpadMinus => DecodedKey::Unicode('-'),
+                KeyCode::Numpad7 => {
+                    if modifiers.numlock {
+                        DecodedKey::Unicode('7')
+                    } else {
+                        DecodedKey::RawKey(KeyCode::Home)
+                    }
+                }
+                KeyCode::Numpad8 => {
+                    if modifiers.numlock {
+                        DecodedKey::Unicode('8')
+                    } else {
+                        DecodedKey::RawKey(KeyCode::UpArrow)
+                    }
+                }
+                KeyCode::Numpad9 => {
+                    if modifiers.numlock {
+                        DecodedKey::Unicode('9')
+                    } else {
+                        DecodedKey::RawKey(KeyCode::PageUp)
+                    }
+                }
+                KeyCode::NumpadPlus => DecodedKey::Unicode('+'),
+                KeyCode::Numpad4 => {
+                    if modifiers.numlock {
+                        DecodedKey::Unicode('4')
+                    } else {
+                        DecodedKey::RawKey(KeyCode::LeftArrow)
+                    }
+                }
+                KeyCode::Numpad5 => DecodedKey::Unicode('5'),
+                KeyCode::Numpad6 => {
+                    if modifiers.numlock {
+                        DecodedKey::Unicode('6')
+                    } else {
+                        DecodedKey::RawKey(KeyCode::RightArrow)
+                    }
+                }
+                KeyCode::Numpad1 => {
+                    if modifiers.numlock {
+                        DecodedKey::Unicode('1')
+                    } else {
+                        DecodedKey::RawKey(KeyCode::End)
+                    }
+                }
+                KeyCode::Numpad2 => {
+                    if modifiers.numlock {
+                        DecodedKey::Unicode('2')
+                    } else {
+                        DecodedKey::RawKey(KeyCode::DownArrow)
+                    }
+                }
+                KeyCode::Numpad3 => {
+                    if modifiers.numlock {
+                        DecodedKey::Unicode('3')
+                    } else {
+                        DecodedKey::RawKey(KeyCode::PageDown)
+                    }
+                }
+                KeyCode::Numpad0 => {
+                    if modifiers.numlock {
+                        DecodedKey::Unicode('0')
+                    } else {
+                        DecodedKey::RawKey(KeyCode::Insert)
+                    }
+                }
+                KeyCode::NumpadPeriod => {
+                    if modifiers.numlock {
+                        DecodedKey::Unicode('.')
+                    } else {
+                        DecodedKey::Unicode(127.into())
+                    }
+                }
+                KeyCode::NumpadEnter => DecodedKey::Unicode(10.into()),
+                k => DecodedKey::RawKey(k),
+            }
+        }
+    }
+
+    impl KeyboardLayout for Uk105Key {
+        fn map_scancode(code: u8) -> Result<KeyCode, Error> {
+            match code {
+                0x61 => Ok(KeyCode::Backslash),
+                _ => Us104Key::map_scancode(code),
+            }
+        }
+
+        fn map_extended_scancode(code: u8) -> Result<KeyCode, Error> {
+            match code {
+                _ => Us104Key::map_extended_scancode(code),
+            }
+        }
+
+        fn map_keycode(keycode: KeyCode, modifiers: &Modifiers) -> DecodedKey {
+            match keycode {
+                KeyCode::BackTick => {
+                    if modifiers.alt_gr {
+                        DecodedKey::Unicode('|')
+                    } else if modifiers.is_shifted() {
+                        DecodedKey::Unicode('¬')
+                    } else {
+                        DecodedKey::Unicode('`')
+                    }
+                }
+                KeyCode::Key2 => if modifiers.is_shifted() {
+                    DecodedKey::Unicode('"')
+                } else {
+                    DecodedKey::Unicode('2')
+                },
+                KeyCode::Quote => if modifiers.is_shifted() {
+                    DecodedKey::Unicode('@')
+                } else {
+                    DecodedKey::Unicode('\'')
+                },
+                KeyCode::Key3 => if modifiers.is_shifted() {
+                    DecodedKey::Unicode('£')
+                } else {
+                    DecodedKey::Unicode('3')
+                },
+                KeyCode::Key4 => {
+                    if modifiers.alt_gr {
+                        DecodedKey::Unicode('€')
+                    } else if modifiers.is_shifted() {
+                        DecodedKey::Unicode('$')
+                    } else {
+                        DecodedKey::Unicode('4')
+                    }
+                }
+                KeyCode::HashTilde => if modifiers.is_shifted() {
+                    DecodedKey::Unicode('~')
+                } else {
+                    DecodedKey::Unicode('#')
+                },
+                e => Us104Key::map_keycode(e, modifiers),
+            }
+        }
     }
 }
 
@@ -460,7 +933,7 @@ mod test {
 
     #[test]
     fn test_f9() {
-        let mut k = Keyboard::new(layouts::EnglishUk);
+        let mut k = Keyboard::new(layouts::Us104Key);
         // start
         assert_eq!(k.add_bit(false), Ok(None));
         // 8 data bits (LSB first)
@@ -483,7 +956,7 @@ mod test {
 
     #[test]
     fn test_f5() {
-        let mut k = Keyboard::new(layouts::EnglishUk);
+        let mut k = Keyboard::new(layouts::Us104Key);
         // start
         assert_eq!(k.add_bit(false), Ok(None));
         // 8 data bits (LSB first)
@@ -506,7 +979,7 @@ mod test {
 
     #[test]
     fn test_f5_up() {
-        let mut k = Keyboard::new(layouts::EnglishUk);
+        let mut k = Keyboard::new(layouts::Us104Key);
         // Send F0
 
         // start
@@ -545,6 +1018,57 @@ mod test {
             k.add_bit(true),
             Ok(Some(KeyEvent::new(KeyCode::F5, KeyState::Up)))
         );
+    }
+
+    #[test]
+    fn test_shift() {
+        let mut k = Keyboard::new(layouts::Uk105Key);
+        // A with left shift held
+        assert_eq!(k.process_keyevent(KeyEvent::new(KeyCode::ShiftLeft, KeyState::Down)), None);
+        assert_eq!(k.process_keyevent(KeyEvent::new(KeyCode::A, KeyState::Down)), Some(DecodedKey::Unicode('A')));
+        assert_eq!(k.process_keyevent(KeyEvent::new(KeyCode::A, KeyState::Up)), None);
+        assert_eq!(k.process_keyevent(KeyEvent::new(KeyCode::ShiftLeft, KeyState::Up)), None);
+
+        // A with no shift
+        assert_eq!(k.process_keyevent(KeyEvent::new(KeyCode::A, KeyState::Down)), Some(DecodedKey::Unicode('a')));
+        assert_eq!(k.process_keyevent(KeyEvent::new(KeyCode::A, KeyState::Up)), None);
+
+        // A with right shift held
+        assert_eq!(k.process_keyevent(KeyEvent::new(KeyCode::ShiftRight, KeyState::Down)), None);
+        assert_eq!(k.process_keyevent(KeyEvent::new(KeyCode::A, KeyState::Down)), Some(DecodedKey::Unicode('A')));
+        assert_eq!(k.process_keyevent(KeyEvent::new(KeyCode::A, KeyState::Up)), None);
+        assert_eq!(k.process_keyevent(KeyEvent::new(KeyCode::ShiftRight, KeyState::Up)), None);
+
+        // Caps lock ON
+        assert_eq!(k.process_keyevent(KeyEvent::new(KeyCode::CapsLock, KeyState::Down)), None);
+        assert_eq!(k.process_keyevent(KeyEvent::new(KeyCode::CapsLock, KeyState::Up)), None);
+
+        // Letters are now caps
+        assert_eq!(k.process_keyevent(KeyEvent::new(KeyCode::X, KeyState::Down)), Some(DecodedKey::Unicode('X')));
+        assert_eq!(k.process_keyevent(KeyEvent::new(KeyCode::X, KeyState::Up)), None);
+
+        // Unless you press shift
+        assert_eq!(k.process_keyevent(KeyEvent::new(KeyCode::ShiftRight, KeyState::Down)), None);
+        assert_eq!(k.process_keyevent(KeyEvent::new(KeyCode::A, KeyState::Down)), Some(DecodedKey::Unicode('a')));
+        assert_eq!(k.process_keyevent(KeyEvent::new(KeyCode::A, KeyState::Up)), None);
+        assert_eq!(k.process_keyevent(KeyEvent::new(KeyCode::ShiftRight, KeyState::Up)), None);
+    }
+
+    #[test]
+    fn test_numlock() {
+        let mut k = Keyboard::new(layouts::Uk105Key);
+
+        // Numlock ON by default
+        assert_eq!(k.process_keyevent(KeyEvent::new(KeyCode::Numpad0, KeyState::Down)), Some(DecodedKey::Unicode('0')));
+        assert_eq!(k.process_keyevent(KeyEvent::new(KeyCode::Numpad0, KeyState::Up)), None);
+
+        // Numlock OFF
+        assert_eq!(k.process_keyevent(KeyEvent::new(KeyCode::NumpadLock, KeyState::Down)), None);
+        assert_eq!(k.process_keyevent(KeyEvent::new(KeyCode::NumpadLock, KeyState::Up)), None);
+
+        // Now KP_0 produces INSERT
+        assert_eq!(k.process_keyevent(KeyEvent::new(KeyCode::Numpad0, KeyState::Down)), Some(DecodedKey::RawKey(KeyCode::Insert)));
+        assert_eq!(k.process_keyevent(KeyEvent::new(KeyCode::Numpad0, KeyState::Up)), None);
     }
 }
 
