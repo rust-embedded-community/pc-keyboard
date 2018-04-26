@@ -241,6 +241,7 @@ impl<T> Keyboard<T>
 where
     T: KeyboardLayout,
 {
+    /// Make a new Keyboard object with the given layout.
     pub fn new(_layout: T) -> Keyboard<T> {
         Keyboard {
             register: 0,
@@ -257,62 +258,95 @@ where
         }
     }
 
+    /// Clears the bit register.
+    ///
+    /// Call this when there is a timeout reading data from the keyboard.
     pub fn clear(&mut self) {
         self.register = 0;
         self.num_bits = 0;
         self.decode_state = DecodeState::Start;
     }
 
+    /// Processes a 16-bit word from the keyboard.
+    ///
+    /// * The start bit (0) must be in bit 0.
+    /// * The data octet must be in bits 1..8, with the LSB in bit 1 and the
+    ///   MSB in bit 8.
+    /// * The parity bit must be in bit 9.
+    /// * The stop bit (1) must be in bit 10.
+    pub fn add_word(&mut self, word: u16) -> Result<Option<KeyEvent>, Error> {
+        let byte = Self::check_word(word)?;
+        self.add_byte(byte)
+    }
+
+    /// Processes an 8-bit byte from the keyboard.
+    ///
+    /// We assume the start, stop and parity bits have been processed and
+    /// verified.
+    pub fn add_byte(&mut self, byte: u8) -> Result<Option<KeyEvent>, Error> {
+        let st = self.decode_state;
+        self.clear();
+        match st {
+            DecodeState::Start => {
+                // All keys start here
+                let code = match byte {
+                    KEY_RELEASE_CODE => {
+                        self.decode_state = DecodeState::Release;
+                        return Ok(None);
+                    }
+                    EXTENDED_KEY_CODE => {
+                        self.decode_state = DecodeState::Extended;
+                        return Ok(None);
+                    }
+                    e => T::map_scancode(e)?,
+                };
+                Ok(Some(KeyEvent::new(code, KeyState::Down)))
+            }
+            DecodeState::Extended => {
+                // These are extended keys
+                let code = match byte {
+                    KEY_RELEASE_CODE => {
+                        self.decode_state = DecodeState::ExtendedRelease;
+                        return Ok(None);
+                    }
+                    e => T::map_extended_scancode(e)?,
+                };
+                Ok(Some(KeyEvent::new(code, KeyState::Down)))
+            }
+            DecodeState::Release => {
+                // These are 'normal' keys being released
+                let code = T::map_scancode(byte)?;
+                Ok(Some(KeyEvent::new(code, KeyState::Up)))
+            }
+            DecodeState::ExtendedRelease => {
+                // These are extended keys being release
+                let code = T::map_extended_scancode(byte)?;
+                Ok(Some(KeyEvent::new(code, KeyState::Up)))
+            }
+        }
+    }
+
+    /// Shift a bit into the register.
+    ///
+    /// Call this /or/ call `add_word` - don't call both.
+    /// Until the last bit is added you get Ok(None) returned.
     pub fn add_bit(&mut self, bit: bool) -> Result<Option<KeyEvent>, Error> {
         self.register |= (bit as u16) << self.num_bits;
         self.num_bits += 1;
         if self.num_bits == KEYCODE_BITS {
-            let byte = Self::check_parity(self.register)?;
-            let st = self.decode_state;
-            self.clear();
-            match st {
-                DecodeState::Start => {
-                    // All keys start here
-                    let code = match byte {
-                        KEY_RELEASE_CODE => {
-                            self.decode_state = DecodeState::Release;
-                            return Ok(None);
-                        }
-                        EXTENDED_KEY_CODE => {
-                            self.decode_state = DecodeState::Extended;
-                            return Ok(None);
-                        }
-                        e => T::map_scancode(e)?,
-                    };
-                    Ok(Some(KeyEvent::new(code, KeyState::Down)))
-                }
-                DecodeState::Extended => {
-                    // These are extended keys
-                    let code = match byte {
-                        KEY_RELEASE_CODE => {
-                            self.decode_state = DecodeState::ExtendedRelease;
-                            return Ok(None);
-                        }
-                        e => T::map_extended_scancode(e)?,
-                    };
-                    Ok(Some(KeyEvent::new(code, KeyState::Down)))
-                }
-                DecodeState::Release => {
-                    // These are 'normal' keys being released
-                    let code = T::map_scancode(byte)?;
-                    Ok(Some(KeyEvent::new(code, KeyState::Up)))
-                }
-                DecodeState::ExtendedRelease => {
-                    // These are extended keys being release
-                    let code = T::map_extended_scancode(byte)?;
-                    Ok(Some(KeyEvent::new(code, KeyState::Up)))
-                }
-            }
+            let word = self.register;
+            self.add_word(word)
         } else {
             Ok(None)
         }
     }
 
+    /// Processes a `KeyEvent` returned from `add_bit`, `add_byte` or `add_word`
+    /// and produces a decoded key.
+    ///
+    /// For example, the KeyEvent for pressing the '5' key on your keyboard
+    /// gives a DecodedKey of unicode character '5', unless the shift key is
+    /// held in which case you get the unicode character '%'.
     pub fn process_keyevent(&mut self, ev: KeyEvent) -> Option<DecodedKey> {
         match ev {
             KeyEvent { code: KeyCode::ShiftLeft, state: KeyState::Down } => {
@@ -363,7 +397,7 @@ where
     }
 
     /// Check 11-bit word has 1 start bit, 1 stop bit and an odd parity bit.
-    fn check_parity(word: u16) -> Result<u8, Error> {
+    fn check_word(word: u16) -> Result<u8, Error> {
         let start_bit = Self::get_bit(word, 0);
         let parity_bit = Self::get_bit(word, 9);
         let stop_bit = Self::get_bit(word, 10);
@@ -951,6 +985,45 @@ mod test {
         assert_eq!(
             k.add_bit(true),
             Ok(Some(KeyEvent::new(KeyCode::F9, KeyState::Down)))
+        );
+    }
+
+    #[test]
+    fn test_f9_word() {
+        let mut k = Keyboard::new(layouts::Us104Key);
+        assert_eq!(
+            k.add_word(0x0402),
+            Ok(Some(KeyEvent::new(KeyCode::F9, KeyState::Down)))
+        );
+    }
+
+    #[test]
+    fn test_f9_byte() {
+        let mut k = Keyboard::new(layouts::Us104Key);
+        assert_eq!(
+            k.add_byte(0x01),
+            Ok(Some(KeyEvent::new(KeyCode::F9, KeyState::Down)))
+        );
+    }
+
+    #[test]
+    fn test_keyup_keydown() {
+        let mut k = Keyboard::new(layouts::Us104Key);
+        assert_eq!(
+            k.add_byte(0x01),
+            Ok(Some(KeyEvent::new(KeyCode::F9, KeyState::Down)))
+        );
+        assert_eq!(
+            k.add_byte(0x01),
+            Ok(Some(KeyEvent::new(KeyCode::F9, KeyState::Down)))
+        );
+        assert_eq!(
+            k.add_byte(0xF0),
+            Ok(None)
+        );
+        assert_eq!(
+            k.add_byte(0x01),
+            Ok(Some(KeyEvent::new(KeyCode::F9, KeyState::Up)))
         );
     }
 
