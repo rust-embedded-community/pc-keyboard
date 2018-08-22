@@ -1,6 +1,11 @@
 [package]
 name = "pc-keyboard"
-version = "0.1.0"
+version = "0.1.1"
 authors = ["Jonathan 'theJPster' Pallant <github@thejpster.org.uk>"]
+description = "PS/2 keyboard interface library. Handles UK 105-key keyboards producing Scancode Set 2."
+keywords = ["arm", "cortex-m", "template", "video", "menu"]
+categories = ["embedded", "no-std"]
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/thejpster/pc-keyboard"
 
 [dependencies]
