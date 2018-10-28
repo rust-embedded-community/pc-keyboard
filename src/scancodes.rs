@@ -1,8 +1,11 @@
 use super::{Error, KeyCode, ScancodeSet};
 
+/// Contains the implementation of Scancode Set 1. 
+/// See the OS dev wiki: https://wiki.osdev.org/PS/2_Keyboard#Scan_Code_Set_1
 pub struct ScancodeSet1;
 
 impl ScancodeSet for ScancodeSet1 {
+    /// Implements the single byte codes for Set 1.
     fn map_scancode(code: u8) -> Result<KeyCode, Error> {
         match code {
             0x01 => Ok(KeyCode::Escape),             // 01
@@ -29,8 +32,8 @@ impl ScancodeSet for ScancodeSet1 {
             0x17 => Ok(KeyCode::I),                  // 17
             0x18 => Ok(KeyCode::O),                  // 18
             0x19 => Ok(KeyCode::P),                  // 19
-            0x1A => Ok(KeyCode::LeftSquareBracket),  // 1A  #inconsistent naming order
-            0x1B => Ok(KeyCode::RightSquareBracket), // 1B
+            0x1A => Ok(KeyCode::BracketSquareLeft),  // 1A  
+            0x1B => Ok(KeyCode::BracketSquareRight), // 1B
             0x1C => Ok(KeyCode::Enter),              // 1C
             0x1D => Ok(KeyCode::ControlLeft),        // 1D
             0x1E => Ok(KeyCode::A),                  // 1E
@@ -46,7 +49,7 @@ impl ScancodeSet for ScancodeSet1 {
             0x28 => Ok(KeyCode::Quote),              // 28
             0x29 => Ok(KeyCode::BackTick),           // 29
             0x2A => Ok(KeyCode::ShiftLeft),          // 2A
-            0x2B => Ok(KeyCode::Backslash),          // 2B #inconsistent capitals
+            0x2B => Ok(KeyCode::BackSlash),          // 2B 
             0x2C => Ok(KeyCode::Z),                  // 2C
             0x2D => Ok(KeyCode::X),                  // 2D
             0x2E => Ok(KeyCode::C),                  // 2E
@@ -56,7 +59,7 @@ impl ScancodeSet for ScancodeSet1 {
             0x32 => Ok(KeyCode::M),                  // 32
             0x33 => Ok(KeyCode::Comma),              // 33
             0x34 => Ok(KeyCode::Fullstop),           // 34
-            0x35 => Ok(KeyCode::Slash),              // 35 #inconsistent naming
+            0x35 => Ok(KeyCode::Slash),              // 35 
             0x36 => Ok(KeyCode::ShiftRight),         // 36
             0x37 => Ok(KeyCode::NumpadStar),         // 37
             0x38 => Ok(KeyCode::AltLeft),            // 38
@@ -86,7 +89,7 @@ impl ScancodeSet for ScancodeSet1 {
             0x50 => Ok(KeyCode::Numpad2),            // 50
             0x51 => Ok(KeyCode::Numpad3),            // 51
             0x52 => Ok(KeyCode::Numpad0),            // 52
-            0x53 => Ok(KeyCode::NumpadPeriod),       // 53 #inconsistent naming
+            0x53 => Ok(KeyCode::NumpadPeriod),       // 53 
             //0x54
             //0x55
             //0x56
@@ -96,6 +99,7 @@ impl ScancodeSet for ScancodeSet1 {
         }
     }
 
+    /// Implements the extended byte codes for set 1 (prefixed with E0)
     fn map_extended_scancode(code: u8) -> Result<KeyCode, Error> {
         match code {
             0x10 => Ok(KeyCode::PrevTrack),    // E010
@@ -111,7 +115,7 @@ impl ScancodeSet for ScancodeSet1 {
             //0x1A
             //0x1B
             0x1C => Ok(KeyCode::NumpadEnter),  // E01C
-            0x1D => Ok(KeyCode::RightControl), // E01D #inconsistent naming
+            0x1D => Ok(KeyCode::ControlRight), // E01D 
             //0x1E
             //0x1F
             0x20 => Ok(KeyCode::Mute),         // E020
@@ -154,15 +158,15 @@ impl ScancodeSet for ScancodeSet1 {
             //0x45
             //0x46
             0x47 => Ok(KeyCode::Home),       // E047
-            0x48 => Ok(KeyCode::UpArrow),    // E048
+            0x48 => Ok(KeyCode::ArrowUp),    // E048
             0x49 => Ok(KeyCode::PageUp),     // E049
             //0x4A
-            0x4B => Ok(KeyCode::LeftArrow),  // E04B
+            0x4B => Ok(KeyCode::ArrowLeft),  // E04B
             //0x4C         
-            0x4D => Ok(KeyCode::RightArrow), // E04D
+            0x4D => Ok(KeyCode::ArrowRight), // E04D
             //0x4E
             0x4F => Ok(KeyCode::End),        // E04F
-            0x50 => Ok(KeyCode::DownArrow),  // E050
+            0x50 => Ok(KeyCode::ArrowDown),  // E050
             0x51 => Ok(KeyCode::PageDown),   // E051
             0x52 => Ok(KeyCode::Insert),     // E052
             0x53 => Ok(KeyCode::Delete),     // E053
@@ -171,9 +175,12 @@ impl ScancodeSet for ScancodeSet1 {
     }
 }
 
+/// Contains the implementation of Scancode Set 2. 
+/// See the OS dev wiki: https://wiki.osdev.org/PS/2_Keyboard#Scan_Code_Set_2
 pub struct ScancodeSet2;
 
 impl ScancodeSet for ScancodeSet2 {
+    /// Implements the single byte codes for Set 2.
     fn map_scancode(code: u8) -> Result<KeyCode, Error> {
         match code {
             0x01 => Ok(KeyCode::F9),                 // 01
@@ -234,13 +241,13 @@ impl ScancodeSet for ScancodeSet2 {
             0x4D => Ok(KeyCode::P),                  // 4D
             0x4E => Ok(KeyCode::Minus),              // 4E
             0x52 => Ok(KeyCode::Quote),              // 52
-            0x54 => Ok(KeyCode::LeftSquareBracket),  // 54
+            0x54 => Ok(KeyCode::BracketSquareLeft),  // 54
             0x55 => Ok(KeyCode::Equals),             // 55
             0x58 => Ok(KeyCode::CapsLock),           // 58
             0x59 => Ok(KeyCode::ShiftRight),         // 59
             0x5A => Ok(KeyCode::Enter),              // 5A
-            0x5B => Ok(KeyCode::RightSquareBracket), // 5B
-            0x5D => Ok(KeyCode::Backslash),          // 5D
+            0x5B => Ok(KeyCode::BracketSquareRight), // 5B
+            0x5D => Ok(KeyCode::BackSlash),          // 5D
             0x66 => Ok(KeyCode::Backspace),          // 66
             0x69 => Ok(KeyCode::Numpad1),            // 69
             0x6B => Ok(KeyCode::Numpad4),            // 6B
@@ -265,23 +272,24 @@ impl ScancodeSet for ScancodeSet2 {
         }
     }
 
+    /// Implements the extended byte codes for set 1 (prefixed with E0)
     fn map_extended_scancode(code: u8) -> Result<KeyCode, Error> {
         match code {
             0x11 => Ok(KeyCode::AltRight),     // E011
-            0x14 => Ok(KeyCode::RightControl), // E014
+            0x14 => Ok(KeyCode::ControlRight), // E014
             0x1F => Ok(KeyCode::WindowsLeft),  // E01F
             0x27 => Ok(KeyCode::WindowsRight), // E027
             0x2F => Ok(KeyCode::Menus),        // E02F
             0x4A => Ok(KeyCode::NumpadSlash),  // E04A
             0x5A => Ok(KeyCode::NumpadEnter),  // E05A
             0x69 => Ok(KeyCode::End),          // E069
-            0x6B => Ok(KeyCode::LeftArrow),    // E06B
+            0x6B => Ok(KeyCode::ArrowLeft),    // E06B
             0x6C => Ok(KeyCode::Home),         // E06C
             0x70 => Ok(KeyCode::Insert),       // E070
             0x71 => Ok(KeyCode::Delete),       // E071
-            0x72 => Ok(KeyCode::DownArrow),    // E072
-            0x74 => Ok(KeyCode::RightArrow),   // E074
-            0x75 => Ok(KeyCode::UpArrow),      // E075
+            0x72 => Ok(KeyCode::ArrowDown),    // E072
+            0x74 => Ok(KeyCode::ArrowRight),   // E074
+            0x75 => Ok(KeyCode::ArrowUp),      // E075
             0x7A => Ok(KeyCode::PageDown),     // E07A
             0x7D => Ok(KeyCode::PageUp),       // E07D
             _ => Err(Error::UnknownKeyCode),

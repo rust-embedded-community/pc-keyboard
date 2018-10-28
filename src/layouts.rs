@@ -145,17 +145,17 @@ where
             } else {
                 DecodedKey::Unicode('p')
             },
-            KeyCode::LeftSquareBracket => if modifiers.is_shifted() {
+            KeyCode::BracketSquareLeft => if modifiers.is_shifted() {
                 DecodedKey::Unicode('{')
             } else {
                 DecodedKey::Unicode('[')
             },
-            KeyCode::RightSquareBracket => if modifiers.is_shifted() {
+            KeyCode::BracketSquareRight => if modifiers.is_shifted() {
                 DecodedKey::Unicode('}')
             } else {
                 DecodedKey::Unicode(']')
             },
-            KeyCode::Backslash => if modifiers.is_shifted() {
+            KeyCode::BackSlash => if modifiers.is_shifted() {
                 DecodedKey::Unicode('|')
             } else {
                 DecodedKey::Unicode('\\')
@@ -283,7 +283,7 @@ where
                 if modifiers.numlock {
                     DecodedKey::Unicode('8')
                 } else {
-                    DecodedKey::RawKey(KeyCode::UpArrow)
+                    DecodedKey::RawKey(KeyCode::ArrowUp)
                 }
             }
             KeyCode::Numpad9 => {
@@ -298,7 +298,7 @@ where
                 if modifiers.numlock {
                     DecodedKey::Unicode('4')
                 } else {
-                    DecodedKey::RawKey(KeyCode::LeftArrow)
+                    DecodedKey::RawKey(KeyCode::ArrowLeft)
                 }
             }
             KeyCode::Numpad5 => DecodedKey::Unicode('5'),
@@ -306,7 +306,7 @@ where
                 if modifiers.numlock {
                     DecodedKey::Unicode('6')
                 } else {
-                    DecodedKey::RawKey(KeyCode::RightArrow)
+                    DecodedKey::RawKey(KeyCode::ArrowRight)
                 }
             }
             KeyCode::Numpad1 => {
@@ -320,7 +320,7 @@ where
                 if modifiers.numlock {
                     DecodedKey::Unicode('2')
                 } else {
-                    DecodedKey::RawKey(KeyCode::DownArrow)
+                    DecodedKey::RawKey(KeyCode::ArrowDown)
                 }
             }
             KeyCode::Numpad3 => {
@@ -356,7 +356,7 @@ where
 {
     fn map_scancode(code: u8) -> Result<KeyCode, Error> {
         match code {
-            0x61 => Ok(KeyCode::Backslash),
+            0x61 => Ok(KeyCode::BackSlash),
             _ => S::map_scancode(code),
         }
     }
