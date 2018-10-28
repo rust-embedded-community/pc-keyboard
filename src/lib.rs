@@ -38,15 +38,17 @@ pub use set1::ScancodeSet1;
 // ****************************************************************************
 
 #[derive(Debug)]
-pub struct Keyboard<T>
+pub struct Keyboard<T, S>
 where
-    T: KeyboardLayout,
+    T: KeyboardLayout<S>,
+    S: ScancodeSet, 
 {
     register: u16,
     num_bits: u8,
     decode_state: DecodeState,
     modifiers: Modifiers,
     _layout: PhantomData<T>,
+    _set: PhantomData<S>,
 }
 
 #[derive(Debug, PartialEq, Eq, Copy, Clone)]
@@ -189,7 +191,10 @@ pub struct KeyEvent {
     pub state: KeyState,
 }
 
-pub trait KeyboardLayout {
+pub trait KeyboardLayout<S> 
+where 
+    S: ScancodeSet
+{
     /// Convert a Scan Code Set 2 byte to our `KeyCode` enum
     fn map_scancode(code: u8) -> Result<KeyCode, Error>;
 
@@ -265,12 +270,13 @@ const KEY_RELEASE_CODE: u8 = 0xF0;
 //
 // ****************************************************************************
 
-impl<T> Keyboard<T>
+impl<T, S> Keyboard<T, S>
 where
-    T: KeyboardLayout,
+    T: KeyboardLayout<S>,
+    S: ScancodeSet
 {
     /// Make a new Keyboard object with the given layout.
-    pub fn new(_layout: T) -> Keyboard<T> {
+    pub fn new(_layout: T, _set: S) -> Keyboard<T, S> {
         Keyboard {
             register: 0,
             num_bits: 0,
@@ -283,6 +289,7 @@ where
                 alt_gr: false
             },
             _layout: PhantomData,
+            _set: PhantomData,
         }
     }
 
@@ -479,13 +486,16 @@ pub mod layouts {
     /// Has a 2-row high Enter key, with Backslash next to the left shift.
     pub struct Uk105Key;
 
-    impl KeyboardLayout for Us104Key {
+    impl<S> KeyboardLayout<S> for Us104Key 
+    where 
+        S: ScancodeSet
+    {
         fn map_scancode(code: u8) -> Result<KeyCode, Error> {
-            <Self as ScancodeSet>::map_scancode(code)
+            S::map_scancode(code)
         }
 
         fn map_extended_scancode(code: u8) -> Result<KeyCode, Error> {
-            <Self as ScancodeSet>::map_extended_scancode(code)
+            S::map_extended_scancode(code)
         }
 
         fn map_keycode(keycode: KeyCode, modifiers: &Modifiers) -> DecodedKey {
@@ -817,8 +827,9 @@ pub mod layouts {
         }
     }
     
+    pub struct ScancodeSet2;
 
-    impl ScancodeSet for Us104Key {
+    impl ScancodeSet for ScancodeSet2 {
         fn map_scancode(code: u8) -> Result<KeyCode, Error> {
             match code {
                 0x01 => Ok(KeyCode::F9),                 // 01
@@ -934,17 +945,20 @@ pub mod layouts {
         }
     }
 
-    impl KeyboardLayout for Uk105Key {
+    impl<S> KeyboardLayout<S> for Uk105Key 
+    where 
+        S: ScancodeSet
+    {
         fn map_scancode(code: u8) -> Result<KeyCode, Error> {
             match code {
                 0x61 => Ok(KeyCode::Backslash),
-                _ => <Us104Key as ScancodeSet>::map_scancode(code),
+                _ => S::map_scancode(code),
             }
         }
 
         fn map_extended_scancode(code: u8) -> Result<KeyCode, Error> {
             match code {
-                _ => <Us104Key as ScancodeSet>::map_extended_scancode(code),
+                _ => S::map_extended_scancode(code),
             }
         }
 
@@ -988,7 +1002,7 @@ pub mod layouts {
                 } else {
                     DecodedKey::Unicode('#')
                 },
-                e => Us104Key::map_keycode(e, modifiers),
+                e => <Us104Key as KeyboardLayout<ScancodeSet2>>::map_keycode(e, modifiers),
             }
         }
     }
@@ -1006,7 +1020,7 @@ mod test {
 
     #[test]
     fn test_f9() {
-        let mut k = Keyboard::new(layouts::Us104Key);
+        let mut k = Keyboard::new(layouts::Us104Key, layouts::ScancodeSet2);
         // start
         assert_eq!(k.add_bit(false), Ok(None));
         // 8 data bits (LSB first)
@@ -1029,7 +1043,7 @@ mod test {
 
     #[test]
     fn test_f9_word() {
-        let mut k = Keyboard::new(layouts::Us104Key);
+        let mut k = Keyboard::new(layouts::Us104Key, layouts::ScancodeSet2);
         assert_eq!(
             k.add_word(0x0402),
             Ok(Some(KeyEvent::new(KeyCode::F9, KeyState::Down)))
@@ -1038,7 +1052,7 @@ mod test {
 
     #[test]
     fn test_f9_byte() {
-        let mut k = Keyboard::new(layouts::Us104Key);
+        let mut k = Keyboard::new(layouts::Us104Key, layouts::ScancodeSet2);
         assert_eq!(
             k.add_byte(0x01),
             Ok(Some(KeyEvent::new(KeyCode::F9, KeyState::Down)))
@@ -1047,7 +1061,7 @@ mod test {
 
     #[test]
     fn test_keyup_keydown() {
-        let mut k = Keyboard::new(layouts::Us104Key);
+        let mut k = Keyboard::new(layouts::Us104Key, layouts::ScancodeSet2);
         assert_eq!(
             k.add_byte(0x01),
             Ok(Some(KeyEvent::new(KeyCode::F9, KeyState::Down)))
@@ -1068,7 +1082,7 @@ mod test {
 
     #[test]
     fn test_f5() {
-        let mut k = Keyboard::new(layouts::Us104Key);
+        let mut k = Keyboard::new(layouts::Us104Key, layouts::ScancodeSet2);
         // start
         assert_eq!(k.add_bit(false), Ok(None));
         // 8 data bits (LSB first)
@@ -1091,7 +1105,7 @@ mod test {
 
     #[test]
     fn test_f5_up() {
-        let mut k = Keyboard::new(layouts::Us104Key);
+        let mut k = Keyboard::new(layouts::Us104Key, layouts::ScancodeSet2);
         // Send F0
 
         // start
@@ -1134,7 +1148,7 @@ mod test {
 
     #[test]
     fn test_shift() {
-        let mut k = Keyboard::new(layouts::Uk105Key);
+        let mut k = Keyboard::new(layouts::Uk105Key, layouts::ScancodeSet2);
         // A with left shift held
         assert_eq!(k.process_keyevent(KeyEvent::new(KeyCode::ShiftLeft, KeyState::Down)), None);
         assert_eq!(k.process_keyevent(KeyEvent::new(KeyCode::A, KeyState::Down)), Some(DecodedKey::Unicode('A')));
@@ -1168,7 +1182,7 @@ mod test {
 
     #[test]
     fn test_numlock() {
-        let mut k = Keyboard::new(layouts::Uk105Key);
+        let mut k = Keyboard::new(layouts::Uk105Key, layouts::ScancodeSet2);
 
         // Numlock ON by default
         assert_eq!(k.process_keyevent(KeyEvent::new(KeyCode::Numpad0, KeyState::Down)), Some(DecodedKey::Unicode('0')));
