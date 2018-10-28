@@ -24,6 +24,15 @@ use std::marker::PhantomData;
 
 // ****************************************************************************
 //
+// Modules
+//
+// ****************************************************************************
+
+mod set1;
+pub use set1::ScancodeSet1;
+
+// ****************************************************************************
+//
 // Public Types
 //
 // ****************************************************************************
@@ -156,6 +165,17 @@ pub enum KeyCode {
     NumpadEnter,
     /// Not on US keyboards
     HashTilde,
+    // Scan code set 1 unique codes
+    PrevTrack, 
+    NextTrack, 
+    Mute, 
+    Calculator, 
+    Play, 
+    Stop, 
+    VolumeDown, 
+    VolumeUp, 
+    WWWHome, 
+
 }
 
 #[derive(Debug, PartialEq, Eq, Copy, Clone)]
@@ -182,6 +202,15 @@ pub trait KeyboardLayout {
     /// KeyCode::A maps to `Some('a')` (or `Some('A')` if shifted), while
     /// KeyCode::AltLeft returns `None`
     fn map_keycode(keycode: KeyCode, modifiers: &Modifiers) -> DecodedKey;
+}
+
+pub trait ScancodeSet {
+    /// Convert a Scan Code set X byte to our 'KeyCode' enum
+    fn map_scancode(code: u8) -> Result<KeyCode, Error>;
+    
+    /// Convert a Scan Code Set X extended byte (prefixed E0) to our `KeyCode`
+    /// enum.
+    fn map_extended_scancode(code: u8) -> Result<KeyCode, Error>;
 }
 
 #[derive(Debug)]
