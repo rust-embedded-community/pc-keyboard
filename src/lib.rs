@@ -175,7 +175,6 @@ pub enum KeyCode {
     VolumeDown, 
     VolumeUp, 
     WWWHome, 
-
 }
 
 #[derive(Debug, PartialEq, Eq, Copy, Clone)]
@@ -482,117 +481,11 @@ pub mod layouts {
 
     impl KeyboardLayout for Us104Key {
         fn map_scancode(code: u8) -> Result<KeyCode, Error> {
-            match code {
-                0x01 => Ok(KeyCode::F9),                 // 01
-                0x03 => Ok(KeyCode::F5),                 // 03
-                0x04 => Ok(KeyCode::F3),                 // 04
-                0x05 => Ok(KeyCode::F1),                 // 05
-                0x06 => Ok(KeyCode::F2),                 // 06
-                0x07 => Ok(KeyCode::F12),                // 07
-                0x09 => Ok(KeyCode::F10),                // 09
-                0x0A => Ok(KeyCode::F8),                 // 0A
-                0x0B => Ok(KeyCode::F6),                 // 0B
-                0x0C => Ok(KeyCode::F4),                 // 0C
-                0x0D => Ok(KeyCode::Tab),                // 0D
-                0x0E => Ok(KeyCode::BackTick),           // 0E
-                0x11 => Ok(KeyCode::AltLeft),            // 11
-                0x12 => Ok(KeyCode::ShiftLeft),          // 12
-                0x14 => Ok(KeyCode::ControlLeft),        // 14
-                0x15 => Ok(KeyCode::Q),                  // 15
-                0x16 => Ok(KeyCode::Key1),               // 16
-                0x1A => Ok(KeyCode::Z),                  // 1A
-                0x1B => Ok(KeyCode::S),                  // 1B
-                0x1C => Ok(KeyCode::A),                  // 1C
-                0x1D => Ok(KeyCode::W),                  // 1D
-                0x1e => Ok(KeyCode::Key2),               // 1e
-                0x21 => Ok(KeyCode::C),                  // 21
-                0x22 => Ok(KeyCode::X),                  // 22
-                0x23 => Ok(KeyCode::D),                  // 23
-                0x24 => Ok(KeyCode::E),                  // 24
-                0x25 => Ok(KeyCode::Key4),               // 25
-                0x26 => Ok(KeyCode::Key3),               // 26
-                0x29 => Ok(KeyCode::Spacebar),           // 29
-                0x2A => Ok(KeyCode::V),                  // 2A
-                0x2B => Ok(KeyCode::F),                  // 2B
-                0x2C => Ok(KeyCode::T),                  // 2C
-                0x2D => Ok(KeyCode::R),                  // 2D
-                0x2E => Ok(KeyCode::Key5),               // 2E
-                0x31 => Ok(KeyCode::N),                  // 31
-                0x32 => Ok(KeyCode::B),                  // 32
-                0x33 => Ok(KeyCode::H),                  // 33
-                0x34 => Ok(KeyCode::G),                  // 34
-                0x35 => Ok(KeyCode::Y),                  // 35
-                0x36 => Ok(KeyCode::Key6),               // 36
-                0x3A => Ok(KeyCode::M),                  // 3A
-                0x3B => Ok(KeyCode::J),                  // 3B
-                0x3C => Ok(KeyCode::U),                  // 3C
-                0x3D => Ok(KeyCode::Key7),               // 3D
-                0x3E => Ok(KeyCode::Key8),               // 3E
-                0x41 => Ok(KeyCode::Comma),              // 41
-                0x42 => Ok(KeyCode::K),                  // 42
-                0x43 => Ok(KeyCode::I),                  // 43
-                0x44 => Ok(KeyCode::O),                  // 44
-                0x45 => Ok(KeyCode::Key0),               // 45
-                0x46 => Ok(KeyCode::Key9),               // 46
-                0x49 => Ok(KeyCode::Fullstop),           // 49
-                0x4A => Ok(KeyCode::Slash),              // 4A
-                0x4B => Ok(KeyCode::L),                  // 4B
-                0x4C => Ok(KeyCode::SemiColon),          // 4C
-                0x4D => Ok(KeyCode::P),                  // 4D
-                0x4E => Ok(KeyCode::Minus),              // 4E
-                0x52 => Ok(KeyCode::Quote),              // 52
-                0x54 => Ok(KeyCode::LeftSquareBracket),  // 54
-                0x55 => Ok(KeyCode::Equals),             // 55
-                0x58 => Ok(KeyCode::CapsLock),           // 58
-                0x59 => Ok(KeyCode::ShiftRight),         // 59
-                0x5A => Ok(KeyCode::Enter),              // 5A
-                0x5B => Ok(KeyCode::RightSquareBracket), // 5B
-                0x5D => Ok(KeyCode::Backslash),          // 5D
-                0x66 => Ok(KeyCode::Backspace),          // 66
-                0x69 => Ok(KeyCode::Numpad1),            // 69
-                0x6B => Ok(KeyCode::Numpad4),            // 6B
-                0x6C => Ok(KeyCode::Numpad7),            // 6C
-                0x70 => Ok(KeyCode::Numpad0),            // 70
-                0x71 => Ok(KeyCode::NumpadPeriod),       // 71
-                0x72 => Ok(KeyCode::Numpad2),            // 72
-                0x73 => Ok(KeyCode::Numpad5),            // 73
-                0x74 => Ok(KeyCode::Numpad6),            // 74
-                0x75 => Ok(KeyCode::Numpad8),            // 75
-                0x76 => Ok(KeyCode::Escape),             // 76
-                0x77 => Ok(KeyCode::NumpadLock),         // 77
-                0x78 => Ok(KeyCode::F11),                // 78
-                0x79 => Ok(KeyCode::NumpadPlus),         // 79
-                0x7A => Ok(KeyCode::Numpad3),            // 7A
-                0x7B => Ok(KeyCode::NumpadMinus),        // 7B
-                0x7C => Ok(KeyCode::NumpadStar),         // 7C
-                0x7D => Ok(KeyCode::Numpad9),            // 7D
-                0x7E => Ok(KeyCode::ScrollLock),         // 7E
-                0x83 => Ok(KeyCode::F7),                 // 83
-                _ => Err(Error::UnknownKeyCode),
-            }
+            <Self as ScancodeSet>::map_scancode(code)
         }
 
         fn map_extended_scancode(code: u8) -> Result<KeyCode, Error> {
-            match code {
-                0x11 => Ok(KeyCode::AltRight),     // E011
-                0x14 => Ok(KeyCode::RightControl), // E014
-                0x1F => Ok(KeyCode::WindowsLeft),  // E01F
-                0x27 => Ok(KeyCode::WindowsRight), // E027
-                0x2F => Ok(KeyCode::Menus),        // E02F
-                0x4A => Ok(KeyCode::NumpadSlash),  // E04A
-                0x5A => Ok(KeyCode::NumpadEnter),  // E05A
-                0x69 => Ok(KeyCode::End),          // E069
-                0x6B => Ok(KeyCode::LeftArrow),    // E06B
-                0x6C => Ok(KeyCode::Home),         // E06C
-                0x70 => Ok(KeyCode::Insert),       // E070
-                0x71 => Ok(KeyCode::Delete),       // E071
-                0x72 => Ok(KeyCode::DownArrow),    // E072
-                0x74 => Ok(KeyCode::RightArrow),   // E074
-                0x75 => Ok(KeyCode::UpArrow),      // E075
-                0x7A => Ok(KeyCode::PageDown),     // E07A
-                0x7D => Ok(KeyCode::PageUp),       // E07D
-                _ => Err(Error::UnknownKeyCode),
-            }
+            <Self as ScancodeSet>::map_extended_scancode(code)
         }
 
         fn map_keycode(keycode: KeyCode, modifiers: &Modifiers) -> DecodedKey {
@@ -923,18 +816,135 @@ pub mod layouts {
             }
         }
     }
+    
 
-    impl KeyboardLayout for Uk105Key {
+    impl ScancodeSet for Us104Key {
         fn map_scancode(code: u8) -> Result<KeyCode, Error> {
             match code {
-                0x61 => Ok(KeyCode::Backslash),
-                _ => Us104Key::map_scancode(code),
+                0x01 => Ok(KeyCode::F9),                 // 01
+                0x03 => Ok(KeyCode::F5),                 // 03
+                0x04 => Ok(KeyCode::F3),                 // 04
+                0x05 => Ok(KeyCode::F1),                 // 05
+                0x06 => Ok(KeyCode::F2),                 // 06
+                0x07 => Ok(KeyCode::F12),                // 07
+                0x09 => Ok(KeyCode::F10),                // 09
+                0x0A => Ok(KeyCode::F8),                 // 0A
+                0x0B => Ok(KeyCode::F6),                 // 0B
+                0x0C => Ok(KeyCode::F4),                 // 0C
+                0x0D => Ok(KeyCode::Tab),                // 0D
+                0x0E => Ok(KeyCode::BackTick),           // 0E
+                0x11 => Ok(KeyCode::AltLeft),            // 11
+                0x12 => Ok(KeyCode::ShiftLeft),          // 12
+                0x14 => Ok(KeyCode::ControlLeft),        // 14
+                0x15 => Ok(KeyCode::Q),                  // 15
+                0x16 => Ok(KeyCode::Key1),               // 16
+                0x1A => Ok(KeyCode::Z),                  // 1A
+                0x1B => Ok(KeyCode::S),                  // 1B
+                0x1C => Ok(KeyCode::A),                  // 1C
+                0x1D => Ok(KeyCode::W),                  // 1D
+                0x1e => Ok(KeyCode::Key2),               // 1e
+                0x21 => Ok(KeyCode::C),                  // 21
+                0x22 => Ok(KeyCode::X),                  // 22
+                0x23 => Ok(KeyCode::D),                  // 23
+                0x24 => Ok(KeyCode::E),                  // 24
+                0x25 => Ok(KeyCode::Key4),               // 25
+                0x26 => Ok(KeyCode::Key3),               // 26
+                0x29 => Ok(KeyCode::Spacebar),           // 29
+                0x2A => Ok(KeyCode::V),                  // 2A
+                0x2B => Ok(KeyCode::F),                  // 2B
+                0x2C => Ok(KeyCode::T),                  // 2C
+                0x2D => Ok(KeyCode::R),                  // 2D
+                0x2E => Ok(KeyCode::Key5),               // 2E
+                0x31 => Ok(KeyCode::N),                  // 31
+                0x32 => Ok(KeyCode::B),                  // 32
+                0x33 => Ok(KeyCode::H),                  // 33
+                0x34 => Ok(KeyCode::G),                  // 34
+                0x35 => Ok(KeyCode::Y),                  // 35
+                0x36 => Ok(KeyCode::Key6),               // 36
+                0x3A => Ok(KeyCode::M),                  // 3A
+                0x3B => Ok(KeyCode::J),                  // 3B
+                0x3C => Ok(KeyCode::U),                  // 3C
+                0x3D => Ok(KeyCode::Key7),               // 3D
+                0x3E => Ok(KeyCode::Key8),               // 3E
+                0x41 => Ok(KeyCode::Comma),              // 41
+                0x42 => Ok(KeyCode::K),                  // 42
+                0x43 => Ok(KeyCode::I),                  // 43
+                0x44 => Ok(KeyCode::O),                  // 44
+                0x45 => Ok(KeyCode::Key0),               // 45
+                0x46 => Ok(KeyCode::Key9),               // 46
+                0x49 => Ok(KeyCode::Fullstop),           // 49
+                0x4A => Ok(KeyCode::Slash),              // 4A
+                0x4B => Ok(KeyCode::L),                  // 4B
+                0x4C => Ok(KeyCode::SemiColon),          // 4C
+                0x4D => Ok(KeyCode::P),                  // 4D
+                0x4E => Ok(KeyCode::Minus),              // 4E
+                0x52 => Ok(KeyCode::Quote),              // 52
+                0x54 => Ok(KeyCode::LeftSquareBracket),  // 54
+                0x55 => Ok(KeyCode::Equals),             // 55
+                0x58 => Ok(KeyCode::CapsLock),           // 58
+                0x59 => Ok(KeyCode::ShiftRight),         // 59
+                0x5A => Ok(KeyCode::Enter),              // 5A
+                0x5B => Ok(KeyCode::RightSquareBracket), // 5B
+                0x5D => Ok(KeyCode::Backslash),          // 5D
+                0x66 => Ok(KeyCode::Backspace),          // 66
+                0x69 => Ok(KeyCode::Numpad1),            // 69
+                0x6B => Ok(KeyCode::Numpad4),            // 6B
+                0x6C => Ok(KeyCode::Numpad7),            // 6C
+                0x70 => Ok(KeyCode::Numpad0),            // 70
+                0x71 => Ok(KeyCode::NumpadPeriod),       // 71
+                0x72 => Ok(KeyCode::Numpad2),            // 72
+                0x73 => Ok(KeyCode::Numpad5),            // 73
+                0x74 => Ok(KeyCode::Numpad6),            // 74
+                0x75 => Ok(KeyCode::Numpad8),            // 75
+                0x76 => Ok(KeyCode::Escape),             // 76
+                0x77 => Ok(KeyCode::NumpadLock),         // 77
+                0x78 => Ok(KeyCode::F11),                // 78
+                0x79 => Ok(KeyCode::NumpadPlus),         // 79
+                0x7A => Ok(KeyCode::Numpad3),            // 7A
+                0x7B => Ok(KeyCode::NumpadMinus),        // 7B
+                0x7C => Ok(KeyCode::NumpadStar),         // 7C
+                0x7D => Ok(KeyCode::Numpad9),            // 7D
+                0x7E => Ok(KeyCode::ScrollLock),         // 7E
+                0x83 => Ok(KeyCode::F7),                 // 83
+                _ => Err(Error::UnknownKeyCode),
             }
         }
 
         fn map_extended_scancode(code: u8) -> Result<KeyCode, Error> {
             match code {
-                _ => Us104Key::map_extended_scancode(code),
+                0x11 => Ok(KeyCode::AltRight),     // E011
+                0x14 => Ok(KeyCode::RightControl), // E014
+                0x1F => Ok(KeyCode::WindowsLeft),  // E01F
+                0x27 => Ok(KeyCode::WindowsRight), // E027
+                0x2F => Ok(KeyCode::Menus),        // E02F
+                0x4A => Ok(KeyCode::NumpadSlash),  // E04A
+                0x5A => Ok(KeyCode::NumpadEnter),  // E05A
+                0x69 => Ok(KeyCode::End),          // E069
+                0x6B => Ok(KeyCode::LeftArrow),    // E06B
+                0x6C => Ok(KeyCode::Home),         // E06C
+                0x70 => Ok(KeyCode::Insert),       // E070
+                0x71 => Ok(KeyCode::Delete),       // E071
+                0x72 => Ok(KeyCode::DownArrow),    // E072
+                0x74 => Ok(KeyCode::RightArrow),   // E074
+                0x75 => Ok(KeyCode::UpArrow),      // E075
+                0x7A => Ok(KeyCode::PageDown),     // E07A
+                0x7D => Ok(KeyCode::PageUp),       // E07D
+                _ => Err(Error::UnknownKeyCode),
+            }
+        }
+    }
+
+    impl KeyboardLayout for Uk105Key {
+        fn map_scancode(code: u8) -> Result<KeyCode, Error> {
+            match code {
+                0x61 => Ok(KeyCode::Backslash),
+                _ => <Us104Key as ScancodeSet>::map_scancode(code),
+            }
+        }
+
+        fn map_extended_scancode(code: u8) -> Result<KeyCode, Error> {
+            match code {
+                _ => <Us104Key as ScancodeSet>::map_extended_scancode(code),
             }
         }
 
