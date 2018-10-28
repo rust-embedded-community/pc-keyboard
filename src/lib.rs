@@ -28,8 +28,8 @@ use std::marker::PhantomData;
 //
 // ****************************************************************************
 
-mod set1;
-pub use set1::ScancodeSet1;
+mod scancodes;
+pub use scancodes::{ScancodeSet1, ScancodeSet2};
 
 // ****************************************************************************
 //
@@ -489,7 +489,7 @@ mod test {
 
     #[test]
     fn test_f9() {
-        let mut k = Keyboard::new(layouts::Us104Key, layouts::ScancodeSet2);
+        let mut k = Keyboard::new(layouts::Us104Key, ScancodeSet2);
         // start
         assert_eq!(k.add_bit(false), Ok(None));
         // 8 data bits (LSB first)
@@ -512,7 +512,7 @@ mod test {
 
     #[test]
     fn test_f9_word() {
-        let mut k = Keyboard::new(layouts::Us104Key, layouts::ScancodeSet2);
+        let mut k = Keyboard::new(layouts::Us104Key, ScancodeSet2);
         assert_eq!(
             k.add_word(0x0402),
             Ok(Some(KeyEvent::new(KeyCode::F9, KeyState::Down)))
@@ -521,7 +521,7 @@ mod test {
 
     #[test]
     fn test_f9_byte() {
-        let mut k = Keyboard::new(layouts::Us104Key, layouts::ScancodeSet2);
+        let mut k = Keyboard::new(layouts::Us104Key, ScancodeSet2);
         assert_eq!(
             k.add_byte(0x01),
             Ok(Some(KeyEvent::new(KeyCode::F9, KeyState::Down)))
@@ -530,7 +530,7 @@ mod test {
 
     #[test]
     fn test_keyup_keydown() {
-        let mut k = Keyboard::new(layouts::Us104Key, layouts::ScancodeSet2);
+        let mut k = Keyboard::new(layouts::Us104Key, ScancodeSet2);
         assert_eq!(
             k.add_byte(0x01),
             Ok(Some(KeyEvent::new(KeyCode::F9, KeyState::Down)))
@@ -551,7 +551,7 @@ mod test {
 
     #[test]
     fn test_f5() {
-        let mut k = Keyboard::new(layouts::Us104Key, layouts::ScancodeSet2);
+        let mut k = Keyboard::new(layouts::Us104Key, ScancodeSet2);
         // start
         assert_eq!(k.add_bit(false), Ok(None));
         // 8 data bits (LSB first)
@@ -574,7 +574,7 @@ mod test {
 
     #[test]
     fn test_f5_up() {
-        let mut k = Keyboard::new(layouts::Us104Key, layouts::ScancodeSet2);
+        let mut k = Keyboard::new(layouts::Us104Key, ScancodeSet2);
         // Send F0
 
         // start
@@ -617,7 +617,7 @@ mod test {
 
     #[test]
     fn test_shift() {
-        let mut k = Keyboard::new(layouts::Uk105Key, layouts::ScancodeSet2);
+        let mut k = Keyboard::new(layouts::Uk105Key, ScancodeSet2);
         // A with left shift held
         assert_eq!(k.process_keyevent(KeyEvent::new(KeyCode::ShiftLeft, KeyState::Down)), None);
         assert_eq!(k.process_keyevent(KeyEvent::new(KeyCode::A, KeyState::Down)), Some(DecodedKey::Unicode('A')));
@@ -651,7 +651,7 @@ mod test {
 
     #[test]
     fn test_numlock() {
-        let mut k = Keyboard::new(layouts::Uk105Key, layouts::ScancodeSet2);
+        let mut k = Keyboard::new(layouts::Uk105Key, ScancodeSet2);
 
         // Numlock ON by default
         assert_eq!(k.process_keyevent(KeyEvent::new(KeyCode::Numpad0, KeyState::Down)), Some(DecodedKey::Unicode('0')));
