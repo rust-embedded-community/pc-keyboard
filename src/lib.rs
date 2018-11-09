@@ -40,7 +40,7 @@ pub use scancodes::{ScancodeSet1, ScancodeSet2};
 #[derive(Debug)]
 pub struct Keyboard<T, S>
 where
-    T: KeyboardLayout<S>,
+    T: KeyboardLayout,
     S: ScancodeSet, 
 {
     register: u16,
@@ -57,6 +57,8 @@ pub enum Error {
     BadStopBit,
     ParityError,
     UnknownKeyCode,
+    #[doc(hidden)]
+    InvalidState
 }
 
 #[derive(Debug, PartialEq, Eq, Copy, Clone)]
@@ -191,17 +193,8 @@ pub struct KeyEvent {
     pub state: KeyState,
 }
 
-pub trait KeyboardLayout<S> 
-where 
-    S: ScancodeSet
+pub trait KeyboardLayout
 {
-    /// Convert a Scan Code Set 2 byte to our `KeyCode` enum
-    fn map_scancode(code: u8) -> Result<KeyCode, Error>;
-
-    /// Convert a Scan Code Set 2 extended byte (prefixed E0) to our `KeyCode`
-    /// enum.
-    fn map_extended_scancode(code: u8) -> Result<KeyCode, Error>;
-
     /// Convert a `KeyCode` enum to a Unicode character, if possible.
     /// KeyCode::A maps to `Some('a')` (or `Some('A')` if shifted), while
     /// KeyCode::AltLeft returns `None`
@@ -209,12 +202,35 @@ where
 }
 
 pub trait ScancodeSet {
+    /// Handles state logic based on the byte.
+    /// `ConsumeState::Consume(state)` indicates that the byte is now consumed and
+    /// there may or may not be a new state.
+    /// 
+    /// `ConsumeState::Proceed(state)` indicates that the byte should be passed to 
+    /// the map methods, and there may or may not be a new state.
+    fn advance_state(state: DecodeState, code: u8) -> Result<ConsumeState, Error>;
+
     /// Convert a Scan Code set X byte to our 'KeyCode' enum
     fn map_scancode(code: u8) -> Result<KeyCode, Error>;
     
     /// Convert a Scan Code Set X extended byte (prefixed E0) to our `KeyCode`
     /// enum.
     fn map_extended_scancode(code: u8) -> Result<KeyCode, Error>;
+}
+
+pub enum ConsumeState {
+    Consume(DecodeState), 
+    Proceed(DecodeState)
+}
+
+impl ConsumeState {
+    /// Allocates a new decode state
+    fn extract_state(&self) -> DecodeState {
+        match self {
+            &ConsumeState::Consume(ref st) => st.clone(), 
+            &ConsumeState::Proceed(ref st) => st.clone()
+        }
+    }
 }
 
 #[derive(Debug)]
@@ -246,8 +262,8 @@ pub enum DecodedKey {
 //
 // ****************************************************************************
 
-#[derive(Debug, Copy, Clone)]
-enum DecodeState {
+#[derive(Debug, Copy, Clone, Eq, PartialEq)]
+pub enum DecodeState {
     Start,
     Extended,
     Release,
@@ -272,7 +288,7 @@ const KEY_RELEASE_CODE: u8 = 0xF0;
 
 impl<T, S> Keyboard<T, S>
 where
-    T: KeyboardLayout<S>,
+    T: KeyboardLayout,
     S: ScancodeSet
 {
     /// Make a new Keyboard object with the given layout.
@@ -321,44 +337,69 @@ where
     pub fn add_byte(&mut self, byte: u8) -> Result<Option<KeyEvent>, Error> {
         let st = self.decode_state;
         self.clear();
-        match st {
-            DecodeState::Start => {
-                // All keys start here
-                let code = match byte {
-                    KEY_RELEASE_CODE => {
-                        self.decode_state = DecodeState::Release;
-                        return Ok(None);
+        let consume_state = S::advance_state(st, byte)?;
+        self.decode_state = consume_state.extract_state();
+        match consume_state {
+            ConsumeState::Consume(_) => Ok(None), 
+            ConsumeState::Proceed(st) => {
+                match st {
+                    DecodeState::Start => {
+                        let code = S::map_scancode(byte)?;
+                        Ok(Some(KeyEvent::new(code, KeyState::Down)))
+                    }, 
+                    DecodeState::Extended => {
+                        let code = S::map_extended_scancode(byte)?;
+                        Ok(Some(KeyEvent::new(code, KeyState::Down)))
+                    }, 
+                    DecodeState::Release => {
+                        let code = S::map_scancode(byte)?;
+                        Ok(Some(KeyEvent::new(code, KeyState::Up)))
+                    }, 
+                    DecodeState::ExtendedRelease => {
+                        let code = S::map_extended_scancode(byte)?;
+                        Ok(Some(KeyEvent::new(code, KeyState::Up)))
                     }
-                    EXTENDED_KEY_CODE => {
-                        self.decode_state = DecodeState::Extended;
-                        return Ok(None);
-                    }
-                    e => T::map_scancode(e)?,
-                };
-                Ok(Some(KeyEvent::new(code, KeyState::Down)))
-            }
-            DecodeState::Extended => {
-                // These are extended keys
-                let code = match byte {
-                    KEY_RELEASE_CODE => {
-                        self.decode_state = DecodeState::ExtendedRelease;
-                        return Ok(None);
-                    }
-                    e => T::map_extended_scancode(e)?,
-                };
-                Ok(Some(KeyEvent::new(code, KeyState::Down)))
-            }
-            DecodeState::Release => {
-                // These are 'normal' keys being released
-                let code = T::map_scancode(byte)?;
-                Ok(Some(KeyEvent::new(code, KeyState::Up)))
-            }
-            DecodeState::ExtendedRelease => {
-                // These are extended keys being release
-                let code = T::map_extended_scancode(byte)?;
-                Ok(Some(KeyEvent::new(code, KeyState::Up)))
+                }
             }
         }
+        // match st {
+        //     DecodeState::Start => {
+        //         // All keys start here
+        //         let code = match byte {
+        //             KEY_RELEASE_CODE => {
+        //                 self.decode_state = DecodeState::Release;
+        //                 return Ok(None);
+        //             }
+        //             EXTENDED_KEY_CODE => {
+        //                 self.decode_state = DecodeState::Extended;
+        //                 return Ok(None);
+        //             }
+        //             e => T::map_scancode(e)?,
+        //         };
+        //         Ok(Some(KeyEvent::new(code, KeyState::Down)))
+        //     }
+        //     DecodeState::Extended => {
+        //         // These are extended keys
+        //         let code = match byte {
+        //             KEY_RELEASE_CODE => {
+        //                 self.decode_state = DecodeState::ExtendedRelease;
+        //                 return Ok(None);
+        //             }
+        //             e => T::map_extended_scancode(e)?,
+        //         };
+        //         Ok(Some(KeyEvent::new(code, KeyState::Down)))
+        //     }
+        //     DecodeState::Release => {
+        //         // These are 'normal' keys being released
+        //         let code = T::map_scancode(byte)?;
+        //         Ok(Some(KeyEvent::new(code, KeyState::Up)))
+        //     }
+        //     DecodeState::ExtendedRelease => {
+        //         // These are extended keys being release
+        //         let code = T::map_extended_scancode(byte)?;
+        //         Ok(Some(KeyEvent::new(code, KeyState::Up)))
+        //     }
+        // }
     }
 
     /// Shift a bit into the register.
