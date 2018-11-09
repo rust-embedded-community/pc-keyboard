@@ -1,5 +1,4 @@
-use super::{DecodedKey, Error, KeyboardLayout, KeyCode, Modifiers, ScancodeSet};
-use super::scancodes::ScancodeSet2;
+use super::{DecodedKey, KeyboardLayout, KeyCode, Modifiers};
 
 /// A standard United States 101-key (or 104-key including Windows keys) keyboard.
 /// Has a 1-row high Enter key, with Backslash above.
@@ -9,18 +8,7 @@ pub struct Us104Key;
 /// Has a 2-row high Enter key, with Backslash next to the left shift.
 pub struct Uk105Key;
 
-impl<S> KeyboardLayout<S> for Us104Key 
-where 
-    S: ScancodeSet
-{
-    fn map_scancode(code: u8) -> Result<KeyCode, Error> {
-        S::map_scancode(code)
-    }
-
-    fn map_extended_scancode(code: u8) -> Result<KeyCode, Error> {
-        S::map_extended_scancode(code)
-    }
-
+impl KeyboardLayout for Us104Key {
     fn map_keycode(keycode: KeyCode, modifiers: &Modifiers) -> DecodedKey {
         match keycode {
             KeyCode::BackTick => {
@@ -350,23 +338,7 @@ where
     }
 }
 
-impl<S> KeyboardLayout<S> for Uk105Key 
-where 
-    S: ScancodeSet
-{
-    fn map_scancode(code: u8) -> Result<KeyCode, Error> {
-        match code {
-            0x61 => Ok(KeyCode::BackSlash),
-            _ => S::map_scancode(code),
-        }
-    }
-
-    fn map_extended_scancode(code: u8) -> Result<KeyCode, Error> {
-        match code {
-            _ => S::map_extended_scancode(code),
-        }
-    }
-
+impl KeyboardLayout for Uk105Key {
     fn map_keycode(keycode: KeyCode, modifiers: &Modifiers) -> DecodedKey {
         match keycode {
             KeyCode::BackTick => {
@@ -407,7 +379,7 @@ where
             } else {
                 DecodedKey::Unicode('#')
             },
-            e => <Us104Key as KeyboardLayout<ScancodeSet2>>::map_keycode(e, modifiers),
+            e => <Us104Key as KeyboardLayout>::map_keycode(e, modifiers),
         }
     }
 }

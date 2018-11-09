@@ -1,10 +1,37 @@
-use super::{Error, KeyCode, ScancodeSet};
+use super::{ConsumeState, DecodeState, Error, EXTENDED_KEY_CODE, KeyCode, KEY_RELEASE_CODE, ScancodeSet};
 
 /// Contains the implementation of Scancode Set 1. 
 /// See the OS dev wiki: https://wiki.osdev.org/PS/2_Keyboard#Scan_Code_Set_1
 pub struct ScancodeSet1;
 
 impl ScancodeSet for ScancodeSet1 {
+    /// Implements state logic for scancode set 1
+    fn advance_state(state: DecodeState, code: u8) -> Result<ConsumeState, Error> {
+        match state {
+            DecodeState::Start => {
+                match code {
+                    EXTENDED_KEY_CODE => {
+                        Ok(ConsumeState::Consume(DecodeState::Extended))
+                    }, 
+                    0x81..=0xD8 => {
+                        Ok(ConsumeState::Proceed(DecodeState::Release))
+                    },
+                    _ => Ok(ConsumeState::Proceed(DecodeState::Start))
+                }
+            }, 
+            DecodeState::Extended => {
+                match code {
+                    0x90..=0xED => {
+                        Ok(ConsumeState::Proceed(DecodeState::ExtendedRelease))
+                    }, 
+                    _ => Ok(ConsumeState::Proceed(DecodeState::Extended))
+                }
+            },
+            DecodeState::Release => Ok(ConsumeState::Proceed(DecodeState::Release)), 
+            DecodeState::ExtendedRelease => Ok(ConsumeState::Proceed(DecodeState::ExtendedRelease))
+        }
+    }
+
     /// Implements the single byte codes for Set 1.
     fn map_scancode(code: u8) -> Result<KeyCode, Error> {
         match code {
@@ -22,6 +49,7 @@ impl ScancodeSet for ScancodeSet1 {
             0x0C => Ok(KeyCode::Minus),              // 0C
             0x0D => Ok(KeyCode::Equals),             // 0D
             0x0E => Ok(KeyCode::Backspace),          // 0E
+            0x0F => Ok(KeyCode::Tab),                // 0F
             0x10 => Ok(KeyCode::Q),                  // 10
             0x11 => Ok(KeyCode::W),                  // 11
             0x12 => Ok(KeyCode::E),                  // 12
@@ -95,6 +123,7 @@ impl ScancodeSet for ScancodeSet1 {
             //0x56
             0x57 => Ok(KeyCode::F11),                // 57
             0x58 => Ok(KeyCode::F12),                // 58
+            0x81..=0xD8 => Ok(Self::map_scancode(code-80)?),
             _ => Err(Error::UnknownKeyCode),
         }
     }
@@ -170,16 +199,44 @@ impl ScancodeSet for ScancodeSet1 {
             0x51 => Ok(KeyCode::PageDown),   // E051
             0x52 => Ok(KeyCode::Insert),     // E052
             0x53 => Ok(KeyCode::Delete),     // E053
+            0x90..=0xED => Ok(Self::map_extended_scancode(code-80)?),
             _ => Err(Error::UnknownKeyCode),
         }
     }
 }
+
 
 /// Contains the implementation of Scancode Set 2. 
 /// See the OS dev wiki: https://wiki.osdev.org/PS/2_Keyboard#Scan_Code_Set_2
 pub struct ScancodeSet2;
 
 impl ScancodeSet for ScancodeSet2 {
+    /// Implements state logic for scancode set 2
+    fn advance_state(state: DecodeState, code: u8) -> Result<ConsumeState, Error> {
+        match state {
+            DecodeState::Start => {
+                match code {
+                    EXTENDED_KEY_CODE => {
+                        Ok(ConsumeState::Consume(DecodeState::Extended))
+                    }, 
+                    KEY_RELEASE_CODE => {
+                        Ok(ConsumeState::Consume(DecodeState::Release))
+                    },
+                    _ => Ok(ConsumeState::Proceed(DecodeState::Start))
+                }
+            }, 
+            DecodeState::Extended => {
+                match code {
+                    KEY_RELEASE_CODE => {
+                        Ok(ConsumeState::Consume(DecodeState::ExtendedRelease))
+                    }, 
+                    _ => Ok(ConsumeState::Proceed(DecodeState::Extended))
+                }
+            },
+            DecodeState::Release => Ok(ConsumeState::Proceed(DecodeState::Release)), 
+            DecodeState::ExtendedRelease => Ok(ConsumeState::Proceed(DecodeState::ExtendedRelease))
+        }
+    }
     /// Implements the single byte codes for Set 2.
     fn map_scancode(code: u8) -> Result<KeyCode, Error> {
         match code {
