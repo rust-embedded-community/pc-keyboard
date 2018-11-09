@@ -1,6 +1,6 @@
 //! Driver for a PS/2 keyboard.
 //!
-//! Only supports PS/2 Scan Code Set 2, on a UK English keyboard. See [the
+//! Supports PS/2 Scan Code Set 1 and 2, on both UK and UK English keyboards. See [the
 //! OSDev Wiki](https://wiki.osdev.org/PS/2_Keyboard).
 //!
 //! Requires that you sample a pin in an interrupt routine and shift in the
