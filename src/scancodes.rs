@@ -49,6 +49,7 @@ impl ScancodeSet for ScancodeSet1 {
             0x0C => Ok(KeyCode::Minus),              // 0C
             0x0D => Ok(KeyCode::Equals),             // 0D
             0x0E => Ok(KeyCode::Backspace),          // 0E
+            0x0F => Ok(KeyCode::Tab),                // 0F
             0x10 => Ok(KeyCode::Q),                  // 10
             0x11 => Ok(KeyCode::W),                  // 11
             0x12 => Ok(KeyCode::E),                  // 12
