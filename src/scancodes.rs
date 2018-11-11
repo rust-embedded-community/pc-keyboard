@@ -121,7 +121,7 @@ impl ScancodeSet for ScancodeSet1 {
             //0x56
             0x57 => Ok(KeyCode::F11),                // 57
             0x58 => Ok(KeyCode::F12),                // 58
-            0x81..=0xD8 => Ok(Self::map_scancode(code-80)?),
+            0x81..=0xD8 => Ok(Self::map_scancode(code-0x80)?),
             _ => Err(Error::UnknownKeyCode),
         }
     }
