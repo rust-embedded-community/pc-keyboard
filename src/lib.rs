@@ -794,6 +794,23 @@ mod test {
         assert_eq!(codes.len(), 85);
         assert_eq!(errs.len(), 171);
     }
+
+    #[test]
+    fn test_set_1_down_up_down() {
+        let mut k = Keyboard::new(layouts::Us104Key, ScancodeSet1);
+        assert_eq!(
+            k.add_byte(0x1e),
+            Ok(Some(KeyEvent::new(KeyCode::A, KeyState::Down)))
+        );
+        assert_eq!(
+            k.add_byte(0x9e),
+            Ok(Some(KeyEvent::new(KeyCode::A, KeyState::Up)))
+        );
+        assert_eq!(
+            k.add_byte(0x1f),
+            Ok(Some(KeyEvent::new(KeyCode::S, KeyState::Down)))
+        );
+    }
 }
 
 // ****************************************************************************
