@@ -1,6 +1,6 @@
 use super::{ConsumeState, DecodeState, Error, EXTENDED_KEY_CODE, KeyCode, KEY_RELEASE_CODE, ScancodeSet};
 
-/// Contains the implementation of Scancode Set 1. 
+/// Contains the implementation of Scancode Set 1.
 /// See the OS dev wiki: https://wiki.osdev.org/PS/2_Keyboard#Scan_Code_Set_1
 pub struct ScancodeSet1;
 
@@ -12,18 +12,18 @@ impl ScancodeSet for ScancodeSet1 {
                 match code {
                     EXTENDED_KEY_CODE => {
                         Ok(ConsumeState::Consume(DecodeState::Extended))
-                    }, 
+                    },
                     0x81..=0xD8 => {
                         Ok(ConsumeState::Proceed(DecodeState::Release))
                     },
                     _ => Ok(ConsumeState::Proceed(DecodeState::Start))
                 }
-            }, 
+            },
             DecodeState::Extended => {
                 match code {
                     0x90..=0xED => {
                         Ok(ConsumeState::Proceed(DecodeState::ExtendedRelease))
-                    }, 
+                    },
                     _ => Ok(ConsumeState::Proceed(DecodeState::Extended))
                 }
             },
@@ -58,7 +58,7 @@ impl ScancodeSet for ScancodeSet1 {
             0x17 => Ok(KeyCode::I),                  // 17
             0x18 => Ok(KeyCode::O),                  // 18
             0x19 => Ok(KeyCode::P),                  // 19
-            0x1A => Ok(KeyCode::BracketSquareLeft),  // 1A  
+            0x1A => Ok(KeyCode::BracketSquareLeft),  // 1A
             0x1B => Ok(KeyCode::BracketSquareRight), // 1B
             0x1C => Ok(KeyCode::Enter),              // 1C
             0x1D => Ok(KeyCode::ControlLeft),        // 1D
@@ -75,7 +75,7 @@ impl ScancodeSet for ScancodeSet1 {
             0x28 => Ok(KeyCode::Quote),              // 28
             0x29 => Ok(KeyCode::BackTick),           // 29
             0x2A => Ok(KeyCode::ShiftLeft),          // 2A
-            0x2B => Ok(KeyCode::BackSlash),          // 2B 
+            0x2B => Ok(KeyCode::BackSlash),          // 2B
             0x2C => Ok(KeyCode::Z),                  // 2C
             0x2D => Ok(KeyCode::X),                  // 2D
             0x2E => Ok(KeyCode::C),                  // 2E
@@ -85,7 +85,7 @@ impl ScancodeSet for ScancodeSet1 {
             0x32 => Ok(KeyCode::M),                  // 32
             0x33 => Ok(KeyCode::Comma),              // 33
             0x34 => Ok(KeyCode::Fullstop),           // 34
-            0x35 => Ok(KeyCode::Slash),              // 35 
+            0x35 => Ok(KeyCode::Slash),              // 35
             0x36 => Ok(KeyCode::ShiftRight),         // 36
             0x37 => Ok(KeyCode::NumpadStar),         // 37
             0x38 => Ok(KeyCode::AltLeft),            // 38
@@ -115,7 +115,7 @@ impl ScancodeSet for ScancodeSet1 {
             0x50 => Ok(KeyCode::Numpad2),            // 50
             0x51 => Ok(KeyCode::Numpad3),            // 51
             0x52 => Ok(KeyCode::Numpad0),            // 52
-            0x53 => Ok(KeyCode::NumpadPeriod),       // 53 
+            0x53 => Ok(KeyCode::NumpadPeriod),       // 53
             //0x54
             //0x55
             //0x56
@@ -142,7 +142,7 @@ impl ScancodeSet for ScancodeSet1 {
             //0x1A
             //0x1B
             0x1C => Ok(KeyCode::NumpadEnter),  // E01C
-            0x1D => Ok(KeyCode::ControlRight), // E01D 
+            0x1D => Ok(KeyCode::ControlRight), // E01D
             //0x1E
             //0x1F
             0x20 => Ok(KeyCode::Mute),         // E020
@@ -189,7 +189,7 @@ impl ScancodeSet for ScancodeSet1 {
             0x49 => Ok(KeyCode::PageUp),     // E049
             //0x4A
             0x4B => Ok(KeyCode::ArrowLeft),  // E04B
-            //0x4C         
+            //0x4C
             0x4D => Ok(KeyCode::ArrowRight), // E04D
             //0x4E
             0x4F => Ok(KeyCode::End),        // E04F
@@ -197,14 +197,14 @@ impl ScancodeSet for ScancodeSet1 {
             0x51 => Ok(KeyCode::PageDown),   // E051
             0x52 => Ok(KeyCode::Insert),     // E052
             0x53 => Ok(KeyCode::Delete),     // E053
-            0x90..=0xED => Ok(Self::map_extended_scancode(code-80)?),
+            0x90..=0xED => Ok(Self::map_extended_scancode(code-0x80)?),
             _ => Err(Error::UnknownKeyCode),
         }
     }
 }
 
 
-/// Contains the implementation of Scancode Set 2. 
+/// Contains the implementation of Scancode Set 2.
 /// See the OS dev wiki: https://wiki.osdev.org/PS/2_Keyboard#Scan_Code_Set_2
 pub struct ScancodeSet2;
 
@@ -216,18 +216,18 @@ impl ScancodeSet for ScancodeSet2 {
                 match code {
                     EXTENDED_KEY_CODE => {
                         Ok(ConsumeState::Consume(DecodeState::Extended))
-                    }, 
+                    },
                     KEY_RELEASE_CODE => {
                         Ok(ConsumeState::Consume(DecodeState::Release))
                     },
                     _ => Ok(ConsumeState::Proceed(DecodeState::Start))
                 }
-            }, 
+            },
             DecodeState::Extended => {
                 match code {
                     KEY_RELEASE_CODE => {
                         Ok(ConsumeState::Consume(DecodeState::ExtendedRelease))
-                    }, 
+                    },
                     _ => Ok(ConsumeState::Proceed(DecodeState::Extended))
                 }
             },
