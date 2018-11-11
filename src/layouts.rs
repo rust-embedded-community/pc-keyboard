@@ -1,4 +1,4 @@
-use super::{DecodedKey, KeyboardLayout, KeyCode, Modifiers};
+use super::{DecodedKey, KeyCode, KeyboardLayout, Modifiers};
 
 /// A standard United States 101-key (or 104-key including Windows keys) keyboard.
 /// Has a 1-row high Enter key, with Backslash above.
@@ -19,21 +19,27 @@ impl KeyboardLayout for Us104Key {
                 }
             }
             KeyCode::Escape => DecodedKey::Unicode(0x1B.into()),
-            KeyCode::Key1 => if modifiers.is_shifted() {
-                DecodedKey::Unicode('!')
-            } else {
-                DecodedKey::Unicode('1')
-            },
-            KeyCode::Key2 => if modifiers.is_shifted() {
-                DecodedKey::Unicode('@')
-            } else {
-                DecodedKey::Unicode('2')
-            },
-            KeyCode::Key3 => if modifiers.is_shifted() {
-                DecodedKey::Unicode('#')
-            } else {
-                DecodedKey::Unicode('3')
-            },
+            KeyCode::Key1 => {
+                if modifiers.is_shifted() {
+                    DecodedKey::Unicode('!')
+                } else {
+                    DecodedKey::Unicode('1')
+                }
+            }
+            KeyCode::Key2 => {
+                if modifiers.is_shifted() {
+                    DecodedKey::Unicode('@')
+                } else {
+                    DecodedKey::Unicode('2')
+                }
+            }
+            KeyCode::Key3 => {
+                if modifiers.is_shifted() {
+                    DecodedKey::Unicode('#')
+                } else {
+                    DecodedKey::Unicode('3')
+                }
+            }
             KeyCode::Key4 => {
                 if modifiers.is_shifted() {
                     DecodedKey::Unicode('$')
@@ -41,220 +47,304 @@ impl KeyboardLayout for Us104Key {
                     DecodedKey::Unicode('4')
                 }
             }
-            KeyCode::Key5 => if modifiers.is_shifted() {
-                DecodedKey::Unicode('%')
-            } else {
-                DecodedKey::Unicode('5')
-            },
-            KeyCode::Key6 => if modifiers.is_shifted() {
-                DecodedKey::Unicode('^')
-            } else {
-                DecodedKey::Unicode('6')
-            },
-            KeyCode::Key7 => if modifiers.is_shifted() {
-                DecodedKey::Unicode('&')
-            } else {
-                DecodedKey::Unicode('7')
-            },
-            KeyCode::Key8 => if modifiers.is_shifted() {
-                DecodedKey::Unicode('*')
-            } else {
-                DecodedKey::Unicode('8')
-            },
-            KeyCode::Key9 => if modifiers.is_shifted() {
-                DecodedKey::Unicode('(')
-            } else {
-                DecodedKey::Unicode('9')
-            },
-            KeyCode::Key0 => if modifiers.is_shifted() {
-                DecodedKey::Unicode(')')
-            } else {
-                DecodedKey::Unicode('0')
-            },
-            KeyCode::Minus => if modifiers.is_shifted() {
-                DecodedKey::Unicode('_')
-            } else {
-                DecodedKey::Unicode('-')
-            },
-            KeyCode::Equals => if modifiers.is_shifted() {
-                DecodedKey::Unicode('+')
-            } else {
-                DecodedKey::Unicode('=')
-            },
+            KeyCode::Key5 => {
+                if modifiers.is_shifted() {
+                    DecodedKey::Unicode('%')
+                } else {
+                    DecodedKey::Unicode('5')
+                }
+            }
+            KeyCode::Key6 => {
+                if modifiers.is_shifted() {
+                    DecodedKey::Unicode('^')
+                } else {
+                    DecodedKey::Unicode('6')
+                }
+            }
+            KeyCode::Key7 => {
+                if modifiers.is_shifted() {
+                    DecodedKey::Unicode('&')
+                } else {
+                    DecodedKey::Unicode('7')
+                }
+            }
+            KeyCode::Key8 => {
+                if modifiers.is_shifted() {
+                    DecodedKey::Unicode('*')
+                } else {
+                    DecodedKey::Unicode('8')
+                }
+            }
+            KeyCode::Key9 => {
+                if modifiers.is_shifted() {
+                    DecodedKey::Unicode('(')
+                } else {
+                    DecodedKey::Unicode('9')
+                }
+            }
+            KeyCode::Key0 => {
+                if modifiers.is_shifted() {
+                    DecodedKey::Unicode(')')
+                } else {
+                    DecodedKey::Unicode('0')
+                }
+            }
+            KeyCode::Minus => {
+                if modifiers.is_shifted() {
+                    DecodedKey::Unicode('_')
+                } else {
+                    DecodedKey::Unicode('-')
+                }
+            }
+            KeyCode::Equals => {
+                if modifiers.is_shifted() {
+                    DecodedKey::Unicode('+')
+                } else {
+                    DecodedKey::Unicode('=')
+                }
+            }
             KeyCode::Backspace => DecodedKey::Unicode(0x08.into()),
             KeyCode::Tab => DecodedKey::Unicode(0x09.into()),
-            KeyCode::Q => if modifiers.is_shifted() {
-                DecodedKey::Unicode('Q')
-            } else {
-                DecodedKey::Unicode('q')
-            },
-            KeyCode::W => if modifiers.is_shifted() {
-                DecodedKey::Unicode('W')
-            } else {
-                DecodedKey::Unicode('w')
-            },
-            KeyCode::E => if modifiers.is_shifted() {
-                DecodedKey::Unicode('E')
-            } else {
-                DecodedKey::Unicode('e')
-            },
-            KeyCode::R => if modifiers.is_shifted() {
-                DecodedKey::Unicode('R')
-            } else {
-                DecodedKey::Unicode('r')
-            },
-            KeyCode::T => if modifiers.is_shifted() {
-                DecodedKey::Unicode('T')
-            } else {
-                DecodedKey::Unicode('t')
-            },
-            KeyCode::Y => if modifiers.is_shifted() {
-                DecodedKey::Unicode('Y')
-            } else {
-                DecodedKey::Unicode('y')
-            },
-            KeyCode::U => if modifiers.is_shifted() {
-                DecodedKey::Unicode('U')
-            } else {
-                DecodedKey::Unicode('u')
-            },
-            KeyCode::I => if modifiers.is_shifted() {
-                DecodedKey::Unicode('I')
-            } else {
-                DecodedKey::Unicode('i')
-            },
-            KeyCode::O => if modifiers.is_shifted() {
-                DecodedKey::Unicode('O')
-            } else {
-                DecodedKey::Unicode('o')
-            },
-            KeyCode::P => if modifiers.is_shifted() {
-                DecodedKey::Unicode('P')
-            } else {
-                DecodedKey::Unicode('p')
-            },
-            KeyCode::BracketSquareLeft => if modifiers.is_shifted() {
-                DecodedKey::Unicode('{')
-            } else {
-                DecodedKey::Unicode('[')
-            },
-            KeyCode::BracketSquareRight => if modifiers.is_shifted() {
-                DecodedKey::Unicode('}')
-            } else {
-                DecodedKey::Unicode(']')
-            },
-            KeyCode::BackSlash => if modifiers.is_shifted() {
-                DecodedKey::Unicode('|')
-            } else {
-                DecodedKey::Unicode('\\')
-            },
-            KeyCode::A => if modifiers.is_shifted() {
-                DecodedKey::Unicode('A')
-            } else {
-                DecodedKey::Unicode('a')
-            },
-            KeyCode::S => if modifiers.is_shifted() {
-                DecodedKey::Unicode('S')
-            } else {
-                DecodedKey::Unicode('s')
-            },
-            KeyCode::D => if modifiers.is_shifted() {
-                DecodedKey::Unicode('D')
-            } else {
-                DecodedKey::Unicode('d')
-            },
-            KeyCode::F => if modifiers.is_shifted() {
-                DecodedKey::Unicode('F')
-            } else {
-                DecodedKey::Unicode('f')
-            },
-            KeyCode::G => if modifiers.is_shifted() {
-                DecodedKey::Unicode('G')
-            } else {
-                DecodedKey::Unicode('g')
-            },
-            KeyCode::H => if modifiers.is_shifted() {
-                DecodedKey::Unicode('H')
-            } else {
-                DecodedKey::Unicode('h')
-            },
-            KeyCode::J => if modifiers.is_shifted() {
-                DecodedKey::Unicode('J')
-            } else {
-                DecodedKey::Unicode('j')
-            },
-            KeyCode::K => if modifiers.is_shifted() {
-                DecodedKey::Unicode('K')
-            } else {
-                DecodedKey::Unicode('k')
-            },
-            KeyCode::L => if modifiers.is_shifted() {
-                DecodedKey::Unicode('L')
-            } else {
-                DecodedKey::Unicode('l')
-            },
-            KeyCode::SemiColon => if modifiers.is_shifted() {
-                DecodedKey::Unicode(':')
-            } else {
-                DecodedKey::Unicode(';')
-            },
-            KeyCode::Quote => if modifiers.is_shifted() {
-                DecodedKey::Unicode('"')
-            } else {
-                DecodedKey::Unicode('\'')
-            },
+            KeyCode::Q => {
+                if modifiers.is_shifted() {
+                    DecodedKey::Unicode('Q')
+                } else {
+                    DecodedKey::Unicode('q')
+                }
+            }
+            KeyCode::W => {
+                if modifiers.is_shifted() {
+                    DecodedKey::Unicode('W')
+                } else {
+                    DecodedKey::Unicode('w')
+                }
+            }
+            KeyCode::E => {
+                if modifiers.is_shifted() {
+                    DecodedKey::Unicode('E')
+                } else {
+                    DecodedKey::Unicode('e')
+                }
+            }
+            KeyCode::R => {
+                if modifiers.is_shifted() {
+                    DecodedKey::Unicode('R')
+                } else {
+                    DecodedKey::Unicode('r')
+                }
+            }
+            KeyCode::T => {
+                if modifiers.is_shifted() {
+                    DecodedKey::Unicode('T')
+                } else {
+                    DecodedKey::Unicode('t')
+                }
+            }
+            KeyCode::Y => {
+                if modifiers.is_shifted() {
+                    DecodedKey::Unicode('Y')
+                } else {
+                    DecodedKey::Unicode('y')
+                }
+            }
+            KeyCode::U => {
+                if modifiers.is_shifted() {
+                    DecodedKey::Unicode('U')
+                } else {
+                    DecodedKey::Unicode('u')
+                }
+            }
+            KeyCode::I => {
+                if modifiers.is_shifted() {
+                    DecodedKey::Unicode('I')
+                } else {
+                    DecodedKey::Unicode('i')
+                }
+            }
+            KeyCode::O => {
+                if modifiers.is_shifted() {
+                    DecodedKey::Unicode('O')
+                } else {
+                    DecodedKey::Unicode('o')
+                }
+            }
+            KeyCode::P => {
+                if modifiers.is_shifted() {
+                    DecodedKey::Unicode('P')
+                } else {
+                    DecodedKey::Unicode('p')
+                }
+            }
+            KeyCode::BracketSquareLeft => {
+                if modifiers.is_shifted() {
+                    DecodedKey::Unicode('{')
+                } else {
+                    DecodedKey::Unicode('[')
+                }
+            }
+            KeyCode::BracketSquareRight => {
+                if modifiers.is_shifted() {
+                    DecodedKey::Unicode('}')
+                } else {
+                    DecodedKey::Unicode(']')
+                }
+            }
+            KeyCode::BackSlash => {
+                if modifiers.is_shifted() {
+                    DecodedKey::Unicode('|')
+                } else {
+                    DecodedKey::Unicode('\\')
+                }
+            }
+            KeyCode::A => {
+                if modifiers.is_shifted() {
+                    DecodedKey::Unicode('A')
+                } else {
+                    DecodedKey::Unicode('a')
+                }
+            }
+            KeyCode::S => {
+                if modifiers.is_shifted() {
+                    DecodedKey::Unicode('S')
+                } else {
+                    DecodedKey::Unicode('s')
+                }
+            }
+            KeyCode::D => {
+                if modifiers.is_shifted() {
+                    DecodedKey::Unicode('D')
+                } else {
+                    DecodedKey::Unicode('d')
+                }
+            }
+            KeyCode::F => {
+                if modifiers.is_shifted() {
+                    DecodedKey::Unicode('F')
+                } else {
+                    DecodedKey::Unicode('f')
+                }
+            }
+            KeyCode::G => {
+                if modifiers.is_shifted() {
+                    DecodedKey::Unicode('G')
+                } else {
+                    DecodedKey::Unicode('g')
+                }
+            }
+            KeyCode::H => {
+                if modifiers.is_shifted() {
+                    DecodedKey::Unicode('H')
+                } else {
+                    DecodedKey::Unicode('h')
+                }
+            }
+            KeyCode::J => {
+                if modifiers.is_shifted() {
+                    DecodedKey::Unicode('J')
+                } else {
+                    DecodedKey::Unicode('j')
+                }
+            }
+            KeyCode::K => {
+                if modifiers.is_shifted() {
+                    DecodedKey::Unicode('K')
+                } else {
+                    DecodedKey::Unicode('k')
+                }
+            }
+            KeyCode::L => {
+                if modifiers.is_shifted() {
+                    DecodedKey::Unicode('L')
+                } else {
+                    DecodedKey::Unicode('l')
+                }
+            }
+            KeyCode::SemiColon => {
+                if modifiers.is_shifted() {
+                    DecodedKey::Unicode(':')
+                } else {
+                    DecodedKey::Unicode(';')
+                }
+            }
+            KeyCode::Quote => {
+                if modifiers.is_shifted() {
+                    DecodedKey::Unicode('"')
+                } else {
+                    DecodedKey::Unicode('\'')
+                }
+            }
             // Enter gives LF, not CRLF or CR
             KeyCode::Enter => DecodedKey::Unicode(10.into()),
-            KeyCode::Z => if modifiers.is_shifted() {
-                DecodedKey::Unicode('Z')
-            } else {
-                DecodedKey::Unicode('z')
-            },
-            KeyCode::X => if modifiers.is_shifted() {
-                DecodedKey::Unicode('X')
-            } else {
-                DecodedKey::Unicode('x')
-            },
-            KeyCode::C => if modifiers.is_shifted() {
-                DecodedKey::Unicode('C')
-            } else {
-                DecodedKey::Unicode('c')
-            },
-            KeyCode::V => if modifiers.is_shifted() {
-                DecodedKey::Unicode('V')
-            } else {
-                DecodedKey::Unicode('v')
-            },
-            KeyCode::B => if modifiers.is_shifted() {
-                DecodedKey::Unicode('B')
-            } else {
-                DecodedKey::Unicode('b')
-            },
-            KeyCode::N => if modifiers.is_shifted() {
-                DecodedKey::Unicode('N')
-            } else {
-                DecodedKey::Unicode('n')
-            },
-            KeyCode::M => if modifiers.is_shifted() {
-                DecodedKey::Unicode('M')
-            } else {
-                DecodedKey::Unicode('m')
-            },
-            KeyCode::Comma => if modifiers.is_shifted() {
-                DecodedKey::Unicode('<')
-            } else {
-                DecodedKey::Unicode(',')
-            },
-            KeyCode::Fullstop => if modifiers.is_shifted() {
-                DecodedKey::Unicode('>')
-            } else {
-                DecodedKey::Unicode('.')
-            },
-            KeyCode::Slash => if modifiers.is_shifted() {
-                DecodedKey::Unicode('?')
-            } else {
-                DecodedKey::Unicode('/')
-            },
+            KeyCode::Z => {
+                if modifiers.is_shifted() {
+                    DecodedKey::Unicode('Z')
+                } else {
+                    DecodedKey::Unicode('z')
+                }
+            }
+            KeyCode::X => {
+                if modifiers.is_shifted() {
+                    DecodedKey::Unicode('X')
+                } else {
+                    DecodedKey::Unicode('x')
+                }
+            }
+            KeyCode::C => {
+                if modifiers.is_shifted() {
+                    DecodedKey::Unicode('C')
+                } else {
+                    DecodedKey::Unicode('c')
+                }
+            }
+            KeyCode::V => {
+                if modifiers.is_shifted() {
+                    DecodedKey::Unicode('V')
+                } else {
+                    DecodedKey::Unicode('v')
+                }
+            }
+            KeyCode::B => {
+                if modifiers.is_shifted() {
+                    DecodedKey::Unicode('B')
+                } else {
+                    DecodedKey::Unicode('b')
+                }
+            }
+            KeyCode::N => {
+                if modifiers.is_shifted() {
+                    DecodedKey::Unicode('N')
+                } else {
+                    DecodedKey::Unicode('n')
+                }
+            }
+            KeyCode::M => {
+                if modifiers.is_shifted() {
+                    DecodedKey::Unicode('M')
+                } else {
+                    DecodedKey::Unicode('m')
+                }
+            }
+            KeyCode::Comma => {
+                if modifiers.is_shifted() {
+                    DecodedKey::Unicode('<')
+                } else {
+                    DecodedKey::Unicode(',')
+                }
+            }
+            KeyCode::Fullstop => {
+                if modifiers.is_shifted() {
+                    DecodedKey::Unicode('>')
+                } else {
+                    DecodedKey::Unicode('.')
+                }
+            }
+            KeyCode::Slash => {
+                if modifiers.is_shifted() {
+                    DecodedKey::Unicode('?')
+                } else {
+                    DecodedKey::Unicode('/')
+                }
+            }
             KeyCode::Spacebar => DecodedKey::Unicode(' '),
             KeyCode::Delete => DecodedKey::Unicode(127.into()),
             KeyCode::NumpadSlash => DecodedKey::Unicode('/'),
@@ -350,21 +440,27 @@ impl KeyboardLayout for Uk105Key {
                     DecodedKey::Unicode('`')
                 }
             }
-            KeyCode::Key2 => if modifiers.is_shifted() {
-                DecodedKey::Unicode('"')
-            } else {
-                DecodedKey::Unicode('2')
-            },
-            KeyCode::Quote => if modifiers.is_shifted() {
-                DecodedKey::Unicode('@')
-            } else {
-                DecodedKey::Unicode('\'')
-            },
-            KeyCode::Key3 => if modifiers.is_shifted() {
-                DecodedKey::Unicode('£')
-            } else {
-                DecodedKey::Unicode('3')
-            },
+            KeyCode::Key2 => {
+                if modifiers.is_shifted() {
+                    DecodedKey::Unicode('"')
+                } else {
+                    DecodedKey::Unicode('2')
+                }
+            }
+            KeyCode::Quote => {
+                if modifiers.is_shifted() {
+                    DecodedKey::Unicode('@')
+                } else {
+                    DecodedKey::Unicode('\'')
+                }
+            }
+            KeyCode::Key3 => {
+                if modifiers.is_shifted() {
+                    DecodedKey::Unicode('£')
+                } else {
+                    DecodedKey::Unicode('3')
+                }
+            }
             KeyCode::Key4 => {
                 if modifiers.alt_gr {
                     DecodedKey::Unicode('€')
@@ -374,11 +470,13 @@ impl KeyboardLayout for Uk105Key {
                     DecodedKey::Unicode('4')
                 }
             }
-            KeyCode::HashTilde => if modifiers.is_shifted() {
-                DecodedKey::Unicode('~')
-            } else {
-                DecodedKey::Unicode('#')
-            },
+            KeyCode::HashTilde => {
+                if modifiers.is_shifted() {
+                    DecodedKey::Unicode('~')
+                } else {
+                    DecodedKey::Unicode('#')
+                }
+            }
             e => <Us104Key as KeyboardLayout>::map_keycode(e, modifiers),
         }
     }
