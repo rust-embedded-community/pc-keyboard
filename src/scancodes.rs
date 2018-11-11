@@ -8,7 +8,7 @@ impl ScancodeSet for ScancodeSet1 {
     /// Implements state logic for scancode set 1
     fn advance_state(state: DecodeState, code: u8) -> Result<ConsumeState, Error> {
         match state {
-            DecodeState::Start => {
+            DecodeState::Start | DecodeState::Release | DecodeState::ExtendedRelease => {
                 match code {
                     EXTENDED_KEY_CODE => {
                         Ok(ConsumeState::Consume(DecodeState::Extended))
@@ -27,8 +27,6 @@ impl ScancodeSet for ScancodeSet1 {
                     _ => Ok(ConsumeState::Proceed(DecodeState::Extended))
                 }
             },
-            DecodeState::Release => Ok(ConsumeState::Proceed(DecodeState::Release)), 
-            DecodeState::ExtendedRelease => Ok(ConsumeState::Proceed(DecodeState::ExtendedRelease))
         }
     }
 
@@ -233,7 +231,7 @@ impl ScancodeSet for ScancodeSet2 {
                     _ => Ok(ConsumeState::Proceed(DecodeState::Extended))
                 }
             },
-            DecodeState::Release => Ok(ConsumeState::Proceed(DecodeState::Release)), 
+            DecodeState::Release => Ok(ConsumeState::Proceed(DecodeState::Release)),
             DecodeState::ExtendedRelease => Ok(ConsumeState::Proceed(DecodeState::ExtendedRelease))
         }
     }
