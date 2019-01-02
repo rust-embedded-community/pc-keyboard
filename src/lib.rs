@@ -29,7 +29,7 @@ use std::marker::PhantomData;
 // ****************************************************************************
 
 mod scancodes;
-pub use scancodes::{ScancodeSet1, ScancodeSet2};
+pub use crate::scancodes::{ScancodeSet1, ScancodeSet2};
 
 // ****************************************************************************
 //
