@@ -205,19 +205,17 @@ impl ScancodeSet for ScancodeSet2 {
     /// Implements state logic for scancode set 2
     fn advance_state(state: DecodeState, code: u8) -> Result<ConsumeState, Error> {
         match state {
-            DecodeState::Start => {
-                match code {
-                    EXTENDED_KEY_CODE => Ok(ConsumeState::Consume(DecodeState::Extended)),
-                    KEY_RELEASE_CODE => Ok(ConsumeState::Consume(DecodeState::Release)),
-                    _ => Ok(ConsumeState::Proceed(DecodeState::Start)),
-                }
-            }
+            DecodeState::Start => match code {
+                EXTENDED_KEY_CODE => Ok(ConsumeState::Consume(DecodeState::Extended)),
+                KEY_RELEASE_CODE => Ok(ConsumeState::Consume(DecodeState::Release)),
+                _ => Ok(ConsumeState::Proceed(DecodeState::Start)),
+            },
             DecodeState::Extended => match code {
                 KEY_RELEASE_CODE => Ok(ConsumeState::Consume(DecodeState::ExtendedRelease)),
                 _ => Ok(ConsumeState::Proceed(DecodeState::Extended)),
             },
             DecodeState::Release => Ok(ConsumeState::Proceed(DecodeState::Release)),
-            DecodeState::ExtendedRelease => Ok(ConsumeState::Proceed(DecodeState::ExtendedRelease))
+            DecodeState::ExtendedRelease => Ok(ConsumeState::Proceed(DecodeState::ExtendedRelease)),
         }
     }
     /// Implements the single byte codes for Set 2.
