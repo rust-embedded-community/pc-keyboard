@@ -205,13 +205,8 @@ pub trait KeyboardLayout {
 }
 
 pub trait ScancodeSet {
-    /// Handles state logic based on the byte.
-    /// `ConsumeState::Consume(state)` indicates that the byte is now consumed and
-    /// there may or may not be a new state.
-    ///
-    /// `ConsumeState::Proceed(state)` indicates that the byte should be passed to
-    /// the map methods, and there may or may not be a new state.
-    fn advance_state(state: DecodeState, code: u8) -> Result<ConsumeState, Error>;
+    /// Handles the state logic for the decoding of scan codes into key events.
+    fn advance_state(state: &mut DecodeState, code: u8) -> Result<Option<KeyEvent>, Error>;
 
     /// Convert a Scan Code set X byte to our 'KeyCode' enum
     fn map_scancode(code: u8) -> Result<KeyCode, Error>;
@@ -219,21 +214,6 @@ pub trait ScancodeSet {
     /// Convert a Scan Code Set X extended byte (prefixed E0) to our `KeyCode`
     /// enum.
     fn map_extended_scancode(code: u8) -> Result<KeyCode, Error>;
-}
-
-pub enum ConsumeState {
-    Consume(DecodeState),
-    Proceed(DecodeState),
-}
-
-impl ConsumeState {
-    /// Allocates a new decode state
-    fn extract_state(&self) -> DecodeState {
-        match self {
-            &ConsumeState::Consume(ref st) => st.clone(),
-            &ConsumeState::Proceed(ref st) => st.clone(),
-        }
-    }
 }
 
 #[derive(Debug)]
@@ -338,31 +318,8 @@ where
     /// We assume the start, stop and parity bits have been processed and
     /// verified.
     pub fn add_byte(&mut self, byte: u8) -> Result<Option<KeyEvent>, Error> {
-        let st = self.decode_state;
-        self.clear();
-        let consume_state = S::advance_state(st, byte)?;
-        self.decode_state = consume_state.extract_state();
-        match consume_state {
-            ConsumeState::Consume(_) => Ok(None),
-            ConsumeState::Proceed(st) => match st {
-                DecodeState::Start => {
-                    let code = S::map_scancode(byte)?;
-                    Ok(Some(KeyEvent::new(code, KeyState::Down)))
-                }
-                DecodeState::Extended => {
-                    let code = S::map_extended_scancode(byte)?;
-                    Ok(Some(KeyEvent::new(code, KeyState::Down)))
-                }
-                DecodeState::Release => {
-                    let code = S::map_scancode(byte)?;
-                    Ok(Some(KeyEvent::new(code, KeyState::Up)))
-                }
-                DecodeState::ExtendedRelease => {
-                    let code = S::map_extended_scancode(byte)?;
-                    Ok(Some(KeyEvent::new(code, KeyState::Up)))
-                }
-            },
-        }
+        let r = S::advance_state(&mut self.decode_state, byte);
+        r
     }
 
     /// Shift a bit into the register.
@@ -374,6 +331,8 @@ where
         self.num_bits += 1;
         if self.num_bits == KEYCODE_BITS {
             let word = self.register;
+            self.register = 0;
+            self.num_bits = 0;
             self.add_word(word)
         } else {
             Ok(None)
@@ -791,8 +750,8 @@ mod test {
         }
         codes.sort();
         println!("{:?}", codes);
-        assert_eq!(codes.len(), 85);
-        assert_eq!(errs.len(), 171);
+        assert_eq!(codes.len(), 86);
+        assert_eq!(errs.len(), 170);
     }
 
     #[test]
@@ -809,6 +768,69 @@ mod test {
         assert_eq!(
             k.add_byte(0x1f),
             Ok(Some(KeyEvent::new(KeyCode::S, KeyState::Down)))
+        );
+    }
+
+    #[test]
+    fn test_set_1_ext_down_up_down() {
+        let mut k = Keyboard::new(layouts::Us104Key, ScancodeSet1);
+        assert_eq!(k.add_byte(0xe0), Ok(None));
+        assert_eq!(
+            k.add_byte(0x1c),
+            Ok(Some(KeyEvent::new(KeyCode::NumpadEnter, KeyState::Down)))
+        );
+        assert_eq!(k.add_byte(0xe0), Ok(None));
+        assert_eq!(
+            k.add_byte(0x9c),
+            Ok(Some(KeyEvent::new(KeyCode::NumpadEnter, KeyState::Up)))
+        );
+    }
+
+    #[test]
+    fn test_set_2_down_up() {
+        let mut k = Keyboard::new(layouts::Us104Key, ScancodeSet2);
+        assert_eq!(
+            k.add_byte(0x29),
+            Ok(Some(KeyEvent::new(KeyCode::Spacebar, KeyState::Down)))
+        );
+        assert_eq!(k.add_byte(0xF0), Ok(None));
+        assert_eq!(
+            k.add_byte(0x29),
+            Ok(Some(KeyEvent::new(KeyCode::Spacebar, KeyState::Up)))
+        );
+        assert_eq!(
+            k.add_byte(0x29),
+            Ok(Some(KeyEvent::new(KeyCode::Spacebar, KeyState::Down)))
+        );
+        assert_eq!(k.add_byte(0xF0), Ok(None));
+        assert_eq!(
+            k.add_byte(0x29),
+            Ok(Some(KeyEvent::new(KeyCode::Spacebar, KeyState::Up)))
+        );
+        assert_eq!(
+            k.add_byte(0x29),
+            Ok(Some(KeyEvent::new(KeyCode::Spacebar, KeyState::Down)))
+        );
+        assert_eq!(k.add_byte(0xF0), Ok(None));
+        assert_eq!(
+            k.add_byte(0x29),
+            Ok(Some(KeyEvent::new(KeyCode::Spacebar, KeyState::Up)))
+        );
+    }
+
+    #[test]
+    fn test_set_2_ext_down_up() {
+        let mut k = Keyboard::new(layouts::Us104Key, ScancodeSet2);
+        assert_eq!(k.add_byte(0xE0), Ok(None));
+        assert_eq!(
+            k.add_byte(0x6C),
+            Ok(Some(KeyEvent::new(KeyCode::Home, KeyState::Down)))
+        );
+        assert_eq!(k.add_byte(0xE0), Ok(None));
+        assert_eq!(k.add_byte(0xF0), Ok(None));
+        assert_eq!(
+            k.add_byte(0x6C),
+            Ok(Some(KeyEvent::new(KeyCode::Home, KeyState::Up)))
         );
     }
 }

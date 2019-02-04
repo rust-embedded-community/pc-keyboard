@@ -1,5 +1,6 @@
 use super::{
-    ConsumeState, DecodeState, Error, KeyCode, ScancodeSet, EXTENDED_KEY_CODE, KEY_RELEASE_CODE,
+    DecodeState, Error, KeyCode, KeyEvent, KeyState, ScancodeSet, EXTENDED_KEY_CODE,
+    KEY_RELEASE_CODE,
 };
 
 /// Contains the implementation of Scancode Set 1.
@@ -8,19 +9,62 @@ pub struct ScancodeSet1;
 
 impl ScancodeSet for ScancodeSet1 {
     /// Implements state logic for scancode set 1
-    fn advance_state(state: DecodeState, code: u8) -> Result<ConsumeState, Error> {
-        match state {
-            DecodeState::Start | DecodeState::Release | DecodeState::ExtendedRelease => {
+    ///
+    /// Start:
+    /// E0 => Extended
+    /// >= 0x80 => Key Up
+    /// <= 0x7F => Key Down
+    ///
+    /// Extended:
+    /// >= 0x80 => Extended Key Up
+    /// <= 0x7F => Extended Key Down
+    fn advance_state(state: &mut DecodeState, code: u8) -> Result<Option<KeyEvent>, Error> {
+        match *state {
+            DecodeState::Start => {
                 match code {
-                    EXTENDED_KEY_CODE => Ok(ConsumeState::Consume(DecodeState::Extended)),
-                    0x81..=0xD8 => Ok(ConsumeState::Proceed(DecodeState::Release)),
-                    _ => Ok(ConsumeState::Proceed(DecodeState::Start)),
+                    EXTENDED_KEY_CODE => {
+                        *state = DecodeState::Extended;
+                        Ok(None)
+                    }
+                    0x80..=0xFF => {
+                        // Release codes
+                        Ok(Some(KeyEvent::new(
+                            Self::map_scancode(code - 0x80)?,
+                            KeyState::Up,
+                        )))
+                    }
+                    _ => {
+                        // Normal codes
+                        Ok(Some(KeyEvent::new(
+                            Self::map_scancode(code)?,
+                            KeyState::Down,
+                        )))
+                    }
                 }
             }
-            DecodeState::Extended => match code {
-                0x90..=0xED => Ok(ConsumeState::Proceed(DecodeState::ExtendedRelease)),
-                _ => Ok(ConsumeState::Proceed(DecodeState::Extended)),
-            },
+            DecodeState::Extended => {
+                *state = DecodeState::Start;
+                match code {
+                    0x80..=0xFF => {
+                        // Extended Release codes
+                        Ok(Some(KeyEvent::new(
+                            Self::map_extended_scancode(code - 0x80)?,
+                            KeyState::Up,
+                        )))
+                    }
+                    _ => {
+                        // Normal release codes
+                        Ok(Some(KeyEvent::new(
+                            Self::map_extended_scancode(code)?,
+                            KeyState::Down,
+                        )))
+                    }
+                }
+            }
+            _ => {
+                // Can't get in to this state
+                unimplemented!();
+            }
         }
     }
 
@@ -203,21 +247,64 @@ pub struct ScancodeSet2;
 
 impl ScancodeSet for ScancodeSet2 {
     /// Implements state logic for scancode set 2
-    fn advance_state(state: DecodeState, code: u8) -> Result<ConsumeState, Error> {
-        match state {
+    ///
+    /// Start:
+    /// F0 => Release
+    /// E0 => Extended
+    /// xx => Key Down
+    ///
+    /// Release:
+    /// xxx => Key Up
+    ///
+    /// Extended:
+    /// F0 => Release Extended
+    /// xx => Extended Key Down
+    ///
+    /// Release Extended:
+    /// xxx => Extended Key Up
+    fn advance_state(state: &mut DecodeState, code: u8) -> Result<Option<KeyEvent>, Error> {
+        match *state {
             DecodeState::Start => match code {
-                EXTENDED_KEY_CODE => Ok(ConsumeState::Consume(DecodeState::Extended)),
-                KEY_RELEASE_CODE => Ok(ConsumeState::Consume(DecodeState::Release)),
-                _ => Ok(ConsumeState::Proceed(DecodeState::Start)),
+                EXTENDED_KEY_CODE => {
+                    *state = DecodeState::Extended;
+                    Ok(None)
+                }
+                KEY_RELEASE_CODE => {
+                    *state = DecodeState::Release;
+                    Ok(None)
+                }
+                _ => Ok(Some(KeyEvent::new(
+                    Self::map_scancode(code)?,
+                    KeyState::Down,
+                ))),
             },
+            DecodeState::Release => {
+                *state = DecodeState::Start;
+                Ok(Some(KeyEvent::new(Self::map_scancode(code)?, KeyState::Up)))
+            }
             DecodeState::Extended => match code {
-                KEY_RELEASE_CODE => Ok(ConsumeState::Consume(DecodeState::ExtendedRelease)),
-                _ => Ok(ConsumeState::Proceed(DecodeState::Extended)),
+                KEY_RELEASE_CODE => {
+                    *state = DecodeState::ExtendedRelease;
+                    Ok(None)
+                }
+                _ => {
+                    *state = DecodeState::Start;
+                    Ok(Some(KeyEvent::new(
+                        Self::map_extended_scancode(code)?,
+                        KeyState::Down,
+                    )))
+                }
             },
-            DecodeState::Release => Ok(ConsumeState::Proceed(DecodeState::Release)),
-            DecodeState::ExtendedRelease => Ok(ConsumeState::Proceed(DecodeState::ExtendedRelease)),
+            DecodeState::ExtendedRelease => {
+                *state = DecodeState::Start;
+                Ok(Some(KeyEvent::new(
+                    Self::map_extended_scancode(code)?,
+                    KeyState::Up,
+                )))
+            }
         }
     }
+
     /// Implements the single byte codes for Set 2.
     fn map_scancode(code: u8) -> Result<KeyCode, Error> {
         match code {
@@ -285,7 +372,8 @@ impl ScancodeSet for ScancodeSet2 {
             0x59 => Ok(KeyCode::ShiftRight),         // 59
             0x5A => Ok(KeyCode::Enter),              // 5A
             0x5B => Ok(KeyCode::BracketSquareRight), // 5B
-            0x5D => Ok(KeyCode::BackSlash),          // 5D
+            0x5D => Ok(KeyCode::HashTilde),          // 5D
+            0x61 => Ok(KeyCode::BackSlash),          // 61
             0x66 => Ok(KeyCode::Backspace),          // 66
             0x69 => Ok(KeyCode::Numpad1),            // 69
             0x6B => Ok(KeyCode::Numpad4),            // 6B
