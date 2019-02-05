@@ -752,8 +752,8 @@ mod test {
         }
         codes.sort();
         println!("{:?}", codes);
-        assert_eq!(codes.len(), 86);
-        assert_eq!(errs.len(), 170);
+        assert_eq!(codes.len(), 87);
+        assert_eq!(errs.len(), 169);
     }
 
     #[test]
