@@ -183,6 +183,8 @@ pub enum KeyCode {
     VolumeDown,
     VolumeUp,
     WWWHome,
+    // Sent when the keyboard boots
+    PowerOnTestOk,
 }
 
 #[derive(Debug, PartialEq, Eq, Copy, Clone)]

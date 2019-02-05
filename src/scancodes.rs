@@ -394,6 +394,7 @@ impl ScancodeSet for ScancodeSet2 {
             0x7D => Ok(KeyCode::Numpad9),            // 7D
             0x7E => Ok(KeyCode::ScrollLock),         // 7E
             0x83 => Ok(KeyCode::F7),                 // 83
+            0xAA => Ok(KeyCode::PowerOnTestOk),      // AA
             _ => Err(Error::UnknownKeyCode),
         }
     }
