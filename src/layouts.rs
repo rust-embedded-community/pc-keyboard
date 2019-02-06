@@ -1,4 +1,4 @@
-use super::{DecodedKey, KeyCode, KeyboardLayout, Modifiers};
+use super::{DecodedKey, KeyCode, KeyboardLayout, Modifiers, HandleControlPlusLetter};
 
 /// A standard United States 101-key (or 104-key including Windows keys) keyboard.
 /// Has a 1-row high Enter key, with Backslash above.
@@ -9,7 +9,8 @@ pub struct Us104Key;
 pub struct Uk105Key;
 
 impl KeyboardLayout for Us104Key {
-    fn map_keycode(keycode: KeyCode, modifiers: &Modifiers) -> DecodedKey {
+    fn map_keycode(keycode: KeyCode, modifiers: &Modifiers, handle_ctrl: HandleControlPlusLetter) -> DecodedKey {
+        let map_to_unicode = handle_ctrl == HandleControlPlusLetter::MapToUnicode;
         match keycode {
             KeyCode::BackTick => {
                 if modifiers.is_shifted() {
@@ -106,70 +107,90 @@ impl KeyboardLayout for Us104Key {
             KeyCode::Backspace => DecodedKey::Unicode(0x08.into()),
             KeyCode::Tab => DecodedKey::Unicode(0x09.into()),
             KeyCode::Q => {
-                if modifiers.is_shifted() {
+                if map_to_unicode && modifiers.is_ctrl() {
+                    DecodedKey::Unicode('\u{0011}')
+                } else if modifiers.is_caps() {
                     DecodedKey::Unicode('Q')
                 } else {
                     DecodedKey::Unicode('q')
                 }
             }
             KeyCode::W => {
-                if modifiers.is_shifted() {
+                if map_to_unicode && modifiers.is_ctrl() {
+                    DecodedKey::Unicode('\u{0017}')
+                } else if modifiers.is_caps() {
                     DecodedKey::Unicode('W')
                 } else {
                     DecodedKey::Unicode('w')
                 }
             }
             KeyCode::E => {
-                if modifiers.is_shifted() {
+                if map_to_unicode && modifiers.is_ctrl() {
+                    DecodedKey::Unicode('\u{0005}')
+                } else if modifiers.is_caps() {
                     DecodedKey::Unicode('E')
                 } else {
                     DecodedKey::Unicode('e')
                 }
             }
             KeyCode::R => {
-                if modifiers.is_shifted() {
+                if map_to_unicode && modifiers.is_ctrl() {
+                    DecodedKey::Unicode('\u{0012}')
+                } else if modifiers.is_caps() {
                     DecodedKey::Unicode('R')
                 } else {
                     DecodedKey::Unicode('r')
                 }
             }
             KeyCode::T => {
-                if modifiers.is_shifted() {
+                if map_to_unicode && modifiers.is_ctrl() {
+                    DecodedKey::Unicode('\u{0014}')
+                } else if modifiers.is_caps() {
                     DecodedKey::Unicode('T')
                 } else {
                     DecodedKey::Unicode('t')
                 }
             }
             KeyCode::Y => {
-                if modifiers.is_shifted() {
+                if map_to_unicode && modifiers.is_ctrl() {
+                    DecodedKey::Unicode('\u{0019}')
+                } else if modifiers.is_caps() {
                     DecodedKey::Unicode('Y')
                 } else {
                     DecodedKey::Unicode('y')
                 }
             }
             KeyCode::U => {
-                if modifiers.is_shifted() {
+                if map_to_unicode && modifiers.is_ctrl() {
+                    DecodedKey::Unicode('\u{0015}')
+                } else if modifiers.is_caps() {
                     DecodedKey::Unicode('U')
                 } else {
                     DecodedKey::Unicode('u')
                 }
             }
             KeyCode::I => {
-                if modifiers.is_shifted() {
+                if map_to_unicode && modifiers.is_ctrl() {
+                    DecodedKey::Unicode('\u{0009}')
+                } else if modifiers.is_caps() {
                     DecodedKey::Unicode('I')
                 } else {
                     DecodedKey::Unicode('i')
                 }
             }
             KeyCode::O => {
-                if modifiers.is_shifted() {
+                if map_to_unicode && modifiers.is_ctrl() {
+                    DecodedKey::Unicode('\u{000F}')
+                } else if modifiers.is_caps() {
                     DecodedKey::Unicode('O')
                 } else {
                     DecodedKey::Unicode('o')
                 }
             }
             KeyCode::P => {
-                if modifiers.is_shifted() {
+                if map_to_unicode && modifiers.is_ctrl() {
+                    DecodedKey::Unicode('\u{0010}')
+                } else if modifiers.is_caps() {
                     DecodedKey::Unicode('P')
                 } else {
                     DecodedKey::Unicode('p')
@@ -197,63 +218,81 @@ impl KeyboardLayout for Us104Key {
                 }
             }
             KeyCode::A => {
-                if modifiers.is_shifted() {
+                if map_to_unicode && modifiers.is_ctrl() {
+                    DecodedKey::Unicode('\u{0001}')
+                } else if modifiers.is_caps() {
                     DecodedKey::Unicode('A')
                 } else {
                     DecodedKey::Unicode('a')
                 }
             }
             KeyCode::S => {
-                if modifiers.is_shifted() {
+                if map_to_unicode && modifiers.is_ctrl() {
+                    DecodedKey::Unicode('\u{0013}')
+                } else if modifiers.is_caps() {
                     DecodedKey::Unicode('S')
                 } else {
                     DecodedKey::Unicode('s')
                 }
             }
             KeyCode::D => {
-                if modifiers.is_shifted() {
+                if map_to_unicode && modifiers.is_ctrl() {
+                    DecodedKey::Unicode('\u{0004}')
+                } else if modifiers.is_caps() {
                     DecodedKey::Unicode('D')
                 } else {
                     DecodedKey::Unicode('d')
                 }
             }
             KeyCode::F => {
-                if modifiers.is_shifted() {
+                if map_to_unicode && modifiers.is_ctrl() {
+                    DecodedKey::Unicode('\u{0006}')
+                } else if modifiers.is_caps() {
                     DecodedKey::Unicode('F')
                 } else {
                     DecodedKey::Unicode('f')
                 }
             }
             KeyCode::G => {
-                if modifiers.is_shifted() {
+                if map_to_unicode && modifiers.is_ctrl() {
+                    DecodedKey::Unicode('\u{0007}')
+                } else if modifiers.is_caps() {
                     DecodedKey::Unicode('G')
                 } else {
                     DecodedKey::Unicode('g')
                 }
             }
             KeyCode::H => {
-                if modifiers.is_shifted() {
+                if map_to_unicode && modifiers.is_ctrl() {
+                    DecodedKey::Unicode('\u{0008}')
+                } else if modifiers.is_caps() {
                     DecodedKey::Unicode('H')
                 } else {
                     DecodedKey::Unicode('h')
                 }
             }
             KeyCode::J => {
-                if modifiers.is_shifted() {
+                if map_to_unicode && modifiers.is_ctrl() {
+                    DecodedKey::Unicode('\u{000A}')
+                } else if modifiers.is_caps() {
                     DecodedKey::Unicode('J')
                 } else {
                     DecodedKey::Unicode('j')
                 }
             }
             KeyCode::K => {
-                if modifiers.is_shifted() {
+                if map_to_unicode && modifiers.is_ctrl() {
+                    DecodedKey::Unicode('\u{000B}')
+                } else if modifiers.is_caps() {
                     DecodedKey::Unicode('K')
                 } else {
                     DecodedKey::Unicode('k')
                 }
             }
             KeyCode::L => {
-                if modifiers.is_shifted() {
+                if map_to_unicode && modifiers.is_ctrl() {
+                    DecodedKey::Unicode('\u{000C}')
+                } else if modifiers.is_caps() {
                     DecodedKey::Unicode('L')
                 } else {
                     DecodedKey::Unicode('l')
@@ -276,49 +315,63 @@ impl KeyboardLayout for Us104Key {
             // Enter gives LF, not CRLF or CR
             KeyCode::Enter => DecodedKey::Unicode(10.into()),
             KeyCode::Z => {
-                if modifiers.is_shifted() {
+                if map_to_unicode && modifiers.is_ctrl() {
+                    DecodedKey::Unicode('\u{001A}')
+                } else if modifiers.is_caps() {
                     DecodedKey::Unicode('Z')
                 } else {
                     DecodedKey::Unicode('z')
                 }
             }
             KeyCode::X => {
-                if modifiers.is_shifted() {
+                if map_to_unicode && modifiers.is_ctrl() {
+                    DecodedKey::Unicode('\u{0018}')
+                } else if modifiers.is_caps() {
                     DecodedKey::Unicode('X')
                 } else {
                     DecodedKey::Unicode('x')
                 }
             }
             KeyCode::C => {
-                if modifiers.is_shifted() {
+                if map_to_unicode && modifiers.is_ctrl() {
+                    DecodedKey::Unicode('\u{0003}')
+                } else if modifiers.is_caps() {
                     DecodedKey::Unicode('C')
                 } else {
                     DecodedKey::Unicode('c')
                 }
             }
             KeyCode::V => {
-                if modifiers.is_shifted() {
+                if map_to_unicode && modifiers.is_ctrl() {
+                    DecodedKey::Unicode('\u{0016}')
+                } else if modifiers.is_caps() {
                     DecodedKey::Unicode('V')
                 } else {
                     DecodedKey::Unicode('v')
                 }
             }
             KeyCode::B => {
-                if modifiers.is_shifted() {
+                if map_to_unicode && modifiers.is_ctrl() {
+                    DecodedKey::Unicode('\u{0002}')
+                } else if modifiers.is_caps() {
                     DecodedKey::Unicode('B')
                 } else {
                     DecodedKey::Unicode('b')
                 }
             }
             KeyCode::N => {
-                if modifiers.is_shifted() {
+                if map_to_unicode && modifiers.is_ctrl() {
+                    DecodedKey::Unicode('\u{000E}')
+                } else if modifiers.is_caps() {
                     DecodedKey::Unicode('N')
                 } else {
                     DecodedKey::Unicode('n')
                 }
             }
             KeyCode::M => {
-                if modifiers.is_shifted() {
+                if map_to_unicode && modifiers.is_ctrl() {
+                    DecodedKey::Unicode('\u{000D}')
+                } else if modifiers.is_caps() {
                     DecodedKey::Unicode('M')
                 } else {
                     DecodedKey::Unicode('m')
@@ -429,7 +482,7 @@ impl KeyboardLayout for Us104Key {
 }
 
 impl KeyboardLayout for Uk105Key {
-    fn map_keycode(keycode: KeyCode, modifiers: &Modifiers) -> DecodedKey {
+    fn map_keycode(keycode: KeyCode, modifiers: &Modifiers, handle_ctrl: HandleControlPlusLetter) -> DecodedKey {
         match keycode {
             KeyCode::BackTick => {
                 if modifiers.alt_gr {
@@ -477,7 +530,7 @@ impl KeyboardLayout for Uk105Key {
                     DecodedKey::Unicode('#')
                 }
             }
-            e => <Us104Key as KeyboardLayout>::map_keycode(e, modifiers),
+            e => <Us104Key as KeyboardLayout>::map_keycode(e, modifiers, handle_ctrl),
         }
     }
 }
