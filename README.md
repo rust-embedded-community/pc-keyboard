@@ -15,10 +15,10 @@ output directly).
 ```rust
 extern crate pc_keyboard;
 
-use pc_keyboard::{Keyboard, layouts, ScancodeSet2};
+use pc_keyboard::{Keyboard, layouts, ScancodeSet2, HandleControlPlusLetter};
 
 fn main() {
-	let mut kb = pc_keyboard::Keyboard::new(layouts::Us104Key, ScancodeSet2);
+	let mut kb = pc_keyboard::Keyboard::new(layouts::Us104Key, ScancodeSet2, HandleControlPlusLetter::MapToUnicode);
 	match kb.add_byte(0x20) {
 		Ok(Some(event)) => {
 			println!("Event {:?}", event);

@@ -1,4 +1,4 @@
-use super::{DecodedKey, KeyCode, KeyboardLayout, Modifiers, HandleControlPlusLetter};
+use super::{DecodedKey, HandleControl, KeyCode, KeyboardLayout, Modifiers};
 
 /// A standard United States 101-key (or 104-key including Windows keys) keyboard.
 /// Has a 1-row high Enter key, with Backslash above.
@@ -9,8 +9,12 @@ pub struct Us104Key;
 pub struct Uk105Key;
 
 impl KeyboardLayout for Us104Key {
-    fn map_keycode(keycode: KeyCode, modifiers: &Modifiers, handle_ctrl: HandleControlPlusLetter) -> DecodedKey {
-        let map_to_unicode = handle_ctrl == HandleControlPlusLetter::MapToUnicode;
+    fn map_keycode(
+        keycode: KeyCode,
+        modifiers: &Modifiers,
+        handle_ctrl: HandleControl,
+    ) -> DecodedKey {
+        let map_to_unicode = handle_ctrl == HandleControl::MapLettersToUnicode;
         match keycode {
             KeyCode::BackTick => {
                 if modifiers.is_shifted() {
@@ -482,7 +486,11 @@ impl KeyboardLayout for Us104Key {
 }
 
 impl KeyboardLayout for Uk105Key {
-    fn map_keycode(keycode: KeyCode, modifiers: &Modifiers, handle_ctrl: HandleControlPlusLetter) -> DecodedKey {
+    fn map_keycode(
+        keycode: KeyCode,
+        modifiers: &Modifiers,
+        handle_ctrl: HandleControl,
+    ) -> DecodedKey {
         match keycode {
             KeyCode::BackTick => {
                 if modifiers.alt_gr {

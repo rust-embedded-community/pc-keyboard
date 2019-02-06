@@ -48,7 +48,7 @@ where
     register: u16,
     num_bits: u8,
     decode_state: DecodeState,
-    handle_ctrl: HandleControlPlusLetter,
+    handle_ctrl: HandleControl,
     modifiers: Modifiers,
     _layout: PhantomData<T>,
     _set: PhantomData<S>,
@@ -194,9 +194,16 @@ pub enum KeyState {
     Down,
 }
 
+/// Options for how we can handle what happens when the Ctrl key is held down
+/// and a letter is pressed.
 #[derive(Debug, PartialEq, Eq, Copy, Clone)]
-pub enum HandleControlPlusLetter {
-    MapToUnicode,
+pub enum HandleControl {
+    /// If either Ctrl key is held down, convert the letters A through Z into
+    /// Unicode chars U+0001 through U+001A. If the Ctrl keys are not held
+    /// down, letters go through normally.
+    MapLettersToUnicode,
+    /// Don't do anything special - send through the Ctrl key up/down events,
+    /// and leave the letters as letters.
     Ignore,
 }
 
@@ -208,9 +215,13 @@ pub struct KeyEvent {
 
 pub trait KeyboardLayout {
     /// Convert a `KeyCode` enum to a Unicode character, if possible.
-    /// KeyCode::A maps to `Some('a')` (or `Some('A')` if shifted), while
-    /// KeyCode::AltLeft returns `None`
-    fn map_keycode(keycode: KeyCode, modifiers: &Modifiers, handle_ctrl: HandleControlPlusLetter) -> DecodedKey;
+    /// `KeyCode::A` maps to `Some('a')` (or `Some('A')` if shifted), while
+    /// `KeyCode::AltLeft` returns `None`
+    fn map_keycode(
+        keycode: KeyCode,
+        modifiers: &Modifiers,
+        handle_ctrl: HandleControl,
+    ) -> DecodedKey;
 }
 
 pub trait ScancodeSet {
@@ -286,7 +297,7 @@ where
     S: ScancodeSet,
 {
     /// Make a new Keyboard object with the given layout.
-    pub fn new(_layout: T, _set: S, handle_ctrl: HandleControlPlusLetter) -> Keyboard<T, S> {
+    pub fn new(_layout: T, _set: S, handle_ctrl: HandleControl) -> Keyboard<T, S> {
         Keyboard {
             register: 0,
             num_bits: 0,
@@ -304,6 +315,16 @@ where
             _layout: PhantomData,
             _set: PhantomData,
         }
+    }
+
+    /// Change the Ctrl key mapping.
+    pub fn set_ctrl_handling(&mut self, new_value: HandleControl) {
+        self.handle_ctrl = new_value;
+    }
+
+    /// Get the current Ctrl key mapping.
+    pub fn get_ctrl_handling(&self) -> HandleControl {
+        self.handle_ctrl
     }
 
     /// Clears the bit register.
@@ -527,7 +548,11 @@ mod test {
 
     #[test]
     fn test_f9() {
-        let mut k = Keyboard::new(layouts::Us104Key, ScancodeSet2, HandleControlPlusLetter::MapToUnicode);
+        let mut k = Keyboard::new(
+            layouts::Us104Key,
+            ScancodeSet2,
+            HandleControl::MapLettersToUnicode,
+        );
         // start
         assert_eq!(k.add_bit(false), Ok(None));
         // 8 data bits (LSB first)
@@ -550,7 +575,11 @@ mod test {
 
     #[test]
     fn test_f9_word() {
-        let mut k = Keyboard::new(layouts::Us104Key, ScancodeSet2, HandleControlPlusLetter::MapToUnicode);
+        let mut k = Keyboard::new(
+            layouts::Us104Key,
+            ScancodeSet2,
+            HandleControl::MapLettersToUnicode,
+        );
         assert_eq!(
             k.add_word(0x0402),
             Ok(Some(KeyEvent::new(KeyCode::F9, KeyState::Down)))
@@ -559,7 +588,11 @@ mod test {
 
     #[test]
     fn test_f9_byte() {
-        let mut k = Keyboard::new(layouts::Us104Key, ScancodeSet2, HandleControlPlusLetter::MapToUnicode);
+        let mut k = Keyboard::new(
+            layouts::Us104Key,
+            ScancodeSet2,
+            HandleControl::MapLettersToUnicode,
+        );
         assert_eq!(
             k.add_byte(0x01),
             Ok(Some(KeyEvent::new(KeyCode::F9, KeyState::Down)))
@@ -568,7 +601,11 @@ mod test {
 
     #[test]
     fn test_keyup_keydown() {
-        let mut k = Keyboard::new(layouts::Us104Key, ScancodeSet2, HandleControlPlusLetter::MapToUnicode);
+        let mut k = Keyboard::new(
+            layouts::Us104Key,
+            ScancodeSet2,
+            HandleControl::MapLettersToUnicode,
+        );
         assert_eq!(
             k.add_byte(0x01),
             Ok(Some(KeyEvent::new(KeyCode::F9, KeyState::Down)))
@@ -586,7 +623,11 @@ mod test {
 
     #[test]
     fn test_f5() {
-        let mut k = Keyboard::new(layouts::Us104Key, ScancodeSet2, HandleControlPlusLetter::MapToUnicode);
+        let mut k = Keyboard::new(
+            layouts::Us104Key,
+            ScancodeSet2,
+            HandleControl::MapLettersToUnicode,
+        );
         // start
         assert_eq!(k.add_bit(false), Ok(None));
         // 8 data bits (LSB first)
@@ -609,7 +650,11 @@ mod test {
 
     #[test]
     fn test_f5_up() {
-        let mut k = Keyboard::new(layouts::Us104Key, ScancodeSet2, HandleControlPlusLetter::MapToUnicode);
+        let mut k = Keyboard::new(
+            layouts::Us104Key,
+            ScancodeSet2,
+            HandleControl::MapLettersToUnicode,
+        );
         // Send F0
 
         // start
@@ -652,7 +697,11 @@ mod test {
 
     #[test]
     fn test_shift() {
-        let mut k = Keyboard::new(layouts::Uk105Key, ScancodeSet2, HandleControlPlusLetter::MapToUnicode);
+        let mut k = Keyboard::new(
+            layouts::Uk105Key,
+            ScancodeSet2,
+            HandleControl::MapLettersToUnicode,
+        );
         // A with left shift held
         assert_eq!(
             k.process_keyevent(KeyEvent::new(KeyCode::ShiftLeft, KeyState::Down)),
@@ -736,11 +785,86 @@ mod test {
             k.process_keyevent(KeyEvent::new(KeyCode::ShiftRight, KeyState::Up)),
             None
         );
+
+        // Numbers are not shifted
+        assert_eq!(
+            k.process_keyevent(KeyEvent::new(KeyCode::Key1, KeyState::Down)),
+            Some(DecodedKey::Unicode('1'))
+        );
+        assert_eq!(
+            k.process_keyevent(KeyEvent::new(KeyCode::Key1, KeyState::Up)),
+            None
+        );
+    }
+
+    #[test]
+    fn test_ctrl() {
+        let mut k = Keyboard::new(
+            layouts::Us104Key,
+            ScancodeSet2,
+            HandleControl::MapLettersToUnicode,
+        );
+        // Normal
+        assert_eq!(
+            k.process_keyevent(KeyEvent::new(KeyCode::A, KeyState::Down)),
+            Some(DecodedKey::Unicode('a'))
+        );
+        assert_eq!(
+            k.process_keyevent(KeyEvent::new(KeyCode::A, KeyState::Up)),
+            None
+        );
+        // Left Control
+        assert_eq!(
+            k.process_keyevent(KeyEvent::new(KeyCode::ControlLeft, KeyState::Down)),
+            None
+        );
+        assert_eq!(
+            k.process_keyevent(KeyEvent::new(KeyCode::A, KeyState::Down)),
+            Some(DecodedKey::Unicode('\u{0001}'))
+        );
+        assert_eq!(
+            k.process_keyevent(KeyEvent::new(KeyCode::ControlLeft, KeyState::Up)),
+            None
+        );
+        assert_eq!(
+            k.process_keyevent(KeyEvent::new(KeyCode::A, KeyState::Up)),
+            None
+        );
+        // Normal
+        assert_eq!(
+            k.process_keyevent(KeyEvent::new(KeyCode::A, KeyState::Down)),
+            Some(DecodedKey::Unicode('a'))
+        );
+        assert_eq!(
+            k.process_keyevent(KeyEvent::new(KeyCode::A, KeyState::Up)),
+            None
+        );
+        // Right Control
+        assert_eq!(
+            k.process_keyevent(KeyEvent::new(KeyCode::ControlRight, KeyState::Down)),
+            None
+        );
+        assert_eq!(
+            k.process_keyevent(KeyEvent::new(KeyCode::A, KeyState::Down)),
+            Some(DecodedKey::Unicode('\u{0001}'))
+        );
+        assert_eq!(
+            k.process_keyevent(KeyEvent::new(KeyCode::ControlRight, KeyState::Up)),
+            None
+        );
+        assert_eq!(
+            k.process_keyevent(KeyEvent::new(KeyCode::A, KeyState::Up)),
+            None
+        );
     }
 
     #[test]
     fn test_numlock() {
-        let mut k = Keyboard::new(layouts::Uk105Key, ScancodeSet2, HandleControlPlusLetter::MapToUnicode);
+        let mut k = Keyboard::new(
+            layouts::Uk105Key,
+            ScancodeSet2,
+            HandleControl::MapLettersToUnicode,
+        );
 
         // Numlock ON by default
         assert_eq!(
@@ -806,7 +930,11 @@ mod test {
 
     #[test]
     fn test_set_1_down_up_down() {
-        let mut k = Keyboard::new(layouts::Us104Key, ScancodeSet1, HandleControlPlusLetter::MapToUnicode);
+        let mut k = Keyboard::new(
+            layouts::Us104Key,
+            ScancodeSet1,
+            HandleControl::MapLettersToUnicode,
+        );
         assert_eq!(
             k.add_byte(0x1e),
             Ok(Some(KeyEvent::new(KeyCode::A, KeyState::Down)))
@@ -823,7 +951,11 @@ mod test {
 
     #[test]
     fn test_set_1_ext_down_up_down() {
-        let mut k = Keyboard::new(layouts::Us104Key, ScancodeSet1, HandleControlPlusLetter::MapToUnicode);
+        let mut k = Keyboard::new(
+            layouts::Us104Key,
+            ScancodeSet1,
+            HandleControl::MapLettersToUnicode,
+        );
         assert_eq!(k.add_byte(0xe0), Ok(None));
         assert_eq!(
             k.add_byte(0x1c),
@@ -838,7 +970,11 @@ mod test {
 
     #[test]
     fn test_set_2_down_up() {
-        let mut k = Keyboard::new(layouts::Us104Key, ScancodeSet2, HandleControlPlusLetter::MapToUnicode);
+        let mut k = Keyboard::new(
+            layouts::Us104Key,
+            ScancodeSet2,
+            HandleControl::MapLettersToUnicode,
+        );
         assert_eq!(
             k.add_byte(0x29),
             Ok(Some(KeyEvent::new(KeyCode::Spacebar, KeyState::Down)))
@@ -870,7 +1006,11 @@ mod test {
 
     #[test]
     fn test_set_2_ext_down_up() {
-        let mut k = Keyboard::new(layouts::Us104Key, ScancodeSet2, HandleControlPlusLetter::MapToUnicode);
+        let mut k = Keyboard::new(
+            layouts::Us104Key,
+            ScancodeSet2,
+            HandleControl::MapLettersToUnicode,
+        );
         assert_eq!(k.add_byte(0xE0), Ok(None));
         assert_eq!(
             k.add_byte(0x6C),
