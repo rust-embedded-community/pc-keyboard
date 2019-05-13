@@ -641,9 +641,9 @@ impl KeyboardLayout for Jis109Key {
             }
             KeyCode::Equals => {
                 if modifiers.is_shifted() {
-                    DecodedKey::Unicode('+')
+                    DecodedKey::Unicode('*')
                 } else {
-                    DecodedKey::Unicode(';')
+                    DecodedKey::Unicode(':')
                 }
             }
             KeyCode::Backspace => DecodedKey::Unicode(0x08.into()),
