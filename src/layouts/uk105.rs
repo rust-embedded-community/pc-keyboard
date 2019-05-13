@@ -3,6 +3,8 @@
 
 use crate::{DecodedKey, HandleControl, KeyCode, KeyboardLayout, Modifiers};
 
+pub use super::us104::Us104Key;
+
 pub struct Uk105Key;
 
 impl KeyboardLayout for Uk105Key {

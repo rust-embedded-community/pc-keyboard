@@ -3,6 +3,8 @@
 
 use crate::{DecodedKey, HandleControl, KeyCode, KeyboardLayout, Modifiers};
 
+pub use super::us104::Us104Key;
+
 pub struct Jis109Key;
 
 impl KeyboardLayout for Jis109Key {
