@@ -9,6 +9,7 @@ output directly).
 * Scancode Set 1 and 2
 * US 104-key layout
 * UK 105-key layout
+* JIS 109-key layout
 
 ## Usage
 
