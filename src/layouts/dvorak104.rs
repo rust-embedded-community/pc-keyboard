@@ -133,6 +133,15 @@ impl KeyboardLayout for Dvorak104Key {
                     DecodedKey::Unicode('=')
                 }
             }
+            KeyCode::S => {
+                if map_to_unicode && modifiers.is_ctrl() {
+                    DecodedKey::Unicode('\u{0013}')
+                } else if modifiers.is_caps() {
+                    DecodedKey::Unicode('O')
+                } else {
+                    DecodedKey::Unicode('o')
+                }
+            }
             KeyCode::D => {
                 if map_to_unicode && modifiers.is_ctrl() {
                     DecodedKey::Unicode('\u{0004}')
