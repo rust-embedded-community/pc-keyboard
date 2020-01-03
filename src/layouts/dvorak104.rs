@@ -13,6 +13,7 @@ impl KeyboardLayout for Dvorak104Key {
         modifiers: &Modifiers,
         handle_ctrl: HandleControl,
     ) -> DecodedKey {
+        let map_to_unicode = handle_ctrl == HandleControl::MapLettersToUnicode;
         match keycode {
             KeyCode::Minus => {
                 if modifiers.is_shifted() {
