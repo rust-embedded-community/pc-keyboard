@@ -7,6 +7,7 @@ output directly).
 ## Supports:
 
 * Scancode Set 1 and 2
+* Dvorak 104-key layout
 * US 104-key layout
 * UK 105-key layout
 * JIS 109-key layout
