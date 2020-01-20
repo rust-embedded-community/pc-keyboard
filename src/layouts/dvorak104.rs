@@ -30,21 +30,21 @@ impl KeyboardLayout for Dvorak104Key {
                 }
             }
             KeyCode::Q => {
-                if modifiers.is_caps() {
+                if modifiers.is_shifted() {
                     DecodedKey::Unicode('"')
                 } else {
                     DecodedKey::Unicode('\'')
                 }
             }
             KeyCode::W => {
-                if modifiers.is_caps() {
+                if modifiers.is_shifted() {
                     DecodedKey::Unicode('<')
                 } else {
                     DecodedKey::Unicode(',')
                 }
             }
             KeyCode::E => {
-                if modifiers.is_caps() {
+                if modifiers.is_shifted() {
                     DecodedKey::Unicode('>')
                 } else {
                     DecodedKey::Unicode('.')
@@ -202,7 +202,7 @@ impl KeyboardLayout for Dvorak104Key {
             KeyCode::SemiColon => {
                 if map_to_unicode && modifiers.is_ctrl() {
                     DecodedKey::Unicode('\u{0013}')
-                } else if modifiers.is_shifted() {
+                } else if modifiers.is_caps() {
                     DecodedKey::Unicode('S')
                 } else {
                     DecodedKey::Unicode('s')
@@ -216,7 +216,7 @@ impl KeyboardLayout for Dvorak104Key {
                 }
             }
             KeyCode::Z => {
-                if modifiers.is_caps() {
+                if modifiers.is_shifted() {
                     DecodedKey::Unicode(':')
                 } else {
                     DecodedKey::Unicode(';')
@@ -270,7 +270,7 @@ impl KeyboardLayout for Dvorak104Key {
             KeyCode::Comma => {
                 if map_to_unicode && modifiers.is_ctrl() {
                     DecodedKey::Unicode('\u{0017}')
-                } else if modifiers.is_shifted() {
+                } else if modifiers.is_caps() {
                     DecodedKey::Unicode('W')
                 } else {
                     DecodedKey::Unicode('w')
@@ -279,7 +279,7 @@ impl KeyboardLayout for Dvorak104Key {
             KeyCode::Fullstop => {
                 if map_to_unicode && modifiers.is_ctrl() {
                     DecodedKey::Unicode('\u{0016}')
-                } else if modifiers.is_shifted() {
+                } else if modifiers.is_caps() {
                     DecodedKey::Unicode('V')
                 } else {
                     DecodedKey::Unicode('v')
@@ -288,7 +288,7 @@ impl KeyboardLayout for Dvorak104Key {
             KeyCode::Slash => {
                 if map_to_unicode && modifiers.is_ctrl() {
                     DecodedKey::Unicode('\u{001A}')
-                } else if modifiers.is_shifted() {
+                } else if modifiers.is_caps() {
                     DecodedKey::Unicode('Z')
                 } else {
                     DecodedKey::Unicode('z')
