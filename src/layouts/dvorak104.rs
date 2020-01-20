@@ -30,27 +30,21 @@ impl KeyboardLayout for Dvorak104Key {
                 }
             }
             KeyCode::Q => {
-                if map_to_unicode && modifiers.is_ctrl() {
-                    DecodedKey::Unicode('\u{0011}')
-                } else if modifiers.is_caps() {
+                if modifiers.is_caps() {
                     DecodedKey::Unicode('"')
                 } else {
                     DecodedKey::Unicode('\'')
                 }
             }
             KeyCode::W => {
-                if map_to_unicode && modifiers.is_ctrl() {
-                    DecodedKey::Unicode('\u{0017}')
-                } else if modifiers.is_caps() {
+                if modifiers.is_caps() {
                     DecodedKey::Unicode('<')
                 } else {
                     DecodedKey::Unicode(',')
                 }
             }
             KeyCode::E => {
-                if map_to_unicode && modifiers.is_ctrl() {
-                    DecodedKey::Unicode('\u{0005}')
-                } else if modifiers.is_caps() {
+                if modifiers.is_caps() {
                     DecodedKey::Unicode('>')
                 } else {
                     DecodedKey::Unicode('.')
@@ -58,7 +52,7 @@ impl KeyboardLayout for Dvorak104Key {
             }
             KeyCode::R => {
                 if map_to_unicode && modifiers.is_ctrl() {
-                    DecodedKey::Unicode('\u{0012}')
+                    DecodedKey::Unicode('\u{0010}')
                 } else if modifiers.is_caps() {
                     DecodedKey::Unicode('P')
                 } else {
@@ -67,7 +61,7 @@ impl KeyboardLayout for Dvorak104Key {
             }
             KeyCode::T => {
                 if map_to_unicode && modifiers.is_ctrl() {
-                    DecodedKey::Unicode('\u{0014}')
+                    DecodedKey::Unicode('\u{0019}')
                 } else if modifiers.is_caps() {
                     DecodedKey::Unicode('Y')
                 } else {
@@ -76,7 +70,7 @@ impl KeyboardLayout for Dvorak104Key {
             }
             KeyCode::Y => {
                 if map_to_unicode && modifiers.is_ctrl() {
-                    DecodedKey::Unicode('\u{0019}')
+                    DecodedKey::Unicode('\u{0006}')
                 } else if modifiers.is_caps() {
                     DecodedKey::Unicode('F')
                 } else {
@@ -85,7 +79,7 @@ impl KeyboardLayout for Dvorak104Key {
             }
             KeyCode::U => {
                 if map_to_unicode && modifiers.is_ctrl() {
-                    DecodedKey::Unicode('\u{0015}')
+                    DecodedKey::Unicode('\u{0007}')
                 } else if modifiers.is_caps() {
                     DecodedKey::Unicode('G')
                 } else {
@@ -94,7 +88,7 @@ impl KeyboardLayout for Dvorak104Key {
             }
             KeyCode::I => {
                 if map_to_unicode && modifiers.is_ctrl() {
-                    DecodedKey::Unicode('\u{0009}')
+                    DecodedKey::Unicode('\u{0003}')
                 } else if modifiers.is_caps() {
                     DecodedKey::Unicode('C')
                 } else {
@@ -103,7 +97,7 @@ impl KeyboardLayout for Dvorak104Key {
             }
             KeyCode::O => {
                 if map_to_unicode && modifiers.is_ctrl() {
-                    DecodedKey::Unicode('\u{000F}')
+                    DecodedKey::Unicode('\u{0012}')
                 } else if modifiers.is_caps() {
                     DecodedKey::Unicode('R')
                 } else {
@@ -112,7 +106,7 @@ impl KeyboardLayout for Dvorak104Key {
             }
             KeyCode::P => {
                 if map_to_unicode && modifiers.is_ctrl() {
-                    DecodedKey::Unicode('\u{0010}')
+                    DecodedKey::Unicode('\u{000C}')
                 } else if modifiers.is_caps() {
                     DecodedKey::Unicode('L')
                 } else {
@@ -135,7 +129,7 @@ impl KeyboardLayout for Dvorak104Key {
             }
             KeyCode::S => {
                 if map_to_unicode && modifiers.is_ctrl() {
-                    DecodedKey::Unicode('\u{0013}')
+                    DecodedKey::Unicode('\u{000F}')
                 } else if modifiers.is_caps() {
                     DecodedKey::Unicode('O')
                 } else {
@@ -144,7 +138,7 @@ impl KeyboardLayout for Dvorak104Key {
             }
             KeyCode::D => {
                 if map_to_unicode && modifiers.is_ctrl() {
-                    DecodedKey::Unicode('\u{0004}')
+                    DecodedKey::Unicode('\u{0005}')
                 } else if modifiers.is_caps() {
                     DecodedKey::Unicode('E')
                 } else {
@@ -153,7 +147,7 @@ impl KeyboardLayout for Dvorak104Key {
             }
             KeyCode::F => {
                 if map_to_unicode && modifiers.is_ctrl() {
-                    DecodedKey::Unicode('\u{0006}')
+                    DecodedKey::Unicode('\u{0015}')
                 } else if modifiers.is_caps() {
                     DecodedKey::Unicode('U')
                 } else {
@@ -162,7 +156,7 @@ impl KeyboardLayout for Dvorak104Key {
             }
             KeyCode::G => {
                 if map_to_unicode && modifiers.is_ctrl() {
-                    DecodedKey::Unicode('\u{0007}')
+                    DecodedKey::Unicode('\u{0009}')
                 } else if modifiers.is_caps() {
                     DecodedKey::Unicode('I')
                 } else {
@@ -171,7 +165,7 @@ impl KeyboardLayout for Dvorak104Key {
             }
             KeyCode::H => {
                 if map_to_unicode && modifiers.is_ctrl() {
-                    DecodedKey::Unicode('\u{0008}')
+                    DecodedKey::Unicode('\u{0004}')
                 } else if modifiers.is_caps() {
                     DecodedKey::Unicode('D')
                 } else {
@@ -180,7 +174,7 @@ impl KeyboardLayout for Dvorak104Key {
             }
             KeyCode::J => {
                 if map_to_unicode && modifiers.is_ctrl() {
-                    DecodedKey::Unicode('\u{000A}')
+                    DecodedKey::Unicode('\u{0008}')
                 } else if modifiers.is_caps() {
                     DecodedKey::Unicode('H')
                 } else {
@@ -189,7 +183,7 @@ impl KeyboardLayout for Dvorak104Key {
             }
             KeyCode::K => {
                 if map_to_unicode && modifiers.is_ctrl() {
-                    DecodedKey::Unicode('\u{000B}')
+                    DecodedKey::Unicode('\u{0014}')
                 } else if modifiers.is_caps() {
                     DecodedKey::Unicode('T')
                 } else {
@@ -198,7 +192,7 @@ impl KeyboardLayout for Dvorak104Key {
             }
             KeyCode::L => {
                 if map_to_unicode && modifiers.is_ctrl() {
-                    DecodedKey::Unicode('\u{000C}')
+                    DecodedKey::Unicode('\u{000E}')
                 } else if modifiers.is_caps() {
                     DecodedKey::Unicode('N')
                 } else {
@@ -206,7 +200,9 @@ impl KeyboardLayout for Dvorak104Key {
                 }
             }
             KeyCode::SemiColon => {
-                if modifiers.is_shifted() {
+                if map_to_unicode && modifiers.is_ctrl() {
+                    DecodedKey::Unicode('\u{0013}')
+                } else if modifiers.is_shifted() {
                     DecodedKey::Unicode('S')
                 } else {
                     DecodedKey::Unicode('s')
@@ -220,9 +216,7 @@ impl KeyboardLayout for Dvorak104Key {
                 }
             }
             KeyCode::Z => {
-                if map_to_unicode && modifiers.is_ctrl() {
-                    DecodedKey::Unicode('\u{001A}')
-                } else if modifiers.is_caps() {
+                if modifiers.is_caps() {
                     DecodedKey::Unicode(':')
                 } else {
                     DecodedKey::Unicode(';')
@@ -230,7 +224,7 @@ impl KeyboardLayout for Dvorak104Key {
             }
             KeyCode::X => {
                 if map_to_unicode && modifiers.is_ctrl() {
-                    DecodedKey::Unicode('\u{0018}')
+                    DecodedKey::Unicode('\u{0011}')
                 } else if modifiers.is_caps() {
                     DecodedKey::Unicode('Q')
                 } else {
@@ -239,7 +233,7 @@ impl KeyboardLayout for Dvorak104Key {
             }
             KeyCode::C => {
                 if map_to_unicode && modifiers.is_ctrl() {
-                    DecodedKey::Unicode('\u{0003}')
+                    DecodedKey::Unicode('\u{000A}')
                 } else if modifiers.is_caps() {
                     DecodedKey::Unicode('J')
                 } else {
@@ -248,7 +242,7 @@ impl KeyboardLayout for Dvorak104Key {
             }
             KeyCode::V => {
                 if map_to_unicode && modifiers.is_ctrl() {
-                    DecodedKey::Unicode('\u{0016}')
+                    DecodedKey::Unicode('\u{000B}')
                 } else if modifiers.is_caps() {
                     DecodedKey::Unicode('K')
                 } else {
@@ -257,7 +251,7 @@ impl KeyboardLayout for Dvorak104Key {
             }
             KeyCode::B => {
                 if map_to_unicode && modifiers.is_ctrl() {
-                    DecodedKey::Unicode('\u{0002}')
+                    DecodedKey::Unicode('\u{0018}')
                 } else if modifiers.is_caps() {
                     DecodedKey::Unicode('X')
                 } else {
@@ -266,7 +260,7 @@ impl KeyboardLayout for Dvorak104Key {
             }
             KeyCode::N => {
                 if map_to_unicode && modifiers.is_ctrl() {
-                    DecodedKey::Unicode('\u{000E}')
+                    DecodedKey::Unicode('\u{0002}')
                 } else if modifiers.is_caps() {
                     DecodedKey::Unicode('B')
                 } else {
@@ -274,21 +268,27 @@ impl KeyboardLayout for Dvorak104Key {
                 }
             }
             KeyCode::Comma => {
-                if modifiers.is_shifted() {
+                if map_to_unicode && modifiers.is_ctrl() {
+                    DecodedKey::Unicode('\u{0017}')
+                } else if modifiers.is_shifted() {
                     DecodedKey::Unicode('W')
                 } else {
                     DecodedKey::Unicode('w')
                 }
             }
             KeyCode::Fullstop => {
-                if modifiers.is_shifted() {
+                if map_to_unicode && modifiers.is_ctrl() {
+                    DecodedKey::Unicode('\u{0016}')
+                } else if modifiers.is_shifted() {
                     DecodedKey::Unicode('V')
                 } else {
                     DecodedKey::Unicode('v')
                 }
             }
             KeyCode::Slash => {
-                if modifiers.is_shifted() {
+                if map_to_unicode && modifiers.is_ctrl() {
+                    DecodedKey::Unicode('\u{001A}')
+                } else if modifiers.is_shifted() {
                     DecodedKey::Unicode('Z')
                 } else {
                     DecodedKey::Unicode('z')
