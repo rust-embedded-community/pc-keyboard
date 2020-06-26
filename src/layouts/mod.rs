@@ -15,3 +15,6 @@ pub use self::uk105::Uk105Key;
 
 mod jis109;
 pub use self::jis109::Jis109Key;
+
+mod azerty;
+pub use self::azerty::Azerty;

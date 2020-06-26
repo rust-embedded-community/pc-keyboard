@@ -11,6 +11,7 @@ output directly).
 * US 104-key layout
 * UK 105-key layout
 * JIS 109-key layout
+* Azerty full layout
 
 ## Usage
 
