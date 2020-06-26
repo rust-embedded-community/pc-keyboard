@@ -1031,18 +1031,30 @@ mod test {
             ScancodeSet2,
             HandleControl::MapLettersToUnicode,
         );
-
-        // Numlock ON by default
         assert_eq!(
             k.process_keyevent(KeyEvent::new(KeyCode::NumpadSlash, KeyState::Down)),
             Some(DecodedKey::Unicode('/'))
         );
         assert_eq!(
+            k.process_keyevent(KeyEvent::new(KeyCode::NumpadStar, KeyState::Down)),
+            Some(DecodedKey::Unicode('*'))
+        );
+        assert_eq!(
+            k.process_keyevent(KeyEvent::new(KeyCode::A, KeyState::Down)),
+            Some(DecodedKey::Unicode('q'))
+        );
+        assert_eq!(
+            k.process_keyevent(KeyEvent::new(KeyCode::Key4, KeyState::Down)),
+            Some(DecodedKey::Unicode('\''))
+        );
+        assert_eq!(
+            k.process_keyevent(KeyEvent::new(KeyCode::K, KeyState::Down)),
+            Some(DecodedKey::Unicode('k'))
+        );
+        assert_eq!(
             k.process_keyevent(KeyEvent::new(KeyCode::Numpad0, KeyState::Up)),
             None
         );
-
-        // Numlock OFF
         assert_eq!(
             k.process_keyevent(KeyEvent::new(KeyCode::NumpadLock, KeyState::Down)),
             None
@@ -1051,8 +1063,6 @@ mod test {
             k.process_keyevent(KeyEvent::new(KeyCode::NumpadLock, KeyState::Up)),
             None
         );
-
-        // Now KP_0 produces INSERT
         assert_eq!(
             k.process_keyevent(KeyEvent::new(KeyCode::Numpad0, KeyState::Down)),
             Some(DecodedKey::RawKey(KeyCode::Insert))
