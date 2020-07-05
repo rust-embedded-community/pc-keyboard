@@ -1048,8 +1048,8 @@ mod test {
             Some(DecodedKey::Unicode('\''))
         );
         assert_eq!(
-            k.process_keyevent(KeyEvent::new(KeyCode::K, KeyState::Down)),
-            Some(DecodedKey::Unicode('k'))
+            k.process_keyevent(KeyEvent::new(KeyCode::BackSlash, KeyState::Down)),
+            Some(DecodedKey::Unicode('*'))
         );
         assert_eq!(
             k.process_keyevent(KeyEvent::new(KeyCode::Numpad0, KeyState::Up)),

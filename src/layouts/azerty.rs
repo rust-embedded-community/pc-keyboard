@@ -11,6 +11,14 @@ impl KeyboardLayout for Azerty {
         let map_to_unicode = handle_ctrl == HandleControl::MapLettersToUnicode;
         match keycode {
             KeyCode::Escape => DecodedKey::Unicode(0x1B.into()),
+            KeyCode::BackTick => DecodedKey::Unicode('²'),
+            KeyCode::HashTilde => {
+                if modifiers.is_shifted() {
+                    DecodedKey::Unicode('*')
+                } else {
+                    DecodedKey::Unicode('µ')
+                }
+            }
             KeyCode::Key1 => {
                 if modifiers.is_shifted() {
                     DecodedKey::Unicode('1')
@@ -21,6 +29,8 @@ impl KeyboardLayout for Azerty {
             KeyCode::Key2 => {
                 if modifiers.is_shifted() {
                     DecodedKey::Unicode('2')
+                } else if modifiers.alt_gr {
+                    DecodedKey::Unicode('~')
                 } else {
                     DecodedKey::Unicode('é')
                 }
@@ -28,13 +38,17 @@ impl KeyboardLayout for Azerty {
             KeyCode::Key3 => {
                 if modifiers.is_shifted() {
                     DecodedKey::Unicode('3')
-                } else {
+                } else if modifiers.alt_gr {
                     DecodedKey::Unicode('#')
+                } else {
+                    DecodedKey::Unicode('"')
                 }
             }
             KeyCode::Key4 => {
                 if modifiers.is_shifted() {
                     DecodedKey::Unicode('4')
+                } else if modifiers.alt_gr {
+                    DecodedKey::Unicode('{')
                 } else {
                     DecodedKey::Unicode('\'')
                 }
@@ -42,6 +56,8 @@ impl KeyboardLayout for Azerty {
             KeyCode::Key5 => {
                 if modifiers.is_shifted() {
                     DecodedKey::Unicode('5')
+                } else if modifiers.alt_gr {
+                    DecodedKey::Unicode('[')
                 } else {
                     DecodedKey::Unicode('(')
                 }
@@ -49,6 +65,8 @@ impl KeyboardLayout for Azerty {
             KeyCode::Key6 => {
                 if modifiers.is_shifted() {
                     DecodedKey::Unicode('6')
+                } else if modifiers.alt_gr {
+                    DecodedKey::Unicode('|')
                 } else {
                     DecodedKey::Unicode('-')
                 }
@@ -56,6 +74,8 @@ impl KeyboardLayout for Azerty {
             KeyCode::Key7 => {
                 if modifiers.is_shifted() {
                     DecodedKey::Unicode('7')
+                } else if modifiers.alt_gr {
+                    DecodedKey::Unicode('`')
                 } else {
                     DecodedKey::Unicode('è')
                 }
@@ -63,6 +83,8 @@ impl KeyboardLayout for Azerty {
             KeyCode::Key8 => {
                 if modifiers.is_shifted() {
                     DecodedKey::Unicode('8')
+                } else if modifiers.alt_gr {
+                    DecodedKey::Unicode('\\')
                 } else {
                     DecodedKey::Unicode('_')
                 }
@@ -70,6 +92,8 @@ impl KeyboardLayout for Azerty {
             KeyCode::Key9 => {
                 if modifiers.is_shifted() {
                     DecodedKey::Unicode('9')
+                } else if modifiers.alt_gr {
+                    DecodedKey::Unicode('^')
                 } else {
                     DecodedKey::Unicode('ç')
                 }
@@ -77,6 +101,8 @@ impl KeyboardLayout for Azerty {
             KeyCode::Key0 => {
                 if modifiers.is_shifted() {
                     DecodedKey::Unicode('0')
+                } else if modifiers.alt_gr {
+                    DecodedKey::Unicode('@')
                 } else {
                     DecodedKey::Unicode('à')
                 }
@@ -84,15 +110,19 @@ impl KeyboardLayout for Azerty {
             KeyCode::Minus => {
                 if modifiers.is_shifted() {
                     DecodedKey::Unicode('°')
+                } else if modifiers.alt_gr {
+                    DecodedKey::Unicode(']')
                 } else {
                     DecodedKey::Unicode(')')
                 }
             }
             KeyCode::Equals => {
                 if modifiers.is_shifted() {
-                    DecodedKey::Unicode('+')
-                } else {
                     DecodedKey::Unicode('=')
+                } else if modifiers.alt_gr {
+                    DecodedKey::Unicode('}')
+                } else {
+                    DecodedKey::Unicode('+')
                 }
             }
             KeyCode::Backspace => DecodedKey::Unicode(0x08.into()),
@@ -189,23 +219,27 @@ impl KeyboardLayout for Azerty {
             }
             KeyCode::BracketSquareLeft => {
                 if modifiers.is_shifted() {
-                    DecodedKey::Unicode('{')
-                } else {
-                    DecodedKey::Unicode('[')
-                }
-            }
-            KeyCode::BracketSquareRight => {
-                if modifiers.is_shifted() {
                     DecodedKey::Unicode('¨')
+                } else if modifiers.alt_gr {
+                    DecodedKey::Unicode('ˇ')
                 } else {
                     DecodedKey::Unicode('^')
                 }
             }
+            KeyCode::BracketSquareRight => {
+                if modifiers.is_shifted() {
+                    DecodedKey::Unicode('£')
+                } else if modifiers.alt_gr {
+                    DecodedKey::Unicode('¤')
+                } else {
+                    DecodedKey::Unicode('$')
+                }
+            }
             KeyCode::BackSlash => {
                 if modifiers.is_shifted() {
-                    DecodedKey::Unicode('>')
+                    DecodedKey::Unicode('µ')
                 } else {
-                    DecodedKey::Unicode('<')
+                    DecodedKey::Unicode('*')
                 }
             }
             KeyCode::A => {
@@ -467,6 +501,9 @@ impl KeyboardLayout for Azerty {
                 }
             }
             KeyCode::NumpadEnter => DecodedKey::Unicode(10.into()),
+            KeyCode::ShiftLeft => {
+                DecodedKey::Unicode('<')
+            }
             k => DecodedKey::RawKey(k),
         }
     }
