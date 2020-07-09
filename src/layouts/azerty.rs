@@ -118,11 +118,11 @@ impl KeyboardLayout for Azerty {
             }
             KeyCode::Equals => {
                 if modifiers.is_shifted() {
-                    DecodedKey::Unicode('=')
+                    DecodedKey::Unicode('+')
                 } else if modifiers.alt_gr {
                     DecodedKey::Unicode('}')
                 } else {
-                    DecodedKey::Unicode('+')
+                    DecodedKey::Unicode('=')
                 }
             }
             KeyCode::Backspace => DecodedKey::Unicode(0x08.into()),
@@ -418,9 +418,9 @@ impl KeyboardLayout for Azerty {
             }
             KeyCode::Slash => {
                 if modifiers.is_shifted() {
-                    DecodedKey::Unicode('!')
-                } else {
                     DecodedKey::Unicode('§')
+                } else {
+                    DecodedKey::Unicode('!')
                 }
             }
             KeyCode::Spacebar => DecodedKey::Unicode(' '),
