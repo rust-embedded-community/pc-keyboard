@@ -522,11 +522,11 @@ impl KeyEvent {
 
 impl Modifiers {
     pub fn is_shifted(&self) -> bool {
-        (self.lshift | self.rshift)
+        self.lshift | self.rshift
     }
 
     pub fn is_ctrl(&self) -> bool {
-        (self.lctrl | self.rctrl)
+        self.lctrl | self.rctrl
     }
 
     pub fn is_caps(&self) -> bool {
@@ -1021,6 +1021,55 @@ mod test {
         assert_eq!(
             k.add_byte(0x6C),
             Ok(Some(KeyEvent::new(KeyCode::Home, KeyState::Up)))
+        );
+    }
+
+    #[test]
+    fn test_frazert() {
+        let mut k = Keyboard::new(
+            layouts::Azerty,
+            ScancodeSet2,
+            HandleControl::MapLettersToUnicode,
+        );
+        assert_eq!(
+            k.process_keyevent(KeyEvent::new(KeyCode::NumpadSlash, KeyState::Down)),
+            Some(DecodedKey::Unicode('/'))
+        );
+        assert_eq!(
+            k.process_keyevent(KeyEvent::new(KeyCode::NumpadStar, KeyState::Down)),
+            Some(DecodedKey::Unicode('*'))
+        );
+        assert_eq!(
+            k.process_keyevent(KeyEvent::new(KeyCode::A, KeyState::Down)),
+            Some(DecodedKey::Unicode('q'))
+        );
+        assert_eq!(
+            k.process_keyevent(KeyEvent::new(KeyCode::Key4, KeyState::Down)),
+            Some(DecodedKey::Unicode('\''))
+        );
+        assert_eq!(
+            k.process_keyevent(KeyEvent::new(KeyCode::BackSlash, KeyState::Down)),
+            Some(DecodedKey::Unicode('*'))
+        );
+        assert_eq!(
+            k.process_keyevent(KeyEvent::new(KeyCode::Numpad0, KeyState::Up)),
+            None
+        );
+        assert_eq!(
+            k.process_keyevent(KeyEvent::new(KeyCode::NumpadLock, KeyState::Down)),
+            None
+        );
+        assert_eq!(
+            k.process_keyevent(KeyEvent::new(KeyCode::NumpadLock, KeyState::Up)),
+            None
+        );
+        assert_eq!(
+            k.process_keyevent(KeyEvent::new(KeyCode::Numpad0, KeyState::Down)),
+            Some(DecodedKey::RawKey(KeyCode::Insert))
+        );
+        assert_eq!(
+            k.process_keyevent(KeyEvent::new(KeyCode::Numpad0, KeyState::Up)),
+            None
         );
     }
 }
