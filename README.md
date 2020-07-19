@@ -36,7 +36,7 @@ fn main() {
 }
 ```
 
-## [Documentation](https://docs.rs/crate/cortex-m)
+## [Documentation](https://docs.rs/crate/pc-keyboard)
 
 ## Minimum Supported Rust Version (MSRV)
 
