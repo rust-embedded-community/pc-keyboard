@@ -324,7 +324,9 @@ impl KeyboardLayout for Azerty {
                 }
             }
             KeyCode::SemiColon => {
-                if modifiers.is_shifted() {
+                if map_to_unicode && modifiers.is_ctrl() {
+                    DecodedKey::Unicode('\u{000D}')
+                } else if modifiers.is_caps() {
                     DecodedKey::Unicode('M')
                 } else {
                     DecodedKey::Unicode('m')
