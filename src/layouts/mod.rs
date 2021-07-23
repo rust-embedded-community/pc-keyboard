@@ -18,3 +18,6 @@ pub use self::jis109::Jis109Key;
 
 mod azerty;
 pub use self::azerty::Azerty;
+
+mod de104;
+pub use self::de104::De104Key;
