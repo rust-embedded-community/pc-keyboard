@@ -70,6 +70,7 @@ pub enum Error {
 pub enum KeyCode {
     AltLeft,
     AltRight,
+    AltSysReq,
     ArrowDown,
     ArrowLeft,
     ArrowRight,
@@ -81,6 +82,7 @@ pub enum KeyCode {
     BracketSquareRight,
     CapsLock,
     Comma,
+    ControlBreak,
     ControlLeft,
     ControlRight,
     Delete,
