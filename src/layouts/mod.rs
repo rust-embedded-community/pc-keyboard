@@ -21,3 +21,6 @@ pub use self::jis109::Jis109Key;
 
 mod azerty;
 pub use self::azerty::Azerty;
+
+mod colemak;
+pub use self::colemak::Colemak;
