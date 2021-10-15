@@ -4,6 +4,9 @@
 //! handle all the 'different' keys first, and then jump to another handler -
 //! see UK105 and US104 as an example of that.
 
+mod dvorak_programmer104;
+pub use self::dvorak_programmer104::DVP104Key;
+
 mod dvorak104;
 pub use self::dvorak104::Dvorak104Key;
 
@@ -18,6 +21,9 @@ pub use self::jis109::Jis109Key;
 
 mod azerty;
 pub use self::azerty::Azerty;
+
+mod colemak;
+pub use self::colemak::Colemak;
 
 mod de104;
 pub use self::de104::De104Key;
