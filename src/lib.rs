@@ -186,6 +186,7 @@ pub enum KeyCode {
     WWWHome,
     // Sent when the keyboard boots
     PowerOnTestOk,
+    Oem102,
 }
 
 #[derive(Debug, PartialEq, Eq, Copy, Clone)]

@@ -24,3 +24,6 @@ pub use self::azerty::Azerty;
 
 mod colemak;
 pub use self::colemak::Colemak;
+
+mod de104;
+pub use self::de104::De104Key;
