@@ -205,6 +205,15 @@ impl KeyboardLayout for De104Key {
                     DecodedKey::Unicode('-')
                 }
             }
+            KeyCode::Oem102 => {
+                if modifiers.is_shifted() {
+                    DecodedKey::Unicode('>')
+                } else if modifiers.alt_gr {
+                    DecodedKey::Unicode('|')
+                } else {
+                    DecodedKey::Unicode('<')
+                }
+            }
             
             e => <super::Us104Key as KeyboardLayout>::map_keycode(e, modifiers, handle_ctrl),
         }
