@@ -374,6 +374,7 @@ impl ScancodeSet for ScancodeSet2 {
             0x5A => Ok(KeyCode::Enter),              // 5A
             0x5B => Ok(KeyCode::BracketSquareRight), // 5B
             0x5D => Ok(KeyCode::BackSlash),          // 5D
+            0x61 => Ok(KeyCode::HashTilde),          // 61
             0x66 => Ok(KeyCode::Backspace),          // 66
             0x69 => Ok(KeyCode::Numpad1),            // 69
             0x6B => Ok(KeyCode::Numpad4),            // 6B
