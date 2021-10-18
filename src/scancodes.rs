@@ -395,7 +395,7 @@ impl ScancodeSet for ScancodeSet2 {
             0x7D => Ok(KeyCode::Numpad9),            // 7D
             0x7E => Ok(KeyCode::ScrollLock),         // 7E
             0x83 => Ok(KeyCode::F7),                 // 83
-            0x84 => Ok(KeyCode::AltSysReq),          // 84
+            0x84 => Ok(KeyCode::SysReq),             // 84
             0xAA => Ok(KeyCode::PowerOnTestOk),      // AA
             _ => Err(Error::UnknownKeyCode),
         }
@@ -422,7 +422,7 @@ impl ScancodeSet for ScancodeSet2 {
             0x7A => Ok(KeyCode::PageDown),     // E07A
             0x7C => Ok(KeyCode::PrintScreen),  // E07C
             0x7D => Ok(KeyCode::PageUp),       // E07D
-            0x7E => Ok(KeyCode::ControlBreak), // E07E
+            0x7E => Ok(KeyCode::Break),        // E07E
             _ => Err(Error::UnknownKeyCode),
         }
     }
