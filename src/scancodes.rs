@@ -243,6 +243,7 @@ impl ScancodeSet for ScancodeSet1 {
 
 /// Contains the implementation of Scancode Set 2.
 /// See the OS dev wiki: https://wiki.osdev.org/PS/2_Keyboard#Scan_Code_Set_2
+/// Additional reference: https://www.win.tue.nl/~aeb/linux/kbd/scancodes-10.html
 pub struct ScancodeSet2;
 
 impl ScancodeSet for ScancodeSet2 {
@@ -372,8 +373,8 @@ impl ScancodeSet for ScancodeSet2 {
             0x59 => Ok(KeyCode::ShiftRight),         // 59
             0x5A => Ok(KeyCode::Enter),              // 5A
             0x5B => Ok(KeyCode::BracketSquareRight), // 5B
-            0x5D => Ok(KeyCode::HashTilde),          // 5D
-            0x61 => Ok(KeyCode::BackSlash),          // 61
+            0x5D => Ok(KeyCode::BackSlash),          // 5D
+            0x61 => Ok(KeyCode::HashTilde),          // 61
             0x66 => Ok(KeyCode::Backspace),          // 66
             0x69 => Ok(KeyCode::Numpad1),            // 69
             0x6B => Ok(KeyCode::Numpad4),            // 6B
@@ -394,12 +395,13 @@ impl ScancodeSet for ScancodeSet2 {
             0x7D => Ok(KeyCode::Numpad9),            // 7D
             0x7E => Ok(KeyCode::ScrollLock),         // 7E
             0x83 => Ok(KeyCode::F7),                 // 83
+            0x84 => Ok(KeyCode::SysReq),             // 84
             0xAA => Ok(KeyCode::PowerOnTestOk),      // AA
             _ => Err(Error::UnknownKeyCode),
         }
     }
 
-    /// Implements the extended byte codes for set 1 (prefixed with E0)
+    /// Implements the extended byte codes for set 2 (prefixed with E0)
     fn map_extended_scancode(code: u8) -> Result<KeyCode, Error> {
         match code {
             0x11 => Ok(KeyCode::AltRight),     // E011
@@ -418,7 +420,9 @@ impl ScancodeSet for ScancodeSet2 {
             0x74 => Ok(KeyCode::ArrowRight),   // E074
             0x75 => Ok(KeyCode::ArrowUp),      // E075
             0x7A => Ok(KeyCode::PageDown),     // E07A
+            0x7C => Ok(KeyCode::PrintScreen),  // E07C
             0x7D => Ok(KeyCode::PageUp),       // E07D
+            0x7E => Ok(KeyCode::Break),        // E07E
             _ => Err(Error::UnknownKeyCode),
         }
     }
