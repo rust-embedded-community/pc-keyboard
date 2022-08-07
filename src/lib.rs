@@ -300,7 +300,11 @@ where
     S: ScancodeSet,
 {
     /// Make a new Keyboard object with the given layout.
-    pub fn new(_layout: T, _set: S, handle_ctrl: HandleControl) -> Keyboard<T, S> {
+    pub const fn new(layout: T, set: S, handle_ctrl: HandleControl) -> Keyboard<T, S> {
+        // Bypass destructors, required for const fn
+        core::mem::forget(layout);
+        core::mem::forget(set);
+
         Keyboard {
             register: 0,
             num_bits: 0,
