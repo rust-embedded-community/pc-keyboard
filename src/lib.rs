@@ -356,8 +356,7 @@ where
     /// We assume the start, stop and parity bits have been processed and
     /// verified.
     pub fn add_byte(&mut self, byte: u8) -> Result<Option<KeyEvent>, Error> {
-        let r = S::advance_state(&mut self.decode_state, byte);
-        r
+        S::advance_state(&mut self.decode_state, byte)
     }
 
     /// Shift a bit into the register.

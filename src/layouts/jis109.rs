@@ -1,6 +1,5 @@
 /// A standard Japan 106-key (or 109-key including Windows keys) keyboard.
 /// Has a 2-row high Enter key, with Backslash above.
-
 use crate::{DecodedKey, HandleControl, KeyCode, KeyboardLayout, Modifiers};
 
 pub use super::us104::Us104Key;

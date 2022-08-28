@@ -214,7 +214,7 @@ impl KeyboardLayout for De104Key {
                     DecodedKey::Unicode('<')
                 }
             }
-            
+
             e => <super::Us104Key as KeyboardLayout>::map_keycode(e, modifiers, handle_ctrl),
         }
     }
