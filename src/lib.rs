@@ -314,7 +314,7 @@ where
     S: ScancodeSet,
 {
     /// Make a new Keyboard object with the given layout.
-    pub fn new(_layout: T, _set: S, handle_ctrl: HandleControl) -> Keyboard<T, S> {
+    pub fn new(handle_ctrl: HandleControl) -> Keyboard<T, S> {
         Keyboard {
             register: 0,
             num_bits: 0,
@@ -564,11 +564,8 @@ mod test {
 
     #[test]
     fn test_f9() {
-        let mut k = Keyboard::new(
-            layouts::Us104Key,
-            ScancodeSet2,
-            HandleControl::MapLettersToUnicode,
-        );
+        let mut k =
+            Keyboard::<layouts::Us104Key, ScancodeSet2>::new(HandleControl::MapLettersToUnicode);
         // start
         assert_eq!(k.add_bit(false), Ok(None));
         // 8 data bits (LSB first)
@@ -591,11 +588,8 @@ mod test {
 
     #[test]
     fn test_f9_word() {
-        let mut k = Keyboard::new(
-            layouts::Us104Key,
-            ScancodeSet2,
-            HandleControl::MapLettersToUnicode,
-        );
+        let mut k =
+            Keyboard::<layouts::Us104Key, ScancodeSet2>::new(HandleControl::MapLettersToUnicode);
         assert_eq!(
             k.add_word(0x0402),
             Ok(Some(KeyEvent::new(KeyCode::F9, KeyState::Down)))
@@ -604,11 +598,8 @@ mod test {
 
     #[test]
     fn test_f9_byte() {
-        let mut k = Keyboard::new(
-            layouts::Us104Key,
-            ScancodeSet2,
-            HandleControl::MapLettersToUnicode,
-        );
+        let mut k =
+            Keyboard::<layouts::Us104Key, ScancodeSet2>::new(HandleControl::MapLettersToUnicode);
         assert_eq!(
             k.add_byte(0x01),
             Ok(Some(KeyEvent::new(KeyCode::F9, KeyState::Down)))
@@ -617,11 +608,8 @@ mod test {
 
     #[test]
     fn test_keyup_keydown() {
-        let mut k = Keyboard::new(
-            layouts::Us104Key,
-            ScancodeSet2,
-            HandleControl::MapLettersToUnicode,
-        );
+        let mut k =
+            Keyboard::<layouts::Us104Key, ScancodeSet2>::new(HandleControl::MapLettersToUnicode);
         assert_eq!(
             k.add_byte(0x01),
             Ok(Some(KeyEvent::new(KeyCode::F9, KeyState::Down)))
@@ -639,11 +627,8 @@ mod test {
 
     #[test]
     fn test_f5() {
-        let mut k = Keyboard::new(
-            layouts::Us104Key,
-            ScancodeSet2,
-            HandleControl::MapLettersToUnicode,
-        );
+        let mut k =
+            Keyboard::<layouts::Us104Key, ScancodeSet2>::new(HandleControl::MapLettersToUnicode);
         // start
         assert_eq!(k.add_bit(false), Ok(None));
         // 8 data bits (LSB first)
@@ -666,11 +651,8 @@ mod test {
 
     #[test]
     fn test_f5_up() {
-        let mut k = Keyboard::new(
-            layouts::Us104Key,
-            ScancodeSet2,
-            HandleControl::MapLettersToUnicode,
-        );
+        let mut k =
+            Keyboard::<layouts::Us104Key, ScancodeSet2>::new(HandleControl::MapLettersToUnicode);
         // Send F0
 
         // start
@@ -713,11 +695,8 @@ mod test {
 
     #[test]
     fn test_shift() {
-        let mut k = Keyboard::new(
-            layouts::Uk105Key,
-            ScancodeSet2,
-            HandleControl::MapLettersToUnicode,
-        );
+        let mut k =
+            Keyboard::<layouts::Uk105Key, ScancodeSet2>::new(HandleControl::MapLettersToUnicode);
         // A with left shift held
         assert_eq!(
             k.process_keyevent(KeyEvent::new(KeyCode::ShiftLeft, KeyState::Down)),
@@ -815,11 +794,8 @@ mod test {
 
     #[test]
     fn test_ctrl() {
-        let mut k = Keyboard::new(
-            layouts::Us104Key,
-            ScancodeSet2,
-            HandleControl::MapLettersToUnicode,
-        );
+        let mut k =
+            Keyboard::<layouts::Us104Key, ScancodeSet2>::new(HandleControl::MapLettersToUnicode);
         // Normal
         assert_eq!(
             k.process_keyevent(KeyEvent::new(KeyCode::A, KeyState::Down)),
@@ -876,11 +852,8 @@ mod test {
 
     #[test]
     fn test_numlock() {
-        let mut k = Keyboard::new(
-            layouts::Uk105Key,
-            ScancodeSet2,
-            HandleControl::MapLettersToUnicode,
-        );
+        let mut k =
+            Keyboard::<layouts::Uk105Key, ScancodeSet2>::new(HandleControl::MapLettersToUnicode);
 
         // Numlock ON by default
         assert_eq!(
@@ -946,11 +919,8 @@ mod test {
 
     #[test]
     fn test_set_1_down_up_down() {
-        let mut k = Keyboard::new(
-            layouts::Us104Key,
-            ScancodeSet1,
-            HandleControl::MapLettersToUnicode,
-        );
+        let mut k =
+            Keyboard::<layouts::Us104Key, ScancodeSet1>::new(HandleControl::MapLettersToUnicode);
         assert_eq!(
             k.add_byte(0x1e),
             Ok(Some(KeyEvent::new(KeyCode::A, KeyState::Down)))
@@ -967,11 +937,8 @@ mod test {
 
     #[test]
     fn test_set_1_ext_down_up_down() {
-        let mut k = Keyboard::new(
-            layouts::Us104Key,
-            ScancodeSet1,
-            HandleControl::MapLettersToUnicode,
-        );
+        let mut k =
+            Keyboard::<layouts::Us104Key, ScancodeSet1>::new(HandleControl::MapLettersToUnicode);
         assert_eq!(k.add_byte(0xe0), Ok(None));
         assert_eq!(
             k.add_byte(0x1c),
@@ -986,11 +953,8 @@ mod test {
 
     #[test]
     fn test_set_2_poweron() {
-        let mut k = Keyboard::new(
-            layouts::Us104Key,
-            ScancodeSet2,
-            HandleControl::MapLettersToUnicode,
-        );
+        let mut k =
+            Keyboard::<layouts::Us104Key, ScancodeSet2>::new(HandleControl::MapLettersToUnicode);
         assert_eq!(
             k.add_byte(0xAA),
             Ok(Some(KeyEvent::new(
@@ -1002,11 +966,8 @@ mod test {
 
     #[test]
     fn test_set_2_toomanykeys() {
-        let mut k = Keyboard::new(
-            layouts::Us104Key,
-            ScancodeSet2,
-            HandleControl::MapLettersToUnicode,
-        );
+        let mut k =
+            Keyboard::<layouts::Us104Key, ScancodeSet2>::new(HandleControl::MapLettersToUnicode);
         assert_eq!(
             k.add_byte(0x00),
             Ok(Some(KeyEvent::new(
@@ -1018,11 +979,8 @@ mod test {
 
     #[test]
     fn test_set_2_down_up() {
-        let mut k = Keyboard::new(
-            layouts::Us104Key,
-            ScancodeSet2,
-            HandleControl::MapLettersToUnicode,
-        );
+        let mut k =
+            Keyboard::<layouts::Us104Key, ScancodeSet2>::new(HandleControl::MapLettersToUnicode);
         assert_eq!(
             k.add_byte(0x29),
             Ok(Some(KeyEvent::new(KeyCode::Spacebar, KeyState::Down)))
@@ -1054,11 +1012,8 @@ mod test {
 
     #[test]
     fn test_set_2_ext_down_up() {
-        let mut k = Keyboard::new(
-            layouts::Us104Key,
-            ScancodeSet2,
-            HandleControl::MapLettersToUnicode,
-        );
+        let mut k =
+            Keyboard::<layouts::Us104Key, ScancodeSet2>::new(HandleControl::MapLettersToUnicode);
         assert_eq!(k.add_byte(0xE0), Ok(None));
         assert_eq!(
             k.add_byte(0x6C),
@@ -1074,11 +1029,8 @@ mod test {
 
     #[test]
     fn test_frazert() {
-        let mut k = Keyboard::new(
-            layouts::Azerty,
-            ScancodeSet2,
-            HandleControl::MapLettersToUnicode,
-        );
+        let mut k =
+            Keyboard::<layouts::Azerty, ScancodeSet2>::new(HandleControl::MapLettersToUnicode);
         assert_eq!(
             k.process_keyevent(KeyEvent::new(KeyCode::NumpadSlash, KeyState::Down)),
             Some(DecodedKey::Unicode('/'))
