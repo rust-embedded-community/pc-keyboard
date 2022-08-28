@@ -1,6 +1,6 @@
 use super::{
-    DecodeState, Error, KeyCode, KeyEvent, KeyState, ScancodeSet, EXTENDED_KEY_CODE,
-    KEY_RELEASE_CODE,
+    DecodeState, Error, KeyCode, KeyEvent, KeyState, ScancodeSet, EXTENDED2_KEY_CODE,
+    EXTENDED_KEY_CODE, KEY_RELEASE_CODE,
 };
 
 /// Contains the implementation of Scancode Set 1.
@@ -239,6 +239,11 @@ impl ScancodeSet for ScancodeSet1 {
             _ => Err(Error::UnknownKeyCode),
         }
     }
+
+    /// There are no extended2 scancodes here
+    fn map_extended2_scancode(_code: u8) -> Result<KeyCode, Error> {
+        Err(Error::UnknownKeyCode)
+    }
 }
 
 /// Contains the implementation of Scancode Set 2.
@@ -252,6 +257,7 @@ impl ScancodeSet for ScancodeSet2 {
     /// Start:
     /// F0 => Release
     /// E0 => Extended
+    /// E1 => Extended2 (only used for Pause Key)
     /// xx => Key Down
     ///
     /// Release:
@@ -263,6 +269,13 @@ impl ScancodeSet for ScancodeSet2 {
     ///
     /// Release Extended:
     /// xxx => Extended Key Up
+    ///
+    /// Extended2:
+    /// F0 => Release Extended2
+    /// xx => Extended2 Key Down
+    ///
+    /// Release Extended2:
+    /// xxx => Extended2 Key Up
     fn advance_state(state: &mut DecodeState, code: u8) -> Result<Option<KeyEvent>, Error> {
         match *state {
             DecodeState::Start => match code {
@@ -270,14 +283,25 @@ impl ScancodeSet for ScancodeSet2 {
                     *state = DecodeState::Extended;
                     Ok(None)
                 }
+                EXTENDED2_KEY_CODE => {
+                    *state = DecodeState::Extended2;
+                    Ok(None)
+                }
                 KEY_RELEASE_CODE => {
                     *state = DecodeState::Release;
                     Ok(None)
                 }
-                _ => Ok(Some(KeyEvent::new(
-                    Self::map_scancode(code)?,
-                    KeyState::Down,
-                ))),
+                _ => {
+                    let keycode = Self::map_scancode(code)?;
+                    if keycode == KeyCode::TooManyKeys || keycode == KeyCode::PowerOnTestOk {
+                        Ok(Some(KeyEvent::new(keycode, KeyState::SingleShot)))
+                    } else {
+                        Ok(Some(KeyEvent::new(
+                            Self::map_scancode(code)?,
+                            KeyState::Down,
+                        )))
+                    }
+                }
             },
             DecodeState::Release => {
                 *state = DecodeState::Start;
@@ -290,10 +314,13 @@ impl ScancodeSet for ScancodeSet2 {
                 }
                 _ => {
                     *state = DecodeState::Start;
-                    Ok(Some(KeyEvent::new(
-                        Self::map_extended_scancode(code)?,
-                        KeyState::Down,
-                    )))
+
+                    let keycode = Self::map_extended_scancode(code)?;
+                    if keycode == KeyCode::PrintScreen || keycode == KeyCode::PrintScreen2 {
+                        Ok(Some(KeyEvent::new(keycode, KeyState::SingleShot)))
+                    } else {
+                        Ok(Some(KeyEvent::new(keycode, KeyState::Down)))
+                    }
                 }
             },
             DecodeState::ExtendedRelease => {
@@ -303,12 +330,33 @@ impl ScancodeSet for ScancodeSet2 {
                     KeyState::Up,
                 )))
             }
+            DecodeState::Extended2 => match code {
+                KEY_RELEASE_CODE => {
+                    *state = DecodeState::Extended2Release;
+                    Ok(None)
+                }
+                _ => {
+                    *state = DecodeState::Start;
+                    Ok(Some(KeyEvent::new(
+                        Self::map_extended2_scancode(code)?,
+                        KeyState::Down,
+                    )))
+                }
+            },
+            DecodeState::Extended2Release => {
+                *state = DecodeState::Start;
+                Ok(Some(KeyEvent::new(
+                    Self::map_extended2_scancode(code)?,
+                    KeyState::Up,
+                )))
+            }
         }
     }
 
     /// Implements the single byte codes for Set 2.
     fn map_scancode(code: u8) -> Result<KeyCode, Error> {
         match code {
+            0x00 => Ok(KeyCode::TooManyKeys),        // 00
             0x01 => Ok(KeyCode::F9),                 // 01
             0x03 => Ok(KeyCode::F5),                 // 03
             0x04 => Ok(KeyCode::F3),                 // 04
@@ -405,6 +453,7 @@ impl ScancodeSet for ScancodeSet2 {
     fn map_extended_scancode(code: u8) -> Result<KeyCode, Error> {
         match code {
             0x11 => Ok(KeyCode::AltRight),     // E011
+            0x12 => Ok(KeyCode::PrintScreen),  // E012 (first half)
             0x14 => Ok(KeyCode::ControlRight), // E014
             0x1F => Ok(KeyCode::WindowsLeft),  // E01F
             0x27 => Ok(KeyCode::WindowsRight), // E027
@@ -420,9 +469,17 @@ impl ScancodeSet for ScancodeSet2 {
             0x74 => Ok(KeyCode::ArrowRight),   // E074
             0x75 => Ok(KeyCode::ArrowUp),      // E075
             0x7A => Ok(KeyCode::PageDown),     // E07A
-            0x7C => Ok(KeyCode::PrintScreen),  // E07C
+            0x7C => Ok(KeyCode::PrintScreen2), // E07C (second half)
             0x7D => Ok(KeyCode::PageUp),       // E07D
-            0x7E => Ok(KeyCode::Break),        // E07E
+            0x7E => Ok(KeyCode::ScrollLock),   // E07E
+            _ => Err(Error::UnknownKeyCode),
+        }
+    }
+
+    /// Implements the extended byte codes for set 2 (prefixed with E1)
+    fn map_extended2_scancode(code: u8) -> Result<KeyCode, Error> {
+        match code {
+            0x14 => Ok(KeyCode::PauseBreak), // E114
             _ => Err(Error::UnknownKeyCode),
         }
     }

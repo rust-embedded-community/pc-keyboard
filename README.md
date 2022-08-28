@@ -40,7 +40,7 @@ fn main() {
 
 ## Minimum Supported Rust Version (MSRV)
 
-This crate is guaranteed to compile on stable Rust 1.31 and up. It might compile with older versions but that may change in any new patch release.
+This crate is guaranteed to compile on stable Rust 1.40 and up. It might compile with older versions but that may change in any new patch release.
 
 ## License
 

@@ -501,9 +501,7 @@ impl KeyboardLayout for Azerty {
                 }
             }
             KeyCode::NumpadEnter => DecodedKey::Unicode(10.into()),
-            KeyCode::ShiftLeft => {
-                DecodedKey::Unicode('<')
-            }
+            KeyCode::ShiftLeft => DecodedKey::Unicode('<'),
             k => DecodedKey::RawKey(k),
         }
     }
