@@ -189,12 +189,17 @@ pub enum KeyCode {
     // Sent when the keyboard boots
     PowerOnTestOk,
     Oem102,
+    /// PrintScreen comes in two parts - this is the second
+    PrintScreen2,
+    /// Sent by the keyboard when too many keys are pressed
+    TooManyKeys,
 }
 
 #[derive(Debug, PartialEq, Eq, Copy, Clone)]
 pub enum KeyState {
     Up,
     Down,
+    SingleShot,
 }
 
 /// Options for how we can handle what happens when the Ctrl key is held down
@@ -237,6 +242,10 @@ pub trait ScancodeSet {
     /// Convert a Scan Code Set X extended byte (prefixed E0) to our `KeyCode`
     /// enum.
     fn map_extended_scancode(code: u8) -> Result<KeyCode, Error>;
+
+    /// Convert a Scan Code Set X extended byte (prefixed E1) to our `KeyCode`
+    /// enum.
+    fn map_extended2_scancode(code: u8) -> Result<KeyCode, Error>;
 }
 
 #[derive(Debug)]
@@ -276,6 +285,8 @@ pub enum DecodeState {
     Extended,
     Release,
     ExtendedRelease,
+    Extended2,
+    Extended2Release,
 }
 
 // ****************************************************************************
@@ -286,6 +297,7 @@ pub enum DecodeState {
 
 const KEYCODE_BITS: u8 = 11;
 const EXTENDED_KEY_CODE: u8 = 0xE0;
+const EXTENDED2_KEY_CODE: u8 = 0xE1;
 const KEY_RELEASE_CODE: u8 = 0xF0;
 
 // ****************************************************************************
@@ -912,8 +924,8 @@ mod test {
         }
         codes.sort();
         println!("{:?}", codes);
-        assert_eq!(codes.len(), 85);
-        assert_eq!(errs.len(), 43);
+        assert_eq!(codes.len(), 86);
+        assert_eq!(errs.len(), 42);
 
         let mut codes = Vec::new();
         let mut errs = Vec::new();
@@ -926,8 +938,8 @@ mod test {
         }
         codes.sort();
         println!("{:?}", codes);
-        assert_eq!(codes.len(), 87);
-        assert_eq!(errs.len(), 169);
+        assert_eq!(codes.len(), 89);
+        assert_eq!(errs.len(), 167);
     }
 
     #[test]
@@ -967,6 +979,38 @@ mod test {
         assert_eq!(
             k.add_byte(0x9c),
             Ok(Some(KeyEvent::new(KeyCode::NumpadEnter, KeyState::Up)))
+        );
+    }
+
+    #[test]
+    fn test_set_2_poweron() {
+        let mut k = Keyboard::new(
+            layouts::Us104Key,
+            ScancodeSet2,
+            HandleControl::MapLettersToUnicode,
+        );
+        assert_eq!(
+            k.add_byte(0xAA),
+            Ok(Some(KeyEvent::new(
+                KeyCode::PowerOnTestOk,
+                KeyState::SingleShot
+            )))
+        );
+    }
+
+    #[test]
+    fn test_set_2_toomanykeys() {
+        let mut k = Keyboard::new(
+            layouts::Us104Key,
+            ScancodeSet2,
+            HandleControl::MapLettersToUnicode,
+        );
+        assert_eq!(
+            k.add_byte(0x00),
+            Ok(Some(KeyEvent::new(
+                KeyCode::TooManyKeys,
+                KeyState::SingleShot
+            )))
         );
     }
 
