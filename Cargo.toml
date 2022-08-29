@@ -1,11 +1,11 @@
 [package]
 name = "pc-keyboard"
-version = "0.5.1"
-authors = ["Jonathan 'theJPster' Pallant <github@thejpster.org.uk>"]
+version = "0.6.0"
+authors = ["Jonathan 'theJPster' Pallant <github@thejpster.org.uk>", "Rust Embedded Community Contributors"]
 description = "PS/2 keyboard interface library."
 keywords = ["arm", "cortex-m", "template", "video", "menu"]
 categories = ["embedded", "no-std"]
 license = "MIT OR Apache-2.0"
-repository = "https://github.com/thejpster/pc-keyboard"
+repository = "https://github.com/rust-embedded-community/pc-keyboard.git"
 
 [dependencies]
