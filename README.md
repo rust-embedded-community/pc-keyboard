@@ -21,7 +21,7 @@ extern crate pc_keyboard;
 use pc_keyboard::{Keyboard, layouts, ScancodeSet2, HandleControl};
 
 fn main() {
-	let mut kb = pc_keyboard::Keyboard::new(layouts::Us104Key, ScancodeSet2, HandleControl::MapLettersToUnicode);
+	let mut kb: Keyboard<layouts::Us104Key, ScancodeSet2> = Keyboard::new(HandleControl::MapLettersToUnicode);
 	match kb.add_byte(0x20) {
 		Ok(Some(event)) => {
 			println!("Event {:?}", event);
@@ -41,6 +41,10 @@ fn main() {
 ## Minimum Supported Rust Version (MSRV)
 
 This crate is guaranteed to compile on stable Rust 1.61 and up. It might compile with older versions but that may change in any new patch release.
+
+## Changelog
+
+There is a changelog in [CHANGELOG.md].
 
 ## License
 
