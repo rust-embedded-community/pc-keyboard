@@ -6,12 +6,12 @@ output directly).
 
 ## Supports:
 
-* Scancode Set 1 and 2
-* Dvorak 104-key layout
-* US 104-key layout
-* UK 105-key layout
-* JIS 109-key layout
-* Azerty full layout
+-   Scancode Set 1 and 2
+-   Dvorak 104-key layout
+-   US 104-key layout
+-   UK 105-key layout
+-   JIS 109-key layout
+-   Azerty full layout
 
 ## Usage
 
@@ -40,15 +40,15 @@ fn main() {
 
 ## Minimum Supported Rust Version (MSRV)
 
-This crate is guaranteed to compile on stable Rust 1.40 and up. It might compile with older versions but that may change in any new patch release.
+This crate is guaranteed to compile on stable Rust 1.61 and up. It might compile with older versions but that may change in any new patch release.
 
 ## License
 
 Licensed under either of
 
-- Apache License, Version 2.0 ([LICENSE-APACHE](LICENSE-APACHE) or
-  http://www.apache.org/licenses/LICENSE-2.0)
-- MIT license ([LICENSE-MIT](LICENSE-MIT) or http://opensource.org/licenses/MIT)
+-   Apache License, Version 2.0 ([LICENSE-APACHE](LICENSE-APACHE) or
+    http://www.apache.org/licenses/LICENSE-2.0)
+-   MIT license ([LICENSE-MIT](LICENSE-MIT) or http://opensource.org/licenses/MIT)
 
 at your option.
 
@@ -61,8 +61,8 @@ any additional terms or conditions.
 ## Code of Conduct
 
 Contribution to this crate is organized under the terms of the [Rust Code of
-Conduct][CoC], the maintainer of this crate, the [Rust Embedded Community][team], promises
+Conduct][coc], the maintainer of this crate, the [Rust Embedded Community][team], promises
 to intervene to uphold that code of conduct.
 
-[CoC]: https://www.rust-lang.org/policies/code-of-conduct
+[coc]: https://www.rust-lang.org/policies/code-of-conduct
 [team]: https://github.com/orgs/rust-embedded-community/teams/all

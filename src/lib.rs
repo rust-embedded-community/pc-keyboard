@@ -9,6 +9,8 @@
 //! that the interrupt can access, which is unsafe.
 
 #![cfg_attr(not(test), no_std)]
+#[cfg(test)]
+extern crate std as core;
 
 // ****************************************************************************
 //
@@ -16,11 +18,7 @@
 //
 // ****************************************************************************
 
-#[cfg(not(test))]
 use core::marker::PhantomData;
-
-#[cfg(test)]
-use std::marker::PhantomData;
 
 // ****************************************************************************
 //
@@ -314,7 +312,7 @@ where
     S: ScancodeSet,
 {
     /// Make a new Keyboard object with the given layout.
-    pub fn new(handle_ctrl: HandleControl) -> Keyboard<T, S> {
+    pub const fn new(handle_ctrl: HandleControl) -> Keyboard<T, S> {
         Keyboard {
             register: 0,
             num_bits: 0,
@@ -340,7 +338,7 @@ where
     }
 
     /// Get the current Ctrl key mapping.
-    pub fn get_ctrl_handling(&self) -> HandleControl {
+    pub const fn get_ctrl_handling(&self) -> HandleControl {
         self.handle_ctrl
     }
 
@@ -490,16 +488,16 @@ where
         }
     }
 
-    fn get_bit(word: u16, offset: usize) -> bool {
+    const fn get_bit(word: u16, offset: usize) -> bool {
         ((word >> offset) & 0x0001) != 0
     }
 
-    fn has_even_number_bits(data: u8) -> bool {
+    const fn has_even_number_bits(data: u8) -> bool {
         (data.count_ones() % 2) == 0
     }
 
     /// Check 11-bit word has 1 start bit, 1 stop bit and an odd parity bit.
-    fn check_word(word: u16) -> Result<u8, Error> {
+    const fn check_word(word: u16) -> Result<u8, Error> {
         let start_bit = Self::get_bit(word, 0);
         let parity_bit = Self::get_bit(word, 9);
         let stop_bit = Self::get_bit(word, 10);
@@ -525,7 +523,7 @@ where
 }
 
 impl KeyEvent {
-    pub fn new(code: KeyCode, state: KeyState) -> KeyEvent {
+    pub const fn new(code: KeyCode, state: KeyState) -> KeyEvent {
         KeyEvent { code, state }
     }
 }
@@ -537,15 +535,15 @@ impl KeyEvent {
 // ****************************************************************************
 
 impl Modifiers {
-    pub fn is_shifted(&self) -> bool {
+    pub const fn is_shifted(&self) -> bool {
         self.lshift | self.rshift
     }
 
-    pub fn is_ctrl(&self) -> bool {
+    pub const fn is_ctrl(&self) -> bool {
         self.lctrl | self.rctrl
     }
 
-    pub fn is_caps(&self) -> bool {
+    pub const fn is_caps(&self) -> bool {
         (self.lshift | self.rshift) ^ self.capslock
     }
 }
