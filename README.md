@@ -44,7 +44,7 @@ This crate is guaranteed to compile on stable Rust 1.61 and up. It might compile
 
 ## Changelog
 
-There is a changelog in [CHANGELOG.md].
+There is a changelog in [CHANGELOG.md](./CHANGELOG.md).
 
 ## License
 
@@ -69,4 +69,4 @@ Conduct][coc], the maintainer of this crate, the [Rust Embedded Community][team]
 to intervene to uphold that code of conduct.
 
 [coc]: https://www.rust-lang.org/policies/code-of-conduct
-[team]: https://github.com/orgs/rust-embedded-community/teams/all
+[team]: https://github.com/orgs/rust-embedded-community/people
