@@ -129,7 +129,7 @@ impl KeyboardLayout for Azerty {
             KeyCode::Tab => DecodedKey::Unicode(0x09.into()),
             KeyCode::Q => {
                 if map_to_unicode && modifiers.is_ctrl() {
-                    DecodedKey::Unicode('\u{0011}')
+                    DecodedKey::Unicode('\u{0001}')
                 } else if modifiers.is_caps() {
                     DecodedKey::Unicode('A')
                 } else {
@@ -138,7 +138,7 @@ impl KeyboardLayout for Azerty {
             }
             KeyCode::W => {
                 if map_to_unicode && modifiers.is_ctrl() {
-                    DecodedKey::Unicode('\u{0017}')
+                    DecodedKey::Unicode('\u{001A}')
                 } else if modifiers.is_caps() {
                     DecodedKey::Unicode('Z')
                 } else {
@@ -244,7 +244,7 @@ impl KeyboardLayout for Azerty {
             }
             KeyCode::A => {
                 if map_to_unicode && modifiers.is_ctrl() {
-                    DecodedKey::Unicode('\u{0001}')
+                    DecodedKey::Unicode('\u{0011}')
                 } else if modifiers.is_caps() {
                     DecodedKey::Unicode('Q')
                 } else {
@@ -324,7 +324,9 @@ impl KeyboardLayout for Azerty {
                 }
             }
             KeyCode::SemiColon => {
-                if modifiers.is_shifted() {
+                if map_to_unicode && modifiers.is_ctrl() {
+                    DecodedKey::Unicode('\u{000D}')
+                } else if modifiers.is_caps() {
                     DecodedKey::Unicode('M')
                 } else {
                     DecodedKey::Unicode('m')
@@ -341,7 +343,7 @@ impl KeyboardLayout for Azerty {
             KeyCode::Enter => DecodedKey::Unicode(10.into()),
             KeyCode::Z => {
                 if map_to_unicode && modifiers.is_ctrl() {
-                    DecodedKey::Unicode('\u{001A}')
+                    DecodedKey::Unicode('\u{0017}')
                 } else if modifiers.is_caps() {
                     DecodedKey::Unicode('W')
                 } else {
@@ -394,9 +396,7 @@ impl KeyboardLayout for Azerty {
                 }
             }
             KeyCode::M => {
-                if map_to_unicode && modifiers.is_ctrl() {
-                    DecodedKey::Unicode('\u{000D}')
-                } else if modifiers.is_caps() {
+                if modifiers.is_caps() {
                     DecodedKey::Unicode('?')
                 } else {
                     DecodedKey::Unicode(',')
