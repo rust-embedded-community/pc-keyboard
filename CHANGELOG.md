@@ -1,5 +1,9 @@
 # Changelog
 
+## v0.6.1 (20 October 2022)
+
+* Fix Control-Letter codes on AZERTY
+
 ## v0.6.0 (29 Aug 2022)
 
 * `Keyboard::new` is now const
