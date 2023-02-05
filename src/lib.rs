@@ -70,7 +70,6 @@ pub enum Error {
 ///
 /// See <https://kbdlayout.info/kbduk/shiftstates+virtualkeys/base>
 #[derive(Debug, PartialEq, Eq, Copy, Clone, PartialOrd, Ord)]
-#[non_exhaustive]
 #[repr(u8)]
 pub enum KeyCode {
     // ========= Row 1 (the F-keys) =========
