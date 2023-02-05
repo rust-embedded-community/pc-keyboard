@@ -13,7 +13,7 @@ impl KeyboardLayout for Jis109Key {
         handle_ctrl: HandleControl,
     ) -> DecodedKey {
         match keycode {
-            KeyCode::BackTick => {
+            KeyCode::Oem8 => {
                 if modifiers.is_shifted() {
                     DecodedKey::Unicode('`')
                 } else {
@@ -91,49 +91,49 @@ impl KeyboardLayout for Jis109Key {
                     DecodedKey::Unicode('0')
                 }
             }
-            KeyCode::Minus => {
+            KeyCode::OemMinus => {
                 if modifiers.is_shifted() {
                     DecodedKey::Unicode('=')
                 } else {
                     DecodedKey::Unicode('-')
                 }
             }
-            KeyCode::Equals => {
+            KeyCode::OemPlus => {
                 if modifiers.is_shifted() {
                     DecodedKey::Unicode('+')
                 } else {
                     DecodedKey::Unicode(';')
                 }
             }
-            KeyCode::BracketSquareLeft => {
+            KeyCode::Oem4 => {
                 if modifiers.is_shifted() {
                     DecodedKey::Unicode('{')
                 } else {
                     DecodedKey::Unicode('[')
                 }
             }
-            KeyCode::BracketSquareRight => {
+            KeyCode::Oem6 => {
                 if modifiers.is_shifted() {
                     DecodedKey::Unicode('}')
                 } else {
                     DecodedKey::Unicode(']')
                 }
             }
-            KeyCode::BackSlash => {
+            KeyCode::Oem7 => {
                 if modifiers.is_shifted() {
                     DecodedKey::Unicode('|')
                 } else {
                     DecodedKey::Unicode('\\')
                 }
             }
-            KeyCode::SemiColon => {
+            KeyCode::Oem1 => {
                 if modifiers.is_shifted() {
                     DecodedKey::Unicode('*')
                 } else {
                     DecodedKey::Unicode(':')
                 }
             }
-            KeyCode::Quote => {
+            KeyCode::Oem3 => {
                 if modifiers.is_shifted() {
                     DecodedKey::Unicode('~')
                 } else {

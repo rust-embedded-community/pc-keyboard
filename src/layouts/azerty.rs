@@ -11,8 +11,8 @@ impl KeyboardLayout for Azerty {
         let map_to_unicode = handle_ctrl == HandleControl::MapLettersToUnicode;
         match keycode {
             KeyCode::Escape => DecodedKey::Unicode(0x1B.into()),
-            KeyCode::BackTick => DecodedKey::Unicode('²'),
-            KeyCode::HashTilde => {
+            KeyCode::Oem8 => DecodedKey::Unicode('²'),
+            KeyCode::Oem5 => {
                 if modifiers.is_shifted() {
                     DecodedKey::Unicode('*')
                 } else {
@@ -107,7 +107,7 @@ impl KeyboardLayout for Azerty {
                     DecodedKey::Unicode('à')
                 }
             }
-            KeyCode::Minus => {
+            KeyCode::OemMinus => {
                 if modifiers.is_shifted() {
                     DecodedKey::Unicode('°')
                 } else if modifiers.alt_gr {
@@ -116,7 +116,7 @@ impl KeyboardLayout for Azerty {
                     DecodedKey::Unicode(')')
                 }
             }
-            KeyCode::Equals => {
+            KeyCode::OemPlus => {
                 if modifiers.is_shifted() {
                     DecodedKey::Unicode('+')
                 } else if modifiers.alt_gr {
@@ -217,7 +217,7 @@ impl KeyboardLayout for Azerty {
                     DecodedKey::Unicode('p')
                 }
             }
-            KeyCode::BracketSquareLeft => {
+            KeyCode::Oem4 => {
                 if modifiers.is_shifted() {
                     DecodedKey::Unicode('¨')
                 } else if modifiers.alt_gr {
@@ -226,7 +226,7 @@ impl KeyboardLayout for Azerty {
                     DecodedKey::Unicode('^')
                 }
             }
-            KeyCode::BracketSquareRight => {
+            KeyCode::Oem6 => {
                 if modifiers.is_shifted() {
                     DecodedKey::Unicode('£')
                 } else if modifiers.alt_gr {
@@ -235,7 +235,7 @@ impl KeyboardLayout for Azerty {
                     DecodedKey::Unicode('$')
                 }
             }
-            KeyCode::BackSlash => {
+            KeyCode::Oem7 => {
                 if modifiers.is_shifted() {
                     DecodedKey::Unicode('µ')
                 } else {
@@ -323,7 +323,7 @@ impl KeyboardLayout for Azerty {
                     DecodedKey::Unicode('l')
                 }
             }
-            KeyCode::SemiColon => {
+            KeyCode::Oem1 => {
                 if map_to_unicode && modifiers.is_ctrl() {
                     DecodedKey::Unicode('\u{000D}')
                 } else if modifiers.is_caps() {
@@ -332,7 +332,7 @@ impl KeyboardLayout for Azerty {
                     DecodedKey::Unicode('m')
                 }
             }
-            KeyCode::Quote => {
+            KeyCode::Oem3 => {
                 if modifiers.is_shifted() {
                     DecodedKey::Unicode('%')
                 } else {
@@ -340,7 +340,7 @@ impl KeyboardLayout for Azerty {
                 }
             }
             // Enter gives LF, not CRLF or CR
-            KeyCode::Enter => DecodedKey::Unicode(10.into()),
+            KeyCode::Return => DecodedKey::Unicode(10.into()),
             KeyCode::Z => {
                 if map_to_unicode && modifiers.is_ctrl() {
                     DecodedKey::Unicode('\u{0017}')
@@ -402,21 +402,21 @@ impl KeyboardLayout for Azerty {
                     DecodedKey::Unicode(',')
                 }
             }
-            KeyCode::Comma => {
+            KeyCode::OemComma => {
                 if modifiers.is_shifted() {
                     DecodedKey::Unicode('.')
                 } else {
                     DecodedKey::Unicode(';')
                 }
             }
-            KeyCode::Fullstop => {
+            KeyCode::OemPeriod => {
                 if modifiers.is_shifted() {
                     DecodedKey::Unicode('/')
                 } else {
                     DecodedKey::Unicode(':')
                 }
             }
-            KeyCode::Slash => {
+            KeyCode::Oem2 => {
                 if modifiers.is_shifted() {
                     DecodedKey::Unicode('§')
                 } else {
@@ -425,9 +425,9 @@ impl KeyboardLayout for Azerty {
             }
             KeyCode::Spacebar => DecodedKey::Unicode(' '),
             KeyCode::Delete => DecodedKey::Unicode(127.into()),
-            KeyCode::NumpadSlash => DecodedKey::Unicode('/'),
-            KeyCode::NumpadStar => DecodedKey::Unicode('*'),
-            KeyCode::NumpadMinus => DecodedKey::Unicode('-'),
+            KeyCode::NumpadDivide => DecodedKey::Unicode('/'),
+            KeyCode::NumpadMultiply => DecodedKey::Unicode('*'),
+            KeyCode::NumpadSubtract => DecodedKey::Unicode('-'),
             KeyCode::Numpad7 => {
                 if modifiers.numlock {
                     DecodedKey::Unicode('7')
@@ -449,7 +449,7 @@ impl KeyboardLayout for Azerty {
                     DecodedKey::RawKey(KeyCode::PageUp)
                 }
             }
-            KeyCode::NumpadPlus => DecodedKey::Unicode('+'),
+            KeyCode::NumpadAdd => DecodedKey::Unicode('+'),
             KeyCode::Numpad4 => {
                 if modifiers.numlock {
                     DecodedKey::Unicode('4')
@@ -501,8 +501,59 @@ impl KeyboardLayout for Azerty {
                 }
             }
             KeyCode::NumpadEnter => DecodedKey::Unicode(10.into()),
-            KeyCode::ShiftLeft => DecodedKey::Unicode('<'),
+            KeyCode::LShift => DecodedKey::Unicode('<'),
             k => DecodedKey::RawKey(k),
         }
+    }
+}
+
+#[cfg(test)]
+mod test {
+    use super::*;
+    use crate::{KeyCode, KeyEvent, KeyState, Keyboard, ScancodeSet2};
+
+    #[test]
+    fn test_frazert() {
+        let mut k = Keyboard::<Azerty, ScancodeSet2>::new(HandleControl::MapLettersToUnicode);
+        assert_eq!(
+            k.process_keyevent(KeyEvent::new(KeyCode::NumpadDivide, KeyState::Down)),
+            Some(DecodedKey::Unicode('/'))
+        );
+        assert_eq!(
+            k.process_keyevent(KeyEvent::new(KeyCode::NumpadMultiply, KeyState::Down)),
+            Some(DecodedKey::Unicode('*'))
+        );
+        assert_eq!(
+            k.process_keyevent(KeyEvent::new(KeyCode::A, KeyState::Down)),
+            Some(DecodedKey::Unicode('q'))
+        );
+        assert_eq!(
+            k.process_keyevent(KeyEvent::new(KeyCode::Key4, KeyState::Down)),
+            Some(DecodedKey::Unicode('\''))
+        );
+        assert_eq!(
+            k.process_keyevent(KeyEvent::new(KeyCode::Oem7, KeyState::Down)),
+            Some(DecodedKey::Unicode('*'))
+        );
+        assert_eq!(
+            k.process_keyevent(KeyEvent::new(KeyCode::Numpad0, KeyState::Up)),
+            None
+        );
+        assert_eq!(
+            k.process_keyevent(KeyEvent::new(KeyCode::NumpadLock, KeyState::Down)),
+            None
+        );
+        assert_eq!(
+            k.process_keyevent(KeyEvent::new(KeyCode::NumpadLock, KeyState::Up)),
+            None
+        );
+        assert_eq!(
+            k.process_keyevent(KeyEvent::new(KeyCode::Numpad0, KeyState::Down)),
+            Some(DecodedKey::RawKey(KeyCode::Insert))
+        );
+        assert_eq!(
+            k.process_keyevent(KeyEvent::new(KeyCode::Numpad0, KeyState::Up)),
+            None
+        );
     }
 }

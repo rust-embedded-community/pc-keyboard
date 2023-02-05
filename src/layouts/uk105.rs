@@ -14,7 +14,7 @@ impl KeyboardLayout for Uk105Key {
         handle_ctrl: HandleControl,
     ) -> DecodedKey {
         match keycode {
-            KeyCode::BackTick => {
+            KeyCode::Oem8 => {
                 if modifiers.alt_gr {
                     DecodedKey::Unicode('|')
                 } else if modifiers.is_shifted() {
@@ -30,7 +30,7 @@ impl KeyboardLayout for Uk105Key {
                     DecodedKey::Unicode('2')
                 }
             }
-            KeyCode::Quote => {
+            KeyCode::Oem3 => {
                 if modifiers.is_shifted() {
                     DecodedKey::Unicode('@')
                 } else {
@@ -53,14 +53,14 @@ impl KeyboardLayout for Uk105Key {
                     DecodedKey::Unicode('4')
                 }
             }
-            KeyCode::BackSlash => {
+            KeyCode::Oem7 => {
                 if modifiers.is_shifted() {
                     DecodedKey::Unicode('~')
                 } else {
                     DecodedKey::Unicode('#')
                 }
             }
-            KeyCode::HashTilde => {
+            KeyCode::Oem5 => {
                 if modifiers.is_shifted() {
                     DecodedKey::Unicode('|')
                 } else {

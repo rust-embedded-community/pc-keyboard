@@ -15,14 +15,14 @@ impl KeyboardLayout for Dvorak104Key {
     ) -> DecodedKey {
         let map_to_unicode = handle_ctrl == HandleControl::MapLettersToUnicode;
         match keycode {
-            KeyCode::Minus => {
+            KeyCode::OemMinus => {
                 if modifiers.is_shifted() {
                     DecodedKey::Unicode('{')
                 } else {
                     DecodedKey::Unicode('[')
                 }
             }
-            KeyCode::Equals => {
+            KeyCode::OemPlus => {
                 if modifiers.is_shifted() {
                     DecodedKey::Unicode('}')
                 } else {
@@ -113,14 +113,14 @@ impl KeyboardLayout for Dvorak104Key {
                     DecodedKey::Unicode('l')
                 }
             }
-            KeyCode::BracketSquareLeft => {
+            KeyCode::Oem4 => {
                 if modifiers.is_shifted() {
                     DecodedKey::Unicode('?')
                 } else {
                     DecodedKey::Unicode('/')
                 }
             }
-            KeyCode::BracketSquareRight => {
+            KeyCode::Oem6 => {
                 if modifiers.is_shifted() {
                     DecodedKey::Unicode('+')
                 } else {
@@ -199,7 +199,7 @@ impl KeyboardLayout for Dvorak104Key {
                     DecodedKey::Unicode('n')
                 }
             }
-            KeyCode::SemiColon => {
+            KeyCode::Oem1 => {
                 if map_to_unicode && modifiers.is_ctrl() {
                     DecodedKey::Unicode('\u{0013}')
                 } else if modifiers.is_caps() {
@@ -208,7 +208,7 @@ impl KeyboardLayout for Dvorak104Key {
                     DecodedKey::Unicode('s')
                 }
             }
-            KeyCode::Quote => {
+            KeyCode::Oem3 => {
                 if modifiers.is_shifted() {
                     DecodedKey::Unicode('_')
                 } else {
@@ -267,7 +267,7 @@ impl KeyboardLayout for Dvorak104Key {
                     DecodedKey::Unicode('b')
                 }
             }
-            KeyCode::Comma => {
+            KeyCode::OemComma => {
                 if map_to_unicode && modifiers.is_ctrl() {
                     DecodedKey::Unicode('\u{0017}')
                 } else if modifiers.is_caps() {
@@ -276,7 +276,7 @@ impl KeyboardLayout for Dvorak104Key {
                     DecodedKey::Unicode('w')
                 }
             }
-            KeyCode::Fullstop => {
+            KeyCode::OemPeriod => {
                 if map_to_unicode && modifiers.is_ctrl() {
                     DecodedKey::Unicode('\u{0016}')
                 } else if modifiers.is_caps() {
@@ -285,7 +285,7 @@ impl KeyboardLayout for Dvorak104Key {
                     DecodedKey::Unicode('v')
                 }
             }
-            KeyCode::Slash => {
+            KeyCode::Oem2 => {
                 if map_to_unicode && modifiers.is_ctrl() {
                     DecodedKey::Unicode('\u{001A}')
                 } else if modifiers.is_caps() {
