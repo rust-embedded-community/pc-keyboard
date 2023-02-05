@@ -26,6 +26,8 @@ use core::marker::PhantomData;
 //
 // ****************************************************************************
 
+pub mod layouts;
+
 mod scancodes;
 pub use crate::scancodes::{ScancodeSet1, ScancodeSet2};
 
@@ -36,7 +38,6 @@ pub use crate::scancodes::{ScancodeSet1, ScancodeSet2};
 // ****************************************************************************
 
 /// `Keyboard<T, S>` encapsulates decode/sampling logic, and handles state transitions and key events.
-/// Size: 10 bytes
 #[derive(Debug)]
 pub struct Keyboard<T, S>
 where
@@ -379,17 +380,6 @@ pub trait KeyboardLayout {
 pub trait ScancodeSet {
     /// Handles the state logic for the decoding of scan codes into key events.
     fn advance_state(state: &mut DecodeState, code: u8) -> Result<Option<KeyEvent>, Error>;
-
-    /// Convert a Scan Code set X byte to our 'KeyCode' enum
-    fn map_scancode(code: u8) -> Result<KeyCode, Error>;
-
-    /// Convert a Scan Code Set X extended byte (prefixed E0) to our `KeyCode`
-    /// enum.
-    fn map_extended_scancode(code: u8) -> Result<KeyCode, Error>;
-
-    /// Convert a Scan Code Set X extended byte (prefixed E1) to our `KeyCode`
-    /// enum.
-    fn map_extended2_scancode(code: u8) -> Result<KeyCode, Error>;
 }
 
 /// The set of modifier keys you have on a keyboard.
@@ -725,8 +715,6 @@ impl Modifiers {
     }
 }
 
-pub mod layouts;
-
 // ****************************************************************************
 //
 // Tests
@@ -1015,37 +1003,6 @@ mod test {
             (KeyEvent::new(KeyCode::Numpad0, KeyState::Up), None),
         ];
         process_keyevents(&mut k, &test_sequence);
-    }
-
-    #[test]
-    fn validate_scancodes() {
-        let mut codes = Vec::new();
-        let mut errs = Vec::new();
-        for code in 0x00..=0x7F {
-            let r = ScancodeSet1::map_scancode(code);
-            match r {
-                Ok(c) => codes.push(c),
-                Err(_) => errs.push(code),
-            }
-        }
-        codes.sort();
-        println!("{:?}", codes);
-        assert_eq!(codes.len(), 87);
-        assert_eq!(errs.len(), 41);
-
-        let mut codes = Vec::new();
-        let mut errs = Vec::new();
-        for code in 0x00..=0xFF {
-            let r = ScancodeSet2::map_scancode(code);
-            match r {
-                Ok(c) => codes.push(c),
-                Err(_) => errs.push(code),
-            }
-        }
-        codes.sort();
-        println!("{:?}", codes);
-        assert_eq!(codes.len(), 89);
-        assert_eq!(errs.len(), 167);
     }
 
     #[test]
