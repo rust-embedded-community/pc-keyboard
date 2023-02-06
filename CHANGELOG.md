@@ -1,5 +1,12 @@
 # Changelog
 
+## Unreleased
+
+* Changed ordering of `enum KeyCode` and names of several of the keys
+* Support the mysterious 'Right Control 2' and 'Right Alt 2' so that Pause/Break
+  and Print Screen do the right thing.
+* Fix the Backslash/Tilde swap on the UK Layout.
+
 ## v0.6.1 (20 October 2022)
 
 * Fix Control-Letter codes on AZERTY

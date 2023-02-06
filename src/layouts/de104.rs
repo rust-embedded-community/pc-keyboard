@@ -13,7 +13,7 @@ impl KeyboardLayout for De104Key {
         let map_to_unicode = handle_ctrl == HandleControl::MapLettersToUnicode;
         match keycode {
             KeyCode::Escape => DecodedKey::Unicode(0x1B.into()),
-            KeyCode::BackTick => {
+            KeyCode::Oem8 => {
                 if modifiers.is_shifted() {
                     DecodedKey::Unicode('°')
                 } else {
@@ -90,14 +90,14 @@ impl KeyboardLayout for De104Key {
                     DecodedKey::Unicode('0')
                 }
             }
-            KeyCode::Minus => {
+            KeyCode::OemMinus => {
                 if modifiers.is_shifted() {
                     DecodedKey::Unicode('?')
                 } else {
                     DecodedKey::Unicode('ß')
                 }
             }
-            KeyCode::Equals => {
+            KeyCode::OemPlus => {
                 if modifiers.is_shifted() {
                     DecodedKey::Unicode('`')
                 } else {
@@ -137,14 +137,14 @@ impl KeyboardLayout for De104Key {
                     DecodedKey::Unicode('z')
                 }
             }
-            KeyCode::BracketSquareLeft => {
+            KeyCode::Oem4 => {
                 if modifiers.is_caps() {
                     DecodedKey::Unicode('Ü')
                 } else {
                     DecodedKey::Unicode('ü')
                 }
             }
-            KeyCode::BracketSquareRight => {
+            KeyCode::Oem6 => {
                 if modifiers.alt_gr {
                     DecodedKey::Unicode('~')
                 } else if modifiers.is_caps() {
@@ -153,22 +153,22 @@ impl KeyboardLayout for De104Key {
                     DecodedKey::Unicode('+')
                 }
             }
-            KeyCode::Enter => DecodedKey::Unicode(10.into()),
-            KeyCode::BackSlash => {
+            KeyCode::Return => DecodedKey::Unicode(10.into()),
+            KeyCode::Oem7 => {
                 if modifiers.is_shifted() {
                     DecodedKey::Unicode('\'')
                 } else {
                     DecodedKey::Unicode('#')
                 }
             }
-            KeyCode::SemiColon => {
+            KeyCode::Oem1 => {
                 if modifiers.is_shifted() {
                     DecodedKey::Unicode('Ö')
                 } else {
                     DecodedKey::Unicode('ö')
                 }
             }
-            KeyCode::Quote => {
+            KeyCode::Oem3 => {
                 if modifiers.is_shifted() {
                     DecodedKey::Unicode('Ä')
                 } else {
@@ -184,28 +184,28 @@ impl KeyboardLayout for De104Key {
                     DecodedKey::Unicode('y')
                 }
             }
-            KeyCode::Comma => {
+            KeyCode::OemComma => {
                 if modifiers.is_shifted() {
                     DecodedKey::Unicode(';')
                 } else {
                     DecodedKey::Unicode(',')
                 }
             }
-            KeyCode::Fullstop => {
+            KeyCode::OemPeriod => {
                 if modifiers.is_shifted() {
                     DecodedKey::Unicode(':')
                 } else {
                     DecodedKey::Unicode('.')
                 }
             }
-            KeyCode::Slash => {
+            KeyCode::Oem2 => {
                 if modifiers.is_shifted() {
                     DecodedKey::Unicode('_')
                 } else {
                     DecodedKey::Unicode('-')
                 }
             }
-            KeyCode::Oem102 => {
+            KeyCode::Oem5 => {
                 if modifiers.is_shifted() {
                     DecodedKey::Unicode('>')
                 } else if modifiers.alt_gr {

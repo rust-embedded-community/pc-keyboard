@@ -13,7 +13,7 @@ impl KeyboardLayout for Us104Key {
     ) -> DecodedKey {
         let map_to_unicode = handle_ctrl == HandleControl::MapLettersToUnicode;
         match keycode {
-            KeyCode::BackTick => {
+            KeyCode::Oem8 => {
                 if modifiers.is_shifted() {
                     DecodedKey::Unicode('~')
                 } else {
@@ -91,14 +91,14 @@ impl KeyboardLayout for Us104Key {
                     DecodedKey::Unicode('0')
                 }
             }
-            KeyCode::Minus => {
+            KeyCode::OemMinus => {
                 if modifiers.is_shifted() {
                     DecodedKey::Unicode('_')
                 } else {
                     DecodedKey::Unicode('-')
                 }
             }
-            KeyCode::Equals => {
+            KeyCode::OemPlus => {
                 if modifiers.is_shifted() {
                     DecodedKey::Unicode('+')
                 } else {
@@ -197,21 +197,21 @@ impl KeyboardLayout for Us104Key {
                     DecodedKey::Unicode('p')
                 }
             }
-            KeyCode::BracketSquareLeft => {
+            KeyCode::Oem4 => {
                 if modifiers.is_shifted() {
                     DecodedKey::Unicode('{')
                 } else {
                     DecodedKey::Unicode('[')
                 }
             }
-            KeyCode::BracketSquareRight => {
+            KeyCode::Oem6 => {
                 if modifiers.is_shifted() {
                     DecodedKey::Unicode('}')
                 } else {
                     DecodedKey::Unicode(']')
                 }
             }
-            KeyCode::BackSlash => {
+            KeyCode::Oem7 => {
                 if modifiers.is_shifted() {
                     DecodedKey::Unicode('|')
                 } else {
@@ -299,14 +299,14 @@ impl KeyboardLayout for Us104Key {
                     DecodedKey::Unicode('l')
                 }
             }
-            KeyCode::SemiColon => {
+            KeyCode::Oem1 => {
                 if modifiers.is_shifted() {
                     DecodedKey::Unicode(':')
                 } else {
                     DecodedKey::Unicode(';')
                 }
             }
-            KeyCode::Quote => {
+            KeyCode::Oem3 => {
                 if modifiers.is_shifted() {
                     DecodedKey::Unicode('"')
                 } else {
@@ -314,7 +314,7 @@ impl KeyboardLayout for Us104Key {
                 }
             }
             // Enter gives LF, not CRLF or CR
-            KeyCode::Enter => DecodedKey::Unicode(10.into()),
+            KeyCode::Return => DecodedKey::Unicode(10.into()),
             KeyCode::Z => {
                 if map_to_unicode && modifiers.is_ctrl() {
                     DecodedKey::Unicode('\u{001A}')
@@ -378,21 +378,21 @@ impl KeyboardLayout for Us104Key {
                     DecodedKey::Unicode('m')
                 }
             }
-            KeyCode::Comma => {
+            KeyCode::OemComma => {
                 if modifiers.is_shifted() {
                     DecodedKey::Unicode('<')
                 } else {
                     DecodedKey::Unicode(',')
                 }
             }
-            KeyCode::Fullstop => {
+            KeyCode::OemPeriod => {
                 if modifiers.is_shifted() {
                     DecodedKey::Unicode('>')
                 } else {
                     DecodedKey::Unicode('.')
                 }
             }
-            KeyCode::Slash => {
+            KeyCode::Oem2 => {
                 if modifiers.is_shifted() {
                     DecodedKey::Unicode('?')
                 } else {
@@ -401,9 +401,9 @@ impl KeyboardLayout for Us104Key {
             }
             KeyCode::Spacebar => DecodedKey::Unicode(' '),
             KeyCode::Delete => DecodedKey::Unicode(127.into()),
-            KeyCode::NumpadSlash => DecodedKey::Unicode('/'),
-            KeyCode::NumpadStar => DecodedKey::Unicode('*'),
-            KeyCode::NumpadMinus => DecodedKey::Unicode('-'),
+            KeyCode::NumpadDivide => DecodedKey::Unicode('/'),
+            KeyCode::NumpadMultiply => DecodedKey::Unicode('*'),
+            KeyCode::NumpadSubtract => DecodedKey::Unicode('-'),
             KeyCode::Numpad7 => {
                 if modifiers.numlock {
                     DecodedKey::Unicode('7')
@@ -425,7 +425,7 @@ impl KeyboardLayout for Us104Key {
                     DecodedKey::RawKey(KeyCode::PageUp)
                 }
             }
-            KeyCode::NumpadPlus => DecodedKey::Unicode('+'),
+            KeyCode::NumpadAdd => DecodedKey::Unicode('+'),
             KeyCode::Numpad4 => {
                 if modifiers.numlock {
                     DecodedKey::Unicode('4')
