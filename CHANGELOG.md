@@ -1,11 +1,16 @@
 # Changelog
 
-## Unreleased
+## Unreleased Changes
+
+* None
+
+## v0.7.0 (6 February 2023)
 
 * Changed ordering of `enum KeyCode` and names of several of the keys
+* Made `enum KeyCode` FFI safe (`repr(u8)` and removed `non_exhaustive`)
 * Support the mysterious 'Right Control 2' and 'Right Alt 2' so that Pause/Break
   and Print Screen do the right thing.
-* Fix the Backslash/Tilde swap on the UK Layout.
+* Fixedthe Backslash/Tilde swap on the UK Layout.
 
 ## v0.6.1 (20 October 2022)
 
