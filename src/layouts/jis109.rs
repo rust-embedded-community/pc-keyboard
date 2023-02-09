@@ -1,13 +1,15 @@
-/// A standard Japan 106-key (or 109-key including Windows keys) keyboard.
-/// Has a 2-row high Enter key, with Backslash above.
+//! JIS keyboard support
+
 use crate::{DecodedKey, HandleControl, KeyCode, KeyboardLayout, Modifiers};
 
-pub use super::us104::Us104Key;
-
+/// A standard Japan 106-key (or 109-key including Windows keys) keyboard.
+///
+/// Has a small space bar, to fit in extra buttons.
 pub struct Jis109Key;
 
 impl KeyboardLayout for Jis109Key {
     fn map_keycode(
+        &self,
         keycode: KeyCode,
         modifiers: &Modifiers,
         handle_ctrl: HandleControl,
@@ -140,7 +142,10 @@ impl KeyboardLayout for Jis109Key {
                     DecodedKey::Unicode('^')
                 }
             }
-            e => <Us104Key as KeyboardLayout>::map_keycode(e, modifiers, handle_ctrl),
+            e => {
+                let us = super::Us104Key;
+                us.map_keycode(e, modifiers, handle_ctrl)
+            }
         }
     }
 }

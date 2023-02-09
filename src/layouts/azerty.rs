@@ -1,9 +1,17 @@
+//! French keyboard support
+
 use crate::{DecodedKey, HandleControl, KeyCode, KeyboardLayout, Modifiers};
 
+/// A standard French 102-key (or 105-key including Windows keys) keyboard.
+///
+/// The top row spells `AZERTY`.
+///
+/// Has a 2-row high Enter key, with Backslash next to the left shift (ISO format).
 pub struct Azerty;
 
 impl KeyboardLayout for Azerty {
     fn map_keycode(
+        &self,
         keycode: KeyCode,
         modifiers: &Modifiers,
         handle_ctrl: HandleControl,
@@ -514,7 +522,11 @@ mod test {
 
     #[test]
     fn test_frazert() {
-        let mut k = Keyboard::<Azerty, ScancodeSet2>::new(HandleControl::MapLettersToUnicode);
+        let mut k = Keyboard::new(
+            ScancodeSet2::new(),
+            Azerty,
+            HandleControl::MapLettersToUnicode,
+        );
         assert_eq!(
             k.process_keyevent(KeyEvent::new(KeyCode::NumpadDivide, KeyState::Down)),
             Some(DecodedKey::Unicode('/'))

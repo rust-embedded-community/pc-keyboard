@@ -8,9 +8,18 @@ use crate::{
 /// Contains the implementation of Scancode Set 1.
 ///
 /// See the OS dev wiki: <https://wiki.osdev.org/PS/2_Keyboard#Scan_Code_Set_1>
-pub struct ScancodeSet1;
+pub struct ScancodeSet1 {
+    state: DecodeState,
+}
 
 impl ScancodeSet1 {
+    /// Construct a new [`ScancodeSet1`] decoder.
+    pub const fn new() -> ScancodeSet1 {
+        ScancodeSet1 {
+            state: DecodeState::Start,
+        }
+    }
+
     /// Implements the single byte codes for Set 1.
     fn map_scancode(code: u8) -> Result<KeyCode, Error> {
         match code {
@@ -225,16 +234,16 @@ impl ScancodeSet for ScancodeSet1 {
     /// ## Extended 2:
     /// * `< 0x80` => Extended 2 Key Down
     /// * `>= 0x80` => Extended 2 Key Up
-    fn advance_state(state: &mut DecodeState, code: u8) -> Result<Option<KeyEvent>, Error> {
-        match *state {
+    fn advance_state(&mut self, code: u8) -> Result<Option<KeyEvent>, Error> {
+        match self.state {
             DecodeState::Start => {
                 match code {
                     EXTENDED_KEY_CODE => {
-                        *state = DecodeState::Extended;
+                        self.state = DecodeState::Extended;
                         Ok(None)
                     }
                     EXTENDED2_KEY_CODE => {
-                        *state = DecodeState::Extended2;
+                        self.state = DecodeState::Extended2;
                         Ok(None)
                     }
                     0x80..=0xFF => {
@@ -254,7 +263,7 @@ impl ScancodeSet for ScancodeSet1 {
                 }
             }
             DecodeState::Extended => {
-                *state = DecodeState::Start;
+                self.state = DecodeState::Start;
                 match code {
                     0x80..=0xFF => {
                         // Extended break codes
@@ -273,7 +282,7 @@ impl ScancodeSet for ScancodeSet1 {
                 }
             }
             DecodeState::Extended2 => {
-                *state = DecodeState::Start;
+                self.state = DecodeState::Start;
                 match code {
                     0x80..=0xFF => {
                         // Extended 2 break codes

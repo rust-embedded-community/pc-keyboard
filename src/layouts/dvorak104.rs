@@ -1,14 +1,15 @@
-//! A Dvorak 101-key (or 104-key including Windows keys) keyboard.
-//! Has a 1-row high Enter key, with Backslash above.
+//! Dvorak keyboard support
 
 use crate::{DecodedKey, HandleControl, KeyCode, KeyboardLayout, Modifiers};
 
-pub use super::us104::Us104Key;
-
+/// A Dvorak 101-key (or 104-key including Windows keys) keyboard.
+///
+/// Has a 1-row high Enter key, with Backslash above (ANSI layout).
 pub struct Dvorak104Key;
 
 impl KeyboardLayout for Dvorak104Key {
     fn map_keycode(
+        &self,
         keycode: KeyCode,
         modifiers: &Modifiers,
         handle_ctrl: HandleControl,
@@ -294,7 +295,10 @@ impl KeyboardLayout for Dvorak104Key {
                     DecodedKey::Unicode('z')
                 }
             }
-            e => <super::Us104Key as KeyboardLayout>::map_keycode(e, modifiers, handle_ctrl),
+            e => {
+                let us = super::Us104Key;
+                us.map_keycode(e, modifiers, handle_ctrl)
+            }
         }
     }
 }

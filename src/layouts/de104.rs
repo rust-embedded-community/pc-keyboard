@@ -1,11 +1,17 @@
+//! German keyboard support
+
 use crate::{DecodedKey, HandleControl, KeyCode, KeyboardLayout, Modifiers};
 
-pub use super::us104::Us104Key;
+/// A standard German 102-key (or 105-key including Windows keys) keyboard.
+///
+/// The top row spells `QWERTZ`.
+///
+/// Has a 2-row high Enter key, with Backslash next to the left shift (ISO format).
+pub struct De105Key;
 
-pub struct De104Key;
-
-impl KeyboardLayout for De104Key {
+impl KeyboardLayout for De105Key {
     fn map_keycode(
+        &self,
         keycode: KeyCode,
         modifiers: &Modifiers,
         handle_ctrl: HandleControl,
@@ -214,8 +220,10 @@ impl KeyboardLayout for De104Key {
                     DecodedKey::Unicode('<')
                 }
             }
-
-            e => <super::Us104Key as KeyboardLayout>::map_keycode(e, modifiers, handle_ctrl),
+            e => {
+                let us = super::Us104Key;
+                us.map_keycode(e, modifiers, handle_ctrl)
+            }
         }
     }
 }
