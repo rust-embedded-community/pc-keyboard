@@ -3,7 +3,7 @@ use pc_keyboard::Ps2Decoder;
 fn main() {
     let mut decoder = Ps2Decoder::new();
 
-    // If you get all 11 bits as on `u16`
+    // If you get all 11 bits as one `u16`
     match decoder.add_word(0x0402) {
         Ok(byte) => println!("Word 0x0402 is byte 0x{:02x}", byte),
         Err(e) => println!("Word 0x0402 failed to decode: {:?}", e),
