@@ -1,16 +1,23 @@
-//! Driver for a PS/2 keyboard.
+//! Driver for a PS/2 PC keyboard.
 //!
 //! Supports PS/2 Scan Code Set 1 and 2, on a variety of keyboard layouts. See
 //! [the OSDev Wiki](https://wiki.osdev.org/PS/2_Keyboard).
 //!
-//! Requires that you sample a pin in an interrupt routine and shift in the bit.
-//! We don't sample the pin in this library, as that makes testing difficult,
-//! and it means you have to make this object a global static mut that the
-//! interrupt can access, which is unsafe.
+//! There are three basic steps to handling keyboard input. Your application may bypass some of these.
+//!
+//! * [`Ps2Decoder`] - converts 11-bit PS/2 words into bytes, removing the start/stop
+//!   bits and checking the parity bits. Only needed if you talk to the PS/2
+//!   keyboard over GPIO pins and not required if you talk to the i8042 PC keyboard
+//!   controller.
+//! * [`ScancodeSet`] - converts from Scancode Set 1 (i8042 PC keyboard controller) or
+//!   Scancode Set 2 (raw PS/2 keyboard output) into a symbolic [`KeyCode`] and an
+//!   up/down [`KeyState`].
+//! * [`EventDecoder`] - converts symbolic [`KeyCode`] and [`KeyState`] into a Unicode
+//!   characters (where possible) according to the currently selected `KeyboardLayout`.
+//!
+//! There is also [`Keyboard`] which combines the above three functions into a single object.
 
 #![cfg_attr(not(test), no_std)]
-#[cfg(test)]
-extern crate std as core;
 
 // ****************************************************************************
 //
