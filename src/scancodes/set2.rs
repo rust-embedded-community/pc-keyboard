@@ -9,9 +9,18 @@ use crate::{
 ///
 /// See the OS dev wiki: <https://wiki.osdev.org/PS/2_Keyboard#Scan_Code_Set_2>
 /// Additional reference: <https://www.win.tue.nl/~aeb/linux/kbd/scancodes-10.html>
-pub struct ScancodeSet2;
+pub struct ScancodeSet2 {
+    state: DecodeState,
+}
 
 impl ScancodeSet2 {
+    /// Construct a new [`ScancodeSet2`] decoder.
+    pub const fn new() -> ScancodeSet2 {
+        ScancodeSet2 {
+            state: DecodeState::Start,
+        }
+    }
+
     /// Implements the single byte codes for Set 2.
     fn map_scancode(code: u8) -> Result<KeyCode, Error> {
         match code {
@@ -169,19 +178,19 @@ impl ScancodeSet for ScancodeSet2 {
     ///
     /// ## Release-Extended2:
     /// * xxx => Extended2 Key Up Event
-    fn advance_state(state: &mut DecodeState, code: u8) -> Result<Option<KeyEvent>, Error> {
-        match *state {
+    fn advance_state(&mut self, code: u8) -> Result<Option<KeyEvent>, Error> {
+        match self.state {
             DecodeState::Start => match code {
                 EXTENDED_KEY_CODE => {
-                    *state = DecodeState::Extended;
+                    self.state = DecodeState::Extended;
                     Ok(None)
                 }
                 EXTENDED2_KEY_CODE => {
-                    *state = DecodeState::Extended2;
+                    self.state = DecodeState::Extended2;
                     Ok(None)
                 }
                 KEY_RELEASE_CODE => {
-                    *state = DecodeState::Release;
+                    self.state = DecodeState::Release;
                     Ok(None)
                 }
                 _ => {
@@ -197,23 +206,23 @@ impl ScancodeSet for ScancodeSet2 {
                 }
             },
             DecodeState::Release => {
-                *state = DecodeState::Start;
+                self.state = DecodeState::Start;
                 Ok(Some(KeyEvent::new(Self::map_scancode(code)?, KeyState::Up)))
             }
             DecodeState::Extended => match code {
                 KEY_RELEASE_CODE => {
-                    *state = DecodeState::ExtendedRelease;
+                    self.state = DecodeState::ExtendedRelease;
                     Ok(None)
                 }
                 _ => {
-                    *state = DecodeState::Start;
+                    self.state = DecodeState::Start;
 
                     let keycode = Self::map_extended_scancode(code)?;
                     Ok(Some(KeyEvent::new(keycode, KeyState::Down)))
                 }
             },
             DecodeState::ExtendedRelease => {
-                *state = DecodeState::Start;
+                self.state = DecodeState::Start;
                 Ok(Some(KeyEvent::new(
                     Self::map_extended_scancode(code)?,
                     KeyState::Up,
@@ -221,11 +230,11 @@ impl ScancodeSet for ScancodeSet2 {
             }
             DecodeState::Extended2 => match code {
                 KEY_RELEASE_CODE => {
-                    *state = DecodeState::Extended2Release;
+                    self.state = DecodeState::Extended2Release;
                     Ok(None)
                 }
                 _ => {
-                    *state = DecodeState::Start;
+                    self.state = DecodeState::Start;
                     Ok(Some(KeyEvent::new(
                         Self::map_extended2_scancode(code)?,
                         KeyState::Down,
@@ -233,7 +242,7 @@ impl ScancodeSet for ScancodeSet2 {
                 }
             },
             DecodeState::Extended2Release => {
-                *state = DecodeState::Start;
+                self.state = DecodeState::Start;
                 Ok(Some(KeyEvent::new(
                     Self::map_extended2_scancode(code)?,
                     KeyState::Up,

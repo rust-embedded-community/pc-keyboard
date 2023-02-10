@@ -1,12 +1,15 @@
-//! A standard United States 101-key (or 104-key including Windows keys) keyboard.
-//! Has a 1-row high Enter key, with Backslash above.
+//! United States keyboard support
 
 use crate::{DecodedKey, HandleControl, KeyCode, KeyboardLayout, Modifiers};
 
+/// A standard United States 101-key (or 104-key including Windows keys) keyboard.
+///
+/// Has a 1-row high Enter key, with Oem7 above (ANSI layout).
 pub struct Us104Key;
 
 impl KeyboardLayout for Us104Key {
     fn map_keycode(
+        &self,
         keycode: KeyCode,
         modifiers: &Modifiers,
         handle_ctrl: HandleControl,

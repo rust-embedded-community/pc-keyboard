@@ -1,24 +1,23 @@
-//! Driver for a PS/2 keyboard.
+//! Driver for a PS/2 PC keyboard.
 //!
-//! Supports PS/2 Scan Code Set 1 and 2, on both UK and UK English keyboards. See [the
-//! OSDev Wiki](https://wiki.osdev.org/PS/2_Keyboard).
+//! Supports PS/2 Scan Code Set 1 and 2, on a variety of keyboard layouts. See
+//! [the OSDev Wiki](https://wiki.osdev.org/PS/2_Keyboard).
 //!
-//! Requires that you sample a pin in an interrupt routine and shift in the
-//! bit. We don't sample the pin in this library, as that makes testing
-//! difficult, and it means you have to make this object a global static mut
-//! that the interrupt can access, which is unsafe.
+//! There are three basic steps to handling keyboard input. Your application may bypass some of these.
+//!
+//! * [`Ps2Decoder`] - converts 11-bit PS/2 words into bytes, removing the start/stop
+//!   bits and checking the parity bits. Only needed if you talk to the PS/2
+//!   keyboard over GPIO pins and not required if you talk to the i8042 PC keyboard
+//!   controller.
+//! * [`ScancodeSet`] - converts from Scancode Set 1 (i8042 PC keyboard controller) or
+//!   Scancode Set 2 (raw PS/2 keyboard output) into a symbolic [`KeyCode`] and an
+//!   up/down [`KeyState`].
+//! * [`EventDecoder`] - converts symbolic [`KeyCode`] and [`KeyState`] into a Unicode
+//!   characters (where possible) according to the currently selected `KeyboardLayout`.
+//!
+//! There is also [`Keyboard`] which combines the above three functions into a single object.
 
 #![cfg_attr(not(test), no_std)]
-#[cfg(test)]
-extern crate std as core;
-
-// ****************************************************************************
-//
-// Imports
-//
-// ****************************************************************************
-
-use core::marker::PhantomData;
 
 // ****************************************************************************
 //
@@ -37,20 +36,34 @@ pub use crate::scancodes::{ScancodeSet1, ScancodeSet2};
 //
 // ****************************************************************************
 
-/// `Keyboard<T, S>` encapsulates decode/sampling logic, and handles state transitions and key events.
+/// Encapsulates decode/sampling logic, and handles state transitions and key events.
 #[derive(Debug)]
-pub struct Keyboard<T, S>
+pub struct Keyboard<L, S>
 where
-    T: KeyboardLayout,
     S: ScancodeSet,
+    L: KeyboardLayout,
 {
+    ps2_decoder: Ps2Decoder,
+    scancode_set: S,
+    event_decoder: EventDecoder<L>,
+}
+
+/// Handles decoding of IBM PS/2 Keyboard (and IBM PC/AT Keyboard) bit-streams.
+#[derive(Debug)]
+pub struct Ps2Decoder {
     register: u16,
     num_bits: u8,
-    decode_state: DecodeState,
+}
+
+/// Converts KeyEvents into Unicode, according to the current Keyboard Layout
+#[derive(Debug)]
+pub struct EventDecoder<L>
+where
+    L: KeyboardLayout,
+{
     handle_ctrl: HandleControl,
     modifiers: Modifiers,
-    _layout: PhantomData<T>,
-    _set: PhantomData<S>,
+    layout: L,
 }
 
 /// Indicates different error conditions.
@@ -337,10 +350,15 @@ pub enum KeyCode {
     RAlt2,
 }
 
+/// The new state for a key, as part of a key event.
 #[derive(Debug, PartialEq, Eq, Copy, Clone)]
 pub enum KeyState {
+    /// Key has just been released
     Up,
+    /// Key has just been pressed
     Down,
+    /// Key was pressed and then released as an atomic action. Or it's like a
+    /// PowerOnSelfTest event which doesn't have an 'Up' or a 'Down'.
     SingleShot,
 }
 
@@ -357,18 +375,25 @@ pub enum HandleControl {
     Ignore,
 }
 
+/// A event describing something happen to a key on your keyboard.
 #[derive(Debug, PartialEq, Eq, Clone)]
 pub struct KeyEvent {
+    /// Which key this event is for
     pub code: KeyCode,
+    /// The new state for the key
     pub state: KeyState,
 }
 
+/// Describes a Keyboard Layout.
+///
+/// Layouts might include "en_US", or "en_GB", or "de_GR".
 pub trait KeyboardLayout {
     /// Convert a `KeyCode` enum to a Unicode character, if possible.
     /// `KeyCode::A` maps to `DecodedKey::Unicode('a')` (or
     /// `DecodedKey::Unicode('A')` if shifted), while `KeyCode::LAlt` becomes
     /// `DecodedKey::RawKey(KeyCode::LAlt)` because there's no Unicode equivalent.
     fn map_keycode(
+        &self,
         keycode: KeyCode,
         modifiers: &Modifiers,
         handle_ctrl: HandleControl,
@@ -376,13 +401,15 @@ pub trait KeyboardLayout {
 }
 
 /// A mechanism to convert bytes from a Keyboard into [`KeyCode`] values.
+///
+/// This conversion is stateful.
 pub trait ScancodeSet {
     /// Handles the state logic for the decoding of scan codes into key events.
-    fn advance_state(state: &mut DecodeState, code: u8) -> Result<Option<KeyEvent>, Error>;
+    fn advance_state(&mut self, code: u8) -> Result<Option<KeyEvent>, Error>;
 }
 
 /// The set of modifier keys you have on a keyboard.
-#[derive(Debug)]
+#[derive(Debug, Default)]
 pub struct Modifiers {
     /// The left shift key is down
     pub lshift: bool,
@@ -423,8 +450,9 @@ pub enum DecodedKey {
 //
 // ****************************************************************************
 
+/// Tracls
 #[derive(Debug, Copy, Clone, Eq, PartialEq)]
-pub enum DecodeState {
+enum DecodeState {
     Start,
     Extended,
     Release,
@@ -450,17 +478,163 @@ const KEY_RELEASE_CODE: u8 = 0xF0;
 //
 // ****************************************************************************
 
-impl<T, S> Keyboard<T, S>
+impl<L, S> Keyboard<L, S>
 where
-    T: KeyboardLayout,
+    L: KeyboardLayout,
     S: ScancodeSet,
 {
     /// Make a new Keyboard object with the given layout.
-    pub const fn new(handle_ctrl: HandleControl) -> Keyboard<T, S> {
+    pub const fn new(scancode_set: S, layout: L, handle_ctrl: HandleControl) -> Keyboard<L, S> {
         Keyboard {
+            ps2_decoder: Ps2Decoder::new(),
+            scancode_set,
+            event_decoder: EventDecoder::new(layout, handle_ctrl),
+        }
+    }
+
+    /// Change the Ctrl key mapping.
+    pub fn set_ctrl_handling(&mut self, new_value: HandleControl) {
+        self.event_decoder.set_ctrl_handling(new_value);
+    }
+
+    /// Get the current Ctrl key mapping.
+    pub const fn get_ctrl_handling(&self) -> HandleControl {
+        self.event_decoder.get_ctrl_handling()
+    }
+
+    /// Clears the bit register.
+    ///
+    /// Call this when there is a timeout reading data from the keyboard.
+    pub fn clear(&mut self) {
+        self.ps2_decoder.clear();
+    }
+
+    /// Processes a 16-bit word from the keyboard.
+    ///
+    /// * The start bit (0) must be in bit 0.
+    /// * The data octet must be in bits 1..8, with the LSB in bit 1 and the
+    ///   MSB in bit 8.
+    /// * The parity bit must be in bit 9.
+    /// * The stop bit (1) must be in bit 10.
+    pub fn add_word(&mut self, word: u16) -> Result<Option<KeyEvent>, Error> {
+        let byte = self.ps2_decoder.add_word(word)?;
+        self.add_byte(byte)
+    }
+
+    /// Processes an 8-bit byte from the keyboard.
+    ///
+    /// We assume the start, stop and parity bits have been processed and
+    /// verified.
+    pub fn add_byte(&mut self, byte: u8) -> Result<Option<KeyEvent>, Error> {
+        self.scancode_set.advance_state(byte)
+    }
+
+    /// Shift a bit into the register.
+    ///
+    /// Call this /or/ call `add_word` - don't call both.
+    /// Until the last bit is added you get Ok(None) returned.
+    pub fn add_bit(&mut self, bit: bool) -> Result<Option<KeyEvent>, Error> {
+        if let Some(byte) = self.ps2_decoder.add_bit(bit)? {
+            self.scancode_set.advance_state(byte)
+        } else {
+            Ok(None)
+        }
+    }
+
+    /// Processes a `KeyEvent` returned from `add_bit`, `add_byte` or `add_word`
+    /// and produces a decoded key.
+    ///
+    /// For example, the KeyEvent for pressing the '5' key on your keyboard
+    /// gives a DecodedKey of unicode character '5', unless the shift key is
+    /// held in which case you get the unicode character '%'.
+    pub fn process_keyevent(&mut self, ev: KeyEvent) -> Option<DecodedKey> {
+        self.event_decoder.process_keyevent(ev)
+    }
+}
+
+impl Ps2Decoder {
+    /// Build a new PS/2 protocol decoder.
+    pub const fn new() -> Ps2Decoder {
+        Ps2Decoder {
             register: 0,
             num_bits: 0,
-            decode_state: DecodeState::Start,
+        }
+    }
+
+    /// Clears the bit register.
+    ///
+    /// Call this when there is a timeout reading data from the keyboard.
+    pub fn clear(&mut self) {
+        self.register = 0;
+        self.num_bits = 0;
+    }
+
+    /// Shift a bit into the register.
+    ///
+    /// Until the last bit is added you get Ok(None) returned.
+    pub fn add_bit(&mut self, bit: bool) -> Result<Option<u8>, Error> {
+        self.register |= (bit as u16) << self.num_bits;
+        self.num_bits += 1;
+        if self.num_bits == KEYCODE_BITS {
+            let word = self.register;
+            self.register = 0;
+            self.num_bits = 0;
+            let byte = Self::check_word(word)?;
+            Ok(Some(byte))
+        } else {
+            Ok(None)
+        }
+    }
+
+    /// Process an entire 11-bit word.
+    ///
+    /// Must be packed into the bottom 11-bits of the 16-bit value.
+    pub fn add_word(&self, word: u16) -> Result<u8, Error> {
+        Self::check_word(word)
+    }
+
+    /// Check 11-bit word has 1 start bit, 1 stop bit and an odd parity bit.
+    const fn check_word(word: u16) -> Result<u8, Error> {
+        let start_bit = Self::get_bit(word, 0);
+        let parity_bit = Self::get_bit(word, 9);
+        let stop_bit = Self::get_bit(word, 10);
+        let data = ((word >> 1) & 0xFF) as u8;
+
+        if start_bit {
+            return Err(Error::BadStartBit);
+        }
+
+        if !stop_bit {
+            return Err(Error::BadStopBit);
+        }
+
+        // We have odd parity, so if there are an even number of 1 bits, we need
+        // the parity bit set to make it odd.
+        let need_parity = Self::has_even_number_bits(data);
+
+        if need_parity != parity_bit {
+            return Err(Error::ParityError);
+        }
+
+        Ok(data)
+    }
+
+    const fn get_bit(word: u16, offset: usize) -> bool {
+        ((word >> offset) & 0x0001) != 0
+    }
+
+    const fn has_even_number_bits(data: u8) -> bool {
+        (data.count_ones() % 2) == 0
+    }
+}
+
+impl<L> EventDecoder<L>
+where
+    L: KeyboardLayout,
+{
+    /// Construct a new event decoder.
+    pub const fn new(layout: L, handle_ctrl: HandleControl) -> EventDecoder<L> {
+        EventDecoder {
             handle_ctrl,
             modifiers: Modifiers {
                 lshift: false,
@@ -472,8 +646,7 @@ where
                 alt_gr: false,
                 rctrl2: false,
             },
-            _layout: PhantomData,
-            _set: PhantomData,
+            layout,
         }
     }
 
@@ -485,52 +658,6 @@ where
     /// Get the current Ctrl key mapping.
     pub const fn get_ctrl_handling(&self) -> HandleControl {
         self.handle_ctrl
-    }
-
-    /// Clears the bit register.
-    ///
-    /// Call this when there is a timeout reading data from the keyboard.
-    pub fn clear(&mut self) {
-        self.register = 0;
-        self.num_bits = 0;
-        self.decode_state = DecodeState::Start;
-    }
-
-    /// Processes a 16-bit word from the keyboard.
-    ///
-    /// * The start bit (0) must be in bit 0.
-    /// * The data octet must be in bits 1..8, with the LSB in bit 1 and the
-    ///   MSB in bit 8.
-    /// * The parity bit must be in bit 9.
-    /// * The stop bit (1) must be in bit 10.
-    pub fn add_word(&mut self, word: u16) -> Result<Option<KeyEvent>, Error> {
-        let byte = Self::check_word(word)?;
-        self.add_byte(byte)
-    }
-
-    /// Processes an 8-bit byte from the keyboard.
-    ///
-    /// We assume the start, stop and parity bits have been processed and
-    /// verified.
-    pub fn add_byte(&mut self, byte: u8) -> Result<Option<KeyEvent>, Error> {
-        S::advance_state(&mut self.decode_state, byte)
-    }
-
-    /// Shift a bit into the register.
-    ///
-    /// Call this /or/ call `add_word` - don't call both.
-    /// Until the last bit is added you get Ok(None) returned.
-    pub fn add_bit(&mut self, bit: bool) -> Result<Option<KeyEvent>, Error> {
-        self.register |= (bit as u16) << self.num_bits;
-        self.num_bits += 1;
-        if self.num_bits == KEYCODE_BITS {
-            let word = self.register;
-            self.register = 0;
-            self.num_bits = 0;
-            self.add_word(word)
-        } else {
-            Ok(None)
-        }
     }
 
     /// Processes a `KeyEvent` returned from `add_bit`, `add_byte` or `add_word`
@@ -649,42 +776,20 @@ where
             KeyEvent {
                 code: c,
                 state: KeyState::Down,
-            } => Some(T::map_keycode(c, &self.modifiers, self.handle_ctrl)),
+            } => Some(
+                self.layout
+                    .map_keycode(c, &self.modifiers, self.handle_ctrl),
+            ),
             _ => None,
         }
     }
 
-    const fn get_bit(word: u16, offset: usize) -> bool {
-        ((word >> offset) & 0x0001) != 0
-    }
-
-    const fn has_even_number_bits(data: u8) -> bool {
-        (data.count_ones() % 2) == 0
-    }
-
-    /// Check 11-bit word has 1 start bit, 1 stop bit and an odd parity bit.
-    const fn check_word(word: u16) -> Result<u8, Error> {
-        let start_bit = Self::get_bit(word, 0);
-        let parity_bit = Self::get_bit(word, 9);
-        let stop_bit = Self::get_bit(word, 10);
-        let data = ((word >> 1) & 0xFF) as u8;
-
-        if start_bit {
-            return Err(Error::BadStartBit);
-        }
-
-        if !stop_bit {
-            return Err(Error::BadStopBit);
-        }
-
-        let need_parity = Self::has_even_number_bits(data);
-
-        // Odd parity, so these must not match
-        if need_parity != parity_bit {
-            return Err(Error::ParityError);
-        }
-
-        Ok(data)
+    /// Change the keyboard layout.
+    ///
+    /// Only useful with [`layouts::AnyLayout`], otherwise you can only change a
+    /// layout for exactly the same layout.
+    pub fn change_layout(&mut self, new_layout: L) {
+        self.layout = new_layout;
     }
 }
 
@@ -724,9 +829,9 @@ impl Modifiers {
 mod test {
     use super::*;
 
-    fn add_bytes<T, S>(keyboard: &mut Keyboard<T, S>, test_sequence: &[(u8, Option<KeyEvent>)])
+    fn add_bytes<L, S>(keyboard: &mut Keyboard<L, S>, test_sequence: &[(u8, Option<KeyEvent>)])
     where
-        T: KeyboardLayout,
+        L: KeyboardLayout,
         S: ScancodeSet,
     {
         for (byte, expected_key) in test_sequence.iter().cloned() {
@@ -742,11 +847,11 @@ mod test {
         }
     }
 
-    fn process_keyevents<T, S>(
-        keyboard: &mut Keyboard<T, S>,
+    fn process_keyevents<L, S>(
+        keyboard: &mut Keyboard<L, S>,
         test_sequence: &[(KeyEvent, Option<DecodedKey>)],
     ) where
-        T: KeyboardLayout,
+        L: KeyboardLayout,
         S: ScancodeSet,
     {
         for (idx, (event, expected_decode)) in test_sequence.iter().cloned().enumerate() {
@@ -765,8 +870,11 @@ mod test {
 
     #[test]
     fn test_f9() {
-        let mut k =
-            Keyboard::<layouts::Us104Key, ScancodeSet2>::new(HandleControl::MapLettersToUnicode);
+        let mut k = Keyboard::new(
+            ScancodeSet2::new(),
+            layouts::Us104Key,
+            HandleControl::MapLettersToUnicode,
+        );
         // start
         assert_eq!(k.add_bit(false), Ok(None));
         // 8 data bits (LSB first)
@@ -789,8 +897,11 @@ mod test {
 
     #[test]
     fn test_f9_word() {
-        let mut k =
-            Keyboard::<layouts::Us104Key, ScancodeSet2>::new(HandleControl::MapLettersToUnicode);
+        let mut k = Keyboard::new(
+            ScancodeSet2::new(),
+            layouts::Us104Key,
+            HandleControl::MapLettersToUnicode,
+        );
         assert_eq!(
             k.add_word(0x0402),
             Ok(Some(KeyEvent::new(KeyCode::F9, KeyState::Down)))
@@ -799,8 +910,11 @@ mod test {
 
     #[test]
     fn test_f9_byte() {
-        let mut k =
-            Keyboard::<layouts::Us104Key, ScancodeSet2>::new(HandleControl::MapLettersToUnicode);
+        let mut k = Keyboard::new(
+            ScancodeSet2::new(),
+            layouts::Us104Key,
+            HandleControl::MapLettersToUnicode,
+        );
 
         let test_sequence = [(0x01, Some(KeyEvent::new(KeyCode::F9, KeyState::Down)))];
         add_bytes(&mut k, &test_sequence);
@@ -808,8 +922,11 @@ mod test {
 
     #[test]
     fn test_keyup_keydown() {
-        let mut k =
-            Keyboard::<layouts::Us104Key, ScancodeSet2>::new(HandleControl::MapLettersToUnicode);
+        let mut k = Keyboard::new(
+            ScancodeSet2::new(),
+            layouts::Us104Key,
+            HandleControl::MapLettersToUnicode,
+        );
         let test_sequence = [
             (0x01, Some(KeyEvent::new(KeyCode::F9, KeyState::Down))),
             (0x01, Some(KeyEvent::new(KeyCode::F9, KeyState::Down))),
@@ -821,8 +938,11 @@ mod test {
 
     #[test]
     fn test_f5() {
-        let mut k =
-            Keyboard::<layouts::Us104Key, ScancodeSet2>::new(HandleControl::MapLettersToUnicode);
+        let mut k = Keyboard::new(
+            ScancodeSet2::new(),
+            layouts::Us104Key,
+            HandleControl::MapLettersToUnicode,
+        );
         // start
         assert_eq!(k.add_bit(false), Ok(None));
         // 8 data bits (LSB first)
@@ -845,8 +965,11 @@ mod test {
 
     #[test]
     fn test_f5_up() {
-        let mut k =
-            Keyboard::<layouts::Us104Key, ScancodeSet2>::new(HandleControl::MapLettersToUnicode);
+        let mut k = Keyboard::new(
+            ScancodeSet2::new(),
+            layouts::Us104Key,
+            HandleControl::MapLettersToUnicode,
+        );
         // Send F0
 
         // start
@@ -889,8 +1012,11 @@ mod test {
 
     #[test]
     fn test_shift() {
-        let mut k =
-            Keyboard::<layouts::Uk105Key, ScancodeSet2>::new(HandleControl::MapLettersToUnicode);
+        let mut k = Keyboard::new(
+            ScancodeSet2::new(),
+            layouts::Uk105Key,
+            HandleControl::MapLettersToUnicode,
+        );
         let test_sequence = [
             // A with left shift held
             (KeyEvent::new(KeyCode::LShift, KeyState::Down), None),
@@ -944,8 +1070,11 @@ mod test {
 
     #[test]
     fn test_ctrl() {
-        let mut k =
-            Keyboard::<layouts::Us104Key, ScancodeSet2>::new(HandleControl::MapLettersToUnicode);
+        let mut k = Keyboard::new(
+            ScancodeSet2::new(),
+            layouts::Us104Key,
+            HandleControl::MapLettersToUnicode,
+        );
         let test_sequence = [
             // Normal
             (
@@ -981,8 +1110,11 @@ mod test {
 
     #[test]
     fn test_numlock() {
-        let mut k =
-            Keyboard::<layouts::Uk105Key, ScancodeSet2>::new(HandleControl::MapLettersToUnicode);
+        let mut k = Keyboard::new(
+            ScancodeSet2::new(),
+            layouts::Uk105Key,
+            HandleControl::MapLettersToUnicode,
+        );
 
         let test_sequence = [
             // Numlock ON by default so we get digits
@@ -1006,8 +1138,11 @@ mod test {
 
     #[test]
     fn test_set_1_down_up_down() {
-        let mut k =
-            Keyboard::<layouts::Us104Key, ScancodeSet1>::new(HandleControl::MapLettersToUnicode);
+        let mut k = Keyboard::new(
+            ScancodeSet1::new(),
+            layouts::Us104Key,
+            HandleControl::MapLettersToUnicode,
+        );
         let test_sequence = [
             (0x1e, Some(KeyEvent::new(KeyCode::A, KeyState::Down))),
             (0x9e, Some(KeyEvent::new(KeyCode::A, KeyState::Up))),
@@ -1019,8 +1154,11 @@ mod test {
 
     #[test]
     fn test_set_1_ext_down_up_down() {
-        let mut k =
-            Keyboard::<layouts::Us104Key, ScancodeSet1>::new(HandleControl::MapLettersToUnicode);
+        let mut k = Keyboard::new(
+            ScancodeSet1::new(),
+            layouts::Us104Key,
+            HandleControl::MapLettersToUnicode,
+        );
         let test_sequence = [
             (0xe0, None),
             (
@@ -1038,8 +1176,11 @@ mod test {
 
     #[test]
     fn test_set_2_poweron() {
-        let mut k =
-            Keyboard::<layouts::Us104Key, ScancodeSet2>::new(HandleControl::MapLettersToUnicode);
+        let mut k = Keyboard::new(
+            ScancodeSet2::new(),
+            layouts::Us104Key,
+            HandleControl::MapLettersToUnicode,
+        );
         let test_sequence = [(
             0xAA,
             Some(KeyEvent::new(KeyCode::PowerOnTestOk, KeyState::SingleShot)),
@@ -1049,8 +1190,11 @@ mod test {
 
     #[test]
     fn test_set_2_toomanykeys() {
-        let mut k =
-            Keyboard::<layouts::Us104Key, ScancodeSet2>::new(HandleControl::MapLettersToUnicode);
+        let mut k = Keyboard::new(
+            ScancodeSet2::new(),
+            layouts::Us104Key,
+            HandleControl::MapLettersToUnicode,
+        );
         let test_sequence = [(
             0x00,
             Some(KeyEvent::new(KeyCode::TooManyKeys, KeyState::SingleShot)),
@@ -1060,8 +1204,11 @@ mod test {
 
     #[test]
     fn test_set_2_down_up() {
-        let mut k =
-            Keyboard::<layouts::Us104Key, ScancodeSet2>::new(HandleControl::MapLettersToUnicode);
+        let mut k = Keyboard::new(
+            ScancodeSet2::new(),
+            layouts::Us104Key,
+            HandleControl::MapLettersToUnicode,
+        );
         let test_sequence = [
             (0x29, Some(KeyEvent::new(KeyCode::Spacebar, KeyState::Down))),
             (0xF0, None),
@@ -1078,8 +1225,11 @@ mod test {
 
     #[test]
     fn test_set_2_ext_down_up() {
-        let mut k =
-            Keyboard::<layouts::Us104Key, ScancodeSet2>::new(HandleControl::MapLettersToUnicode);
+        let mut k = Keyboard::new(
+            ScancodeSet2::new(),
+            layouts::Us104Key,
+            HandleControl::MapLettersToUnicode,
+        );
         let test_sequence = [
             (0xE0, None),
             (0x6C, Some(KeyEvent::new(KeyCode::Home, KeyState::Down))),
@@ -1092,8 +1242,11 @@ mod test {
 
     #[test]
     fn test_pause_set1() {
-        let mut k =
-            Keyboard::<layouts::Uk105Key, ScancodeSet1>::new(HandleControl::MapLettersToUnicode);
+        let mut k = Keyboard::new(
+            ScancodeSet1::new(),
+            layouts::Uk105Key,
+            HandleControl::MapLettersToUnicode,
+        );
 
         // A Pause keypress generates this sequence all in one go. There is no
         // 'Break' code for this key.
@@ -1139,8 +1292,11 @@ mod test {
 
     #[test]
     fn test_pause_set2() {
-        let mut k =
-            Keyboard::<layouts::Uk105Key, ScancodeSet2>::new(HandleControl::MapLettersToUnicode);
+        let mut k = Keyboard::new(
+            ScancodeSet2::new(),
+            layouts::Uk105Key,
+            HandleControl::MapLettersToUnicode,
+        );
 
         // A Pause keypress generates this sequence all in one go. There is no
         // 'Break' code for this key.
@@ -1187,8 +1343,11 @@ mod test {
 
     #[test]
     fn test_pause_events() {
-        let mut k =
-            Keyboard::<layouts::Uk105Key, ScancodeSet2>::new(HandleControl::MapLettersToUnicode);
+        let mut k = Keyboard::new(
+            ScancodeSet2::new(),
+            layouts::Uk105Key,
+            HandleControl::MapLettersToUnicode,
+        );
 
         // A Pause keypress generates this sequence all in one go. There is no
         // 'Break' code for this key.
@@ -1231,8 +1390,11 @@ mod test {
 
     #[test]
     fn test_print_screen_set1() {
-        let mut k =
-            Keyboard::<layouts::Uk105Key, ScancodeSet1>::new(HandleControl::MapLettersToUnicode);
+        let mut k = Keyboard::new(
+            ScancodeSet1::new(),
+            layouts::Uk105Key,
+            HandleControl::MapLettersToUnicode,
+        );
 
         // A Print Screen keypress generates this sequence on make and break.
         let test_sequence = [
@@ -1278,8 +1440,11 @@ mod test {
 
     #[test]
     fn test_print_screen_set2() {
-        let mut k =
-            Keyboard::<layouts::Uk105Key, ScancodeSet2>::new(HandleControl::MapLettersToUnicode);
+        let mut k = Keyboard::new(
+            ScancodeSet2::new(),
+            layouts::Uk105Key,
+            HandleControl::MapLettersToUnicode,
+        );
 
         // A Print Screen keypress generates this sequence on make and break.
         let test_sequence = [
@@ -1328,8 +1493,11 @@ mod test {
 
     #[test]
     fn test_print_screen_events() {
-        let mut k =
-            Keyboard::<layouts::Uk105Key, ScancodeSet2>::new(HandleControl::MapLettersToUnicode);
+        let mut k = Keyboard::new(
+            ScancodeSet2::new(),
+            layouts::Uk105Key,
+            HandleControl::MapLettersToUnicode,
+        );
 
         // A Print Screen keypress generates this sequence on make and break.
         let test_sequence = [

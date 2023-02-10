@@ -6,35 +6,45 @@ output directly).
 
 ## Supports:
 
--   Scancode Set 1 and 2
--   Dvorak 104-key layout
--   US 104-key layout
--   UK 105-key layout
--   JIS 109-key layout
--   Azerty full layout
+-   Scancode Set 1 (from the i8042 PC keyboard controller)
+-   Scancode Set 2 (direct from the AT or PS/2 interface keyboard)
+-   Several keyboard layouts:
+
+| Name                                                 | No. Keys | Description                                                              | Link                                                                                |
+| ---------------------------------------------------- | -------- | ------------------------------------------------------------------------ | ----------------------------------------------------------------------------------- |
+| [`Us104`](./src/layouts/us104.rs)                    | 101/104  | North American standard English                                          | [Wikipedia](https://en.wikipedia.org/wiki/QWERTY#United_States)                     |
+| [`Uk105`](./src/layouts/uk105.rs)                    | 102/105  | United Kingdom standard English                                          | [Wikipedia](https://en.wikipedia.org/wiki/QWERTY#United_Kingdom)                    |
+| [`Azerty`](./src/layouts/azerty.rs)                  | 102/105  | Typically used in French locales                                         | [Wikipedia](https://en.wikipedia.org/wiki/AZERTY)                                   |
+| [`De104`](./src/layouts/de104.rs)                    | 102/105  | German layout                                                            | [Wikipedia](https://en.wikipedia.org/wiki/QWERTZ)                                   |
+| [`Jis109`](./src/layouts/jis109.rs)                  | 106/109  | JIS 109-key layout (Latin chars only)                                    | [Wikipedia](https://en.wikipedia.org/wiki/Japanese_input_method#Japanese_keyboards) |
+| [`Colemak`](./src/layouts/colemak.rs)                | 101/104  | A keyboard layout designed to make typing more efficient and comfortable | [Wikipedia](https://en.wikipedia.org/wiki/Colemak)                                  |
+| [`Dvorak104Key`](./src/layouts/dvorak104.rs)         | 101/104  | The more 'ergonomic' alternative to QWERTY                               | [Wikipedia](https://en.wikipedia.org/wiki/Dvorak_keyboard_layout)                   |
+| [`DVP104Key`](./src/layouts/dvorak_programmer104.rs) | 101/104  | Dvorak for Programmers                                                   | [Wikipedia](https://en.wikipedia.org/wiki/Dvorak_keyboard_layout#Programmer_Dvorak) |
+
+101/104 keys is ANSI layout (wide Enter key) and 102/105 keys is ISO layout
+(tall Enter key). The difference between 101 and 104 (and between 102 and
+105) comes from the two Windows keys and the Menu key that were added when
+Windows 95 came out. JIS keyboards have extra keys, added by making the
+space-bar and backspace keys shorter.
+
 
 ## Usage
 
-```rust
-extern crate pc_keyboard;
+There are three basic steps to handling keyboard input. Your application may bypass some of these.
 
-use pc_keyboard::{Keyboard, layouts, ScancodeSet2, HandleControl};
+* `Ps2Decoder` - converts 11-bit PS/2 words into bytes, removing the start/stop
+  bits and checking the parity bits. Only needed if you talk to the PS/2
+  keyboard over GPIO pins and not required if you talk to the i8042 PC keyboard
+  controller.
+* `ScancodeSet` - converts from Scancode Set 1 (i8042 PC keyboard controller) or
+  Scancode Set 2 (raw PS/2 keyboard output) into a symbolic `KeyCode` and an
+  up/down `KeyState`.
+* `EventDecoder` - converts symbolic `KeyCode` and `KeyState` into a Unicode
+  characters (where possible) according to the currently selected `KeyboardLayout`.
 
-fn main() {
-	let mut kb: Keyboard<layouts::Us104Key, ScancodeSet2> = Keyboard::new(HandleControl::MapLettersToUnicode);
-	match kb.add_byte(0x20) {
-		Ok(Some(event)) => {
-			println!("Event {:?}", event);
-		}
-		Ok(None) => {
-			println!("Need more data");
-		}
-		Err(e) => {
-			println!("Error decoding: {:?}", e);
-		}
-	}
-}
-```
+There is also `Keyboard` which combines the above three functions into a single object.
+
+See the [`examples`](./examples) folder for more details.
 
 ## [Documentation](https://docs.rs/crate/pc-keyboard)
 

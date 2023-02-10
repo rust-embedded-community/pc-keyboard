@@ -7,5 +7,6 @@ keywords = ["arm", "cortex-m", "template", "video", "menu"]
 categories = ["embedded", "no-std"]
 license = "MIT OR Apache-2.0"
 repository = "https://github.com/rust-embedded-community/pc-keyboard.git"
+edition = "2021"
 
 [dependencies]
