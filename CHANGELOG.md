@@ -2,12 +2,20 @@
 
 ## Unreleased
 
+* None
+
+## v0.7.0 (12 Feb 2022)
+
 * Changed ordering of `enum KeyCode` and names of several of the keys
+* Made 'enum KeyCode' FFI safe
 * Support the mysterious 'Right Control 2' and 'Right Alt 2' so that Pause/Break
   and Print Screen do the right thing.
 * Fix the Backslash/Tilde swap on the UK Layout.
+* Added split PS/2 Decoder, Scancode interpreter and Event Decoder objects
+* Added example code
+* Improved docs - ASCII-art diagrams of ISO 102/105, ANSI 101/104 and JIS 106/109 keyboards.
 
-## v0.6.1 (20 October 2022)
+## v0.6.1 (20 Oct 2022)
 
 * Fix Control-Letter codes on AZERTY
 
@@ -21,7 +29,7 @@
 * Add Colemak, Dvorak Programmer and DE layouts
 * MSRV increased to Rust 1.61
 
-## v0.5.1 (19 July 2020)
+## v0.5.1 (19 Jul 2020)
 
 * Add Dvorak, JIS and Azerty layouts
 
