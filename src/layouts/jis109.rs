@@ -4,7 +4,7 @@ use crate::{DecodedKey, HandleControl, KeyCode, KeyboardLayout, Modifiers};
 
 /// A standard Japan 106-key (or 109-key including Windows keys) keyboard.
 ///
-/// Has a small space bar, to fit in extra buttons.
+/// Has a small space bar, to fit in extra keys.
 pub struct Jis109Key;
 
 impl KeyboardLayout for Jis109Key {

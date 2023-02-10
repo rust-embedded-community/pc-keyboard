@@ -6,7 +6,7 @@ use crate::{DecodedKey, HandleControl, KeyCode, KeyboardLayout, Modifiers};
 ///
 /// The top row spells `AZERTY`.
 ///
-/// Has a 2-row high Enter key, with Backslash next to the left shift (ISO format).
+/// Has a 2-row high Enter key, with Oem5 next to the left shift (ISO format).
 pub struct Azerty;
 
 impl KeyboardLayout for Azerty {

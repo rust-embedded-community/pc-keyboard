@@ -4,7 +4,7 @@ use crate::{DecodedKey, HandleControl, KeyCode, KeyboardLayout, Modifiers};
 
 /// A standard United Kingdom 102-key (or 105-key including Windows keys) keyboard.
 ///
-/// Has a 2-row high Enter key, with Backslash next to the left shift (ISO format).
+/// Has a 2-row high Enter key, with Oem5 next to the left shift (ISO format).
 pub struct Uk105Key;
 
 impl KeyboardLayout for Uk105Key {

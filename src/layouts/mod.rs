@@ -25,8 +25,8 @@ pub use self::azerty::Azerty;
 mod colemak;
 pub use self::colemak::Colemak;
 
-mod de104;
-pub use self::de104::De105Key;
+mod de105;
+pub use self::de105::De105Key;
 
 /// A enum of all the supported keyboard layouts.
 pub enum AnyLayout {
