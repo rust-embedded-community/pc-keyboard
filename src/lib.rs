@@ -287,7 +287,7 @@ pub enum KeyCode {
     Numpad2,
     /// Numpad 3/Page Down Key
     Numpad3,
-
+    /// Numpad Enter
     NumpadEnter,
 
     // ========= Row 6 (modifers and space bar) =========
@@ -321,24 +321,23 @@ pub enum KeyCode {
     NumpadPeriod,
 
     // ========= Extra Keys =========
-
-    // Multi-media keys - Previous Track
+    /// Multi-media keys - Previous Track
     PrevTrack,
-    // Multi-media keys - Next Track
+    /// Multi-media keys - Next Track
     NextTrack,
-    // Multi-media keys - Volume Mute Toggle
+    /// Multi-media keys - Volume Mute Toggle
     Mute,
-    // Multi-media keys - Open Calculator
+    /// Multi-media keys - Open Calculator
     Calculator,
-    // Multi-media keys - Play
+    /// Multi-media keys - Play
     Play,
-    // Multi-media keys - Stop
+    /// Multi-media keys - Stop
     Stop,
-    // Multi-media keys - Increase Volume
+    /// Multi-media keys - Increase Volume
     VolumeDown,
-    // Multi-media keys - Decrease Volume
+    /// Multi-media keys - Decrease Volume
     VolumeUp,
-    // Multi-media keys - Open Browser
+    /// Multi-media keys - Open Browser
     WWWHome,
     /// Sent when the keyboard boots
     PowerOnTestOk,
@@ -348,6 +347,16 @@ pub enum KeyCode {
     RControl2,
     /// Used as a 'hidden' Right Alt Key (Print Screen = RAlt2 + PrntScr)
     RAlt2,
+    /// Extra JIS key (0x7B)
+    Oem9,
+    /// Extra JIS key (0x79)
+    Oem10,
+    /// Extra JIS key (0x70)
+    Oem11,
+    /// Extra JIS symbol key (0x73)
+    Oem12,
+    /// Extra JIS symbol key (0x7D)
+    Oem13,
 }
 
 /// The new state for a key, as part of a key event.

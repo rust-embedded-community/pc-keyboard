@@ -205,6 +205,11 @@ impl ScancodeSet1 {
             // 0x6B My Computer
             // 0x6C Email
             // 0x6D Media Select
+            0x70 => Ok(KeyCode::Oem11),
+            0x73 => Ok(KeyCode::Oem12),
+            0x79 => Ok(KeyCode::Oem10),
+            0x7B => Ok(KeyCode::Oem9),
+            0x7D => Ok(KeyCode::Oem13),
             _ => Err(Error::UnknownKeyCode),
         }
     }
