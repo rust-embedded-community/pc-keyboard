@@ -48,6 +48,53 @@ See the [`examples`](./examples) folder for more details.
 
 ## [Documentation](https://docs.rs/crate/pc-keyboard)
 
+## Keycodes
+
+This crate uses symbolic keycodes to abstract over Scancode Set 1 and Scancode
+Set 2. They represented by the `KeyCode` enum.
+
+This is the mapping of `KeyCode` to a 105-key ISO keyboard:
+
+```text
++----+  +----+----+----+----+  +----+----+----+----+  +----+----+----+----+   +----+----+----+
+|Esc |  | F1 | F2 | F3 | F4 |  | F5 | F6 | F7 | F8 |  | F9 |F10 |F11 |F12 |   |PrSc|Scrl|PBrk|
++----+  +----+----+----+----+  +----+----+----+----+  +----+----+----+----+   +----+----+----+
+
++----+----+----+----+----+----+----+----+----+----+----+----+----+---------+  +----+----+----+  +----+----+----+----+
+|Oem8|Key1|Key2|Key3|Key4|Key5|Key6|Key7|Key8|Key9|Key0|Oem-|Oem+|Backspace|  |Inse|Home|PgUp|  |NumL|Num/|Num*|Num-|
++----++---++---++---++---++---++---++---++---++---++---++---++---++--------+  +----+----+----+  +----+----+----+----+
+|Tab  | Q  | W  | E  | R  | T  | Y  | U  | I  | O  | P  |Oem4|Oem6| Enter  |  |Dele|End |PgDo|  |Num7|Num8|Num9|    |
++-----++---++---++---++---++---++---++---++---++---++---++---++---++       |  +----+----+----+  +----+----+----+Num+|
+|CapsLo| A  | S  | D  | F  | G  | H  | J  | K  | L  |Oem1|Oem3|Oem7|       |                    |Num4|Num5|Num6|    |
++----+-+--+-+--+-+--+-+--+-+--+-+--+-+--+-+--+-+--+-+--+-+--+-+--+-+-------+       +----+       +----+----+----+----+
+|LShf|Oem5| Z  | X  | C  | V  | B  | N  | M  |OemC|OemP|Oem2|   RShift     |       | Up |       |Num1|Num2|Num3|    |
++----++---+-+--+--+-+----+----+----+----+----+---++----+----++------+------+  +----+----+----+  +----+----+----+Num |
+|LCtrl|LWin | Alt |       Space                  |AltGr|RWin | Menu |RCtrl |  |Left|Down|Righ|  |Num0     |NumP|Ente|
++-----+-----+-----+------------------------------+-----+-----+------+------+  +----+----+----+  +---------+----+----+
+```
+
+This is the mapping of `KeyCode` to a 104-key ANSI keyboard: 
+
+```text
++----+  +----+----+----+----+  +----+----+----+----+  +----+----+----+----+   +----+----+----+
+|Esc |  | F1 | F2 | F3 | F4 |  | F5 | F6 | F7 | F8 |  | F9 |F10 |F11 |F12 |   |PrSc|Scrl|PBrk|
++----+  +----+----+----+----+  +----+----+----+----+  +----+----+----+----+   +----+----+----+
+
++----+----+----+----+----+----+----+----+----+----+----+----+----+---------+  +----+----+----+  +----+----+----+----+
+|Oem8|Key1|Key2|Key3|Key4|Key5|Key6|Key7|Key8|Key9|Key0|Oem-|Oem+|Backspace|  |Inse|Home|PgUp|  |NumL|Num/|Num*|Num-|
++----++---++---++---++---++---++---++---++---++---++---++---++---++--------+  +----+----+----+  +----+----+----+----+
+|Tab  | Q  | W  | E  | R  | T  | Y  | U  | I  | O  | P  |Oem4|Oem6| Oem5   |  |Dele|End |PgDo|  |Num7|Num8|Num9|    |
++-----++---++---++---++---++---++---++---++---++---++---++---++---+--------+  +----+----+----+  +----+----+----+Num+|
+|CapsLo| A  | S  | D  | F  | G  | H  | J  | K  | L  |Oem1|Oem3| Enter      |                    |Num4|Num5|Num6|    |
++------+--+-+--+-+--+-+--+-+--+-+--+-+--+-+--+-+--+-+--+-+--+-+------------+       +----+       +----+----+----+----+
+| LShift  | Z  | X  | C  | V  | B  | N  | M  |OemC|OemP|Oem2|   RShift     |       | Up |       |Num1|Num2|Num3|    |
++-----+---+-+--+--+-+----+----+----+----+----+---++----+----++------+------+  +----+----+----+  +----+----+----+Num |
+|LCtrl|LWin | Alt |       Space                  |AltGr|RWin | Menu |RCtrl |  |Left|Down|Righ|  |Num0     |NumP|Ente|
++-----+-----+-----+------------------------------+-----+-----+------+------+  +----+----+----+  +---------+----+----+
+```
+
+Note that the `Oem7` key is missing on the 104-key ANSI layout.
+
 ## Minimum Supported Rust Version (MSRV)
 
 This crate is guaranteed to compile on stable Rust 1.61 and up. It might compile with older versions but that may change in any new patch release.
