@@ -5,11 +5,6 @@ use crate::{DecodedKey, HandleControl, KeyCode, KeyboardLayout, Modifiers};
 /// A standard Japan 106-key (or 109-key including Windows keys) keyboard.
 ///
 /// Has a small space bar, to fit in extra keys.
-///
-/// Note this doesn't currently work with Scancode Set 2, because I don't know
-/// what the Set 2 values are for the extra JIS-109 specific keys. Also, you're
-/// going to need to implement the Input Method Editor yourself - we only do
-/// basic Latin decoding here.
 pub struct Jis109Key;
 
 impl KeyboardLayout for Jis109Key {
