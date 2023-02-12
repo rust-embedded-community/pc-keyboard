@@ -320,6 +320,18 @@ pub enum KeyCode {
     /// The Numppad Period/Delete Key
     NumpadPeriod,
 
+    // ========= JIS 109-key extra keys =========
+    /// Extra JIS key (0x7B)
+    Oem9,
+    /// Extra JIS key (0x79)
+    Oem10,
+    /// Extra JIS key (0x70)
+    Oem11,
+    /// Extra JIS symbol key (0x73)
+    Oem12,
+    /// Extra JIS symbol key (0x7D)
+    Oem13,
+
     // ========= Extra Keys =========
     /// Multi-media keys - Previous Track
     PrevTrack,
@@ -347,16 +359,6 @@ pub enum KeyCode {
     RControl2,
     /// Used as a 'hidden' Right Alt Key (Print Screen = RAlt2 + PrntScr)
     RAlt2,
-    /// Extra JIS key (0x7B)
-    Oem9,
-    /// Extra JIS key (0x79)
-    Oem10,
-    /// Extra JIS key (0x70)
-    Oem11,
-    /// Extra JIS symbol key (0x73)
-    Oem12,
-    /// Extra JIS symbol key (0x7D)
-    Oem13,
 }
 
 /// The new state for a key, as part of a key event.

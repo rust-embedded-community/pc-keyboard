@@ -260,6 +260,12 @@ IBM PC or PC/XT.
 | Numpad0        | 0x52           | 0x70           |
 | NumpadPeriod   | 0x53           | 0x71           |
 | -              | --             | --             |
+| Oem9           | 0x7B           | 0x67           |
+| Oem10          | 0x79           | 0x64           |
+| Oem11          | 0x70           | 0x13           |
+| Oem12          | 0x73           | 0x51           |
+| Oem13          | 0x7D           | 0x6A           |
+| -              | --             | --             |
 | PrevTrack      | 0xE010         | 0xE015         |
 | NextTrack      | 0xE019         | 0xE04D         |
 | Mute           | 0xE020         | 0xE023         |
