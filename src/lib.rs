@@ -287,7 +287,7 @@ pub enum KeyCode {
     Numpad2,
     /// Numpad 3/Page Down Key
     Numpad3,
-
+    /// Numpad Enter
     NumpadEnter,
 
     // ========= Row 6 (modifers and space bar) =========
@@ -320,25 +320,36 @@ pub enum KeyCode {
     /// The Numppad Period/Delete Key
     NumpadPeriod,
 
-    // ========= Extra Keys =========
+    // ========= JIS 109-key extra keys =========
+    /// Extra JIS key (0x7B)
+    Oem9,
+    /// Extra JIS key (0x79)
+    Oem10,
+    /// Extra JIS key (0x70)
+    Oem11,
+    /// Extra JIS symbol key (0x73)
+    Oem12,
+    /// Extra JIS symbol key (0x7D)
+    Oem13,
 
-    // Multi-media keys - Previous Track
+    // ========= Extra Keys =========
+    /// Multi-media keys - Previous Track
     PrevTrack,
-    // Multi-media keys - Next Track
+    /// Multi-media keys - Next Track
     NextTrack,
-    // Multi-media keys - Volume Mute Toggle
+    /// Multi-media keys - Volume Mute Toggle
     Mute,
-    // Multi-media keys - Open Calculator
+    /// Multi-media keys - Open Calculator
     Calculator,
-    // Multi-media keys - Play
+    /// Multi-media keys - Play
     Play,
-    // Multi-media keys - Stop
+    /// Multi-media keys - Stop
     Stop,
-    // Multi-media keys - Increase Volume
+    /// Multi-media keys - Increase Volume
     VolumeDown,
-    // Multi-media keys - Decrease Volume
+    /// Multi-media keys - Decrease Volume
     VolumeUp,
-    // Multi-media keys - Open Browser
+    /// Multi-media keys - Open Browser
     WWWHome,
     /// Sent when the keyboard boots
     PowerOnTestOk,
@@ -673,14 +684,14 @@ where
                 state: KeyState::Down,
             } => {
                 self.modifiers.lshift = true;
-                None
+                Some(DecodedKey::RawKey(KeyCode::LShift))
             }
             KeyEvent {
                 code: KeyCode::RShift,
                 state: KeyState::Down,
             } => {
                 self.modifiers.rshift = true;
-                None
+                Some(DecodedKey::RawKey(KeyCode::RShift))
             }
             KeyEvent {
                 code: KeyCode::LShift,
@@ -701,7 +712,7 @@ where
                 state: KeyState::Down,
             } => {
                 self.modifiers.capslock = !self.modifiers.capslock;
-                None
+                Some(DecodedKey::RawKey(KeyCode::CapsLock))
             }
             KeyEvent {
                 code: KeyCode::NumpadLock,
@@ -714,7 +725,7 @@ where
                 } else {
                     // It's a numlock toggle
                     self.modifiers.numlock = !self.modifiers.numlock;
-                    None
+                    Some(DecodedKey::RawKey(KeyCode::NumpadLock))
                 }
             }
             KeyEvent {
@@ -722,7 +733,7 @@ where
                 state: KeyState::Down,
             } => {
                 self.modifiers.lctrl = true;
-                None
+                Some(DecodedKey::RawKey(KeyCode::LControl))
             }
             KeyEvent {
                 code: KeyCode::LControl,
@@ -736,7 +747,7 @@ where
                 state: KeyState::Down,
             } => {
                 self.modifiers.rctrl = true;
-                None
+                Some(DecodedKey::RawKey(KeyCode::RControl))
             }
             KeyEvent {
                 code: KeyCode::RControl,
@@ -750,7 +761,7 @@ where
                 state: KeyState::Down,
             } => {
                 self.modifiers.alt_gr = true;
-                None
+                Some(DecodedKey::RawKey(KeyCode::RAltGr))
             }
             KeyEvent {
                 code: KeyCode::RAltGr,
@@ -764,7 +775,7 @@ where
                 state: KeyState::Down,
             } => {
                 self.modifiers.rctrl2 = true;
-                None
+                Some(DecodedKey::RawKey(KeyCode::RControl2))
             }
             KeyEvent {
                 code: KeyCode::RControl2,
@@ -1019,7 +1030,10 @@ mod test {
         );
         let test_sequence = [
             // A with left shift held
-            (KeyEvent::new(KeyCode::LShift, KeyState::Down), None),
+            (
+                KeyEvent::new(KeyCode::LShift, KeyState::Down),
+                Some(DecodedKey::RawKey(KeyCode::LShift)),
+            ),
             (
                 KeyEvent::new(KeyCode::A, KeyState::Down),
                 Some(DecodedKey::Unicode('A')),
@@ -1033,7 +1047,10 @@ mod test {
             ),
             (KeyEvent::new(KeyCode::A, KeyState::Up), None),
             // A with right shift held
-            (KeyEvent::new(KeyCode::RShift, KeyState::Down), None),
+            (
+                KeyEvent::new(KeyCode::RShift, KeyState::Down),
+                Some(DecodedKey::RawKey(KeyCode::RShift)),
+            ),
             (
                 KeyEvent::new(KeyCode::A, KeyState::Down),
                 Some(DecodedKey::Unicode('A')),
@@ -1041,7 +1058,10 @@ mod test {
             (KeyEvent::new(KeyCode::A, KeyState::Up), None),
             (KeyEvent::new(KeyCode::RShift, KeyState::Up), None),
             // Caps lock ON
-            (KeyEvent::new(KeyCode::CapsLock, KeyState::Down), None),
+            (
+                KeyEvent::new(KeyCode::CapsLock, KeyState::Down),
+                Some(DecodedKey::RawKey(KeyCode::CapsLock)),
+            ),
             (KeyEvent::new(KeyCode::CapsLock, KeyState::Up), None),
             // Letters are now caps
             (
@@ -1050,7 +1070,10 @@ mod test {
             ),
             (KeyEvent::new(KeyCode::X, KeyState::Up), None),
             // Unless you press shift
-            (KeyEvent::new(KeyCode::RShift, KeyState::Down), None),
+            (
+                KeyEvent::new(KeyCode::RShift, KeyState::Down),
+                Some(DecodedKey::RawKey(KeyCode::RShift)),
+            ),
             (
                 KeyEvent::new(KeyCode::A, KeyState::Down),
                 Some(DecodedKey::Unicode('a')),
@@ -1083,7 +1106,10 @@ mod test {
             ),
             (KeyEvent::new(KeyCode::A, KeyState::Up), None),
             // Left Control
-            (KeyEvent::new(KeyCode::LControl, KeyState::Down), None),
+            (
+                KeyEvent::new(KeyCode::LControl, KeyState::Down),
+                Some(DecodedKey::RawKey(KeyCode::LControl)),
+            ),
             (
                 KeyEvent::new(KeyCode::A, KeyState::Down),
                 Some(DecodedKey::Unicode('\u{0001}')),
@@ -1097,7 +1123,10 @@ mod test {
             ),
             (KeyEvent::new(KeyCode::A, KeyState::Up), None),
             // Right Control
-            (KeyEvent::new(KeyCode::RControl, KeyState::Down), None),
+            (
+                KeyEvent::new(KeyCode::RControl, KeyState::Down),
+                Some(DecodedKey::RawKey(KeyCode::RControl)),
+            ),
             (
                 KeyEvent::new(KeyCode::A, KeyState::Down),
                 Some(DecodedKey::Unicode('\u{0001}')),
@@ -1124,7 +1153,10 @@ mod test {
             ),
             (KeyEvent::new(KeyCode::Numpad0, KeyState::Up), None),
             // Numlock OFF
-            (KeyEvent::new(KeyCode::NumpadLock, KeyState::Down), None),
+            (
+                KeyEvent::new(KeyCode::NumpadLock, KeyState::Down),
+                Some(DecodedKey::RawKey(KeyCode::NumpadLock)),
+            ),
             (KeyEvent::new(KeyCode::NumpadLock, KeyState::Up), None),
             // Now KP_0 produces INSERT
             (
@@ -1358,7 +1390,7 @@ mod test {
                     code: KeyCode::RControl2,
                     state: KeyState::Down,
                 },
-                None,
+                Some(DecodedKey::RawKey(KeyCode::RControl2)),
             ),
             // Numlock
             (

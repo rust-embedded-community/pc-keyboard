@@ -4,7 +4,7 @@ use crate::{DecodedKey, HandleControl, KeyCode, KeyboardLayout, Modifiers};
 
 /// A Dvorak Programmer 101-key (or 104-key including Windows keys) keyboard.
 ///
-/// Has a 1-row high Enter key, with Oem7 above (ANSI layout).
+/// Has a 1-row high Enter key, with Oem5 above (ANSI layout).
 pub struct DVP104Key;
 
 impl KeyboardLayout for DVP104Key {

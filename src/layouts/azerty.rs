@@ -553,7 +553,7 @@ mod test {
         );
         assert_eq!(
             k.process_keyevent(KeyEvent::new(KeyCode::NumpadLock, KeyState::Down)),
-            None
+            Some(DecodedKey::RawKey(KeyCode::NumpadLock))
         );
         assert_eq!(
             k.process_keyevent(KeyEvent::new(KeyCode::NumpadLock, KeyState::Up)),

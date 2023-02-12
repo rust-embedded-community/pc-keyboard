@@ -5,6 +5,9 @@ use crate::{DecodedKey, HandleControl, KeyCode, KeyboardLayout, Modifiers};
 /// A standard Japan 106-key (or 109-key including Windows keys) keyboard.
 ///
 /// Has a small space bar, to fit in extra keys.
+///
+/// We used <https://www.win.tue.nl/~aeb/linux/kbd/scancodes-8.html> as a
+/// reference.
 pub struct Jis109Key;
 
 impl KeyboardLayout for Jis109Key {
@@ -16,11 +19,8 @@ impl KeyboardLayout for Jis109Key {
     ) -> DecodedKey {
         match keycode {
             KeyCode::Oem8 => {
-                if modifiers.is_shifted() {
-                    DecodedKey::Unicode('`')
-                } else {
-                    DecodedKey::Unicode('@')
-                }
+                // hankaku/zenkaku/kanji
+                DecodedKey::RawKey(KeyCode::Oem8)
             }
             KeyCode::Escape => DecodedKey::Unicode(0x1B.into()),
             KeyCode::Key1 => {
@@ -88,7 +88,7 @@ impl KeyboardLayout for Jis109Key {
             }
             KeyCode::Key0 => {
                 if modifiers.is_shifted() {
-                    DecodedKey::Unicode(' ')
+                    DecodedKey::Unicode('~')
                 } else {
                     DecodedKey::Unicode('0')
                 }
@@ -102,46 +102,73 @@ impl KeyboardLayout for Jis109Key {
             }
             KeyCode::OemPlus => {
                 if modifiers.is_shifted() {
-                    DecodedKey::Unicode('+')
+                    DecodedKey::Unicode('¯')
                 } else {
-                    DecodedKey::Unicode(';')
+                    DecodedKey::Unicode('^')
                 }
             }
             KeyCode::Oem4 => {
+                if modifiers.is_shifted() {
+                    DecodedKey::Unicode('`')
+                } else {
+                    DecodedKey::Unicode('@')
+                }
+            }
+            KeyCode::Oem6 => {
                 if modifiers.is_shifted() {
                     DecodedKey::Unicode('{')
                 } else {
                     DecodedKey::Unicode('[')
                 }
             }
-            KeyCode::Oem6 => {
+            KeyCode::Oem7 => {
                 if modifiers.is_shifted() {
                     DecodedKey::Unicode('}')
                 } else {
                     DecodedKey::Unicode(']')
                 }
             }
-            KeyCode::Oem7 => {
+            KeyCode::Oem1 => {
                 if modifiers.is_shifted() {
-                    DecodedKey::Unicode('|')
+                    DecodedKey::Unicode('+')
                 } else {
-                    DecodedKey::Unicode('\\')
+                    DecodedKey::Unicode(';')
                 }
             }
-            KeyCode::Oem1 => {
+            KeyCode::Oem3 => {
                 if modifiers.is_shifted() {
                     DecodedKey::Unicode('*')
                 } else {
                     DecodedKey::Unicode(':')
                 }
             }
-            KeyCode::Oem3 => {
+            KeyCode::Oem9 => {
+                // Muhenkan
+                DecodedKey::RawKey(keycode)
+            }
+            KeyCode::Oem10 => {
+                // Henkan/Zenkouho
+                DecodedKey::RawKey(keycode)
+            }
+            KeyCode::Oem11 => {
+                // Hiragana/Katakana
+                DecodedKey::RawKey(keycode)
+            }
+            KeyCode::Oem12 => {
                 if modifiers.is_shifted() {
-                    DecodedKey::Unicode('~')
+                    DecodedKey::Unicode('_')
                 } else {
-                    DecodedKey::Unicode('^')
+                    DecodedKey::Unicode('\\')
                 }
             }
+            KeyCode::Oem13 => {
+                if modifiers.is_shifted() {
+                    DecodedKey::Unicode('|')
+                } else {
+                    DecodedKey::Unicode('¥')
+                }
+            }
+
             e => {
                 let us = super::Us104Key;
                 us.map_keycode(e, modifiers, handle_ctrl)

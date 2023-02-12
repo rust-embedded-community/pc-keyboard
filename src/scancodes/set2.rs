@@ -40,6 +40,7 @@ impl ScancodeSet2 {
             0x0E => Ok(KeyCode::Oem8),
             0x11 => Ok(KeyCode::LAlt),
             0x12 => Ok(KeyCode::LShift),
+            0x13 => Ok(KeyCode::Oem11),
             0x14 => Ok(KeyCode::LControl),
             0x15 => Ok(KeyCode::Q),
             0x16 => Ok(KeyCode::Key1),
@@ -83,6 +84,7 @@ impl ScancodeSet2 {
             0x4C => Ok(KeyCode::Oem1),
             0x4D => Ok(KeyCode::P),
             0x4E => Ok(KeyCode::OemMinus),
+            0x51 => Ok(KeyCode::Oem12),
             0x52 => Ok(KeyCode::Oem3),
             0x54 => Ok(KeyCode::Oem4),
             0x55 => Ok(KeyCode::OemPlus),
@@ -92,8 +94,11 @@ impl ScancodeSet2 {
             0x5B => Ok(KeyCode::Oem6),
             0x5D => Ok(KeyCode::Oem7),
             0x61 => Ok(KeyCode::Oem5),
+            0x64 => Ok(KeyCode::Oem10),
             0x66 => Ok(KeyCode::Backspace),
+            0x67 => Ok(KeyCode::Oem9),
             0x69 => Ok(KeyCode::Numpad1),
+            0x6A => Ok(KeyCode::Oem13),
             0x6B => Ok(KeyCode::Numpad4),
             0x6C => Ok(KeyCode::Numpad7),
             0x70 => Ok(KeyCode::Numpad0),
@@ -124,10 +129,19 @@ impl ScancodeSet2 {
             0x11 => Ok(KeyCode::RAltGr),
             0x12 => Ok(KeyCode::RAlt2),
             0x14 => Ok(KeyCode::RControl),
+            0x15 => Ok(KeyCode::PrevTrack),
             0x1F => Ok(KeyCode::LWin),
+            0x21 => Ok(KeyCode::VolumeDown),
+            0x23 => Ok(KeyCode::Mute),
             0x27 => Ok(KeyCode::RWin),
+            0x2B => Ok(KeyCode::Calculator),
             0x2F => Ok(KeyCode::Apps),
+            0x32 => Ok(KeyCode::VolumeUp),
+            0x34 => Ok(KeyCode::Play),
+            0x3A => Ok(KeyCode::WWWHome),
+            0x3B => Ok(KeyCode::Stop),
             0x4A => Ok(KeyCode::NumpadDivide),
+            0x4D => Ok(KeyCode::NextTrack),
             0x5A => Ok(KeyCode::NumpadEnter),
             0x69 => Ok(KeyCode::End),
             0x6B => Ok(KeyCode::ArrowLeft),
@@ -269,7 +283,7 @@ mod test {
         }
         codes.sort();
         println!("{:?}", codes);
-        assert_eq!(codes.len(), 89);
-        assert_eq!(errs.len(), 167);
+        assert_eq!(codes.len(), 94);
+        assert_eq!(errs.len(), 162);
     }
 }
