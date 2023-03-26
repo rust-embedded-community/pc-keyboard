@@ -16,7 +16,7 @@ impl KeyboardLayout for Uk105Key {
     ) -> DecodedKey {
         match keycode {
             KeyCode::Oem8 => {
-                if modifiers.alt_gr {
+                if modifiers.is_altgr() {
                     DecodedKey::Unicode('|')
                 } else if modifiers.is_shifted() {
                     DecodedKey::Unicode('¬')
@@ -46,7 +46,7 @@ impl KeyboardLayout for Uk105Key {
                 }
             }
             KeyCode::Key4 => {
-                if modifiers.alt_gr {
+                if modifiers.is_altgr() {
                     DecodedKey::Unicode('€')
                 } else if modifiers.is_shifted() {
                     DecodedKey::Unicode('$')

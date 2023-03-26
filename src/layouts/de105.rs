@@ -115,7 +115,7 @@ impl KeyboardLayout for De105Key {
             KeyCode::Q => {
                 if map_to_unicode && modifiers.is_ctrl() {
                     DecodedKey::Unicode('\u{0011}')
-                } else if modifiers.alt_gr {
+                } else if modifiers.is_altgr() {
                     DecodedKey::Unicode('@')
                 } else if modifiers.is_caps() {
                     DecodedKey::Unicode('Q')
@@ -126,7 +126,7 @@ impl KeyboardLayout for De105Key {
             KeyCode::E => {
                 if map_to_unicode && modifiers.is_ctrl() {
                     DecodedKey::Unicode('\u{0005}')
-                } else if modifiers.alt_gr {
+                } else if modifiers.is_altgr() {
                     DecodedKey::Unicode('€')
                 } else if modifiers.is_caps() {
                     DecodedKey::Unicode('E')
@@ -151,7 +151,7 @@ impl KeyboardLayout for De105Key {
                 }
             }
             KeyCode::Oem6 => {
-                if modifiers.alt_gr {
+                if modifiers.is_altgr() {
                     DecodedKey::Unicode('~')
                 } else if modifiers.is_caps() {
                     DecodedKey::Unicode('*')
@@ -214,7 +214,7 @@ impl KeyboardLayout for De105Key {
             KeyCode::Oem5 => {
                 if modifiers.is_shifted() {
                     DecodedKey::Unicode('>')
-                } else if modifiers.alt_gr {
+                } else if modifiers.is_altgr() {
                     DecodedKey::Unicode('|')
                 } else {
                     DecodedKey::Unicode('<')
