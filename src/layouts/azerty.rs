@@ -37,7 +37,7 @@ impl KeyboardLayout for Azerty {
             KeyCode::Key2 => {
                 if modifiers.is_shifted() {
                     DecodedKey::Unicode('2')
-                } else if modifiers.alt_gr {
+                } else if modifiers.is_altgr() {
                     DecodedKey::Unicode('~')
                 } else {
                     DecodedKey::Unicode('é')
@@ -46,7 +46,7 @@ impl KeyboardLayout for Azerty {
             KeyCode::Key3 => {
                 if modifiers.is_shifted() {
                     DecodedKey::Unicode('3')
-                } else if modifiers.alt_gr {
+                } else if modifiers.is_altgr() {
                     DecodedKey::Unicode('#')
                 } else {
                     DecodedKey::Unicode('"')
@@ -55,7 +55,7 @@ impl KeyboardLayout for Azerty {
             KeyCode::Key4 => {
                 if modifiers.is_shifted() {
                     DecodedKey::Unicode('4')
-                } else if modifiers.alt_gr {
+                } else if modifiers.is_altgr() {
                     DecodedKey::Unicode('{')
                 } else {
                     DecodedKey::Unicode('\'')
@@ -64,7 +64,7 @@ impl KeyboardLayout for Azerty {
             KeyCode::Key5 => {
                 if modifiers.is_shifted() {
                     DecodedKey::Unicode('5')
-                } else if modifiers.alt_gr {
+                } else if modifiers.is_altgr() {
                     DecodedKey::Unicode('[')
                 } else {
                     DecodedKey::Unicode('(')
@@ -73,7 +73,7 @@ impl KeyboardLayout for Azerty {
             KeyCode::Key6 => {
                 if modifiers.is_shifted() {
                     DecodedKey::Unicode('6')
-                } else if modifiers.alt_gr {
+                } else if modifiers.is_altgr() {
                     DecodedKey::Unicode('|')
                 } else {
                     DecodedKey::Unicode('-')
@@ -82,7 +82,7 @@ impl KeyboardLayout for Azerty {
             KeyCode::Key7 => {
                 if modifiers.is_shifted() {
                     DecodedKey::Unicode('7')
-                } else if modifiers.alt_gr {
+                } else if modifiers.is_altgr() {
                     DecodedKey::Unicode('`')
                 } else {
                     DecodedKey::Unicode('è')
@@ -91,7 +91,7 @@ impl KeyboardLayout for Azerty {
             KeyCode::Key8 => {
                 if modifiers.is_shifted() {
                     DecodedKey::Unicode('8')
-                } else if modifiers.alt_gr {
+                } else if modifiers.is_altgr() {
                     DecodedKey::Unicode('\\')
                 } else {
                     DecodedKey::Unicode('_')
@@ -100,7 +100,7 @@ impl KeyboardLayout for Azerty {
             KeyCode::Key9 => {
                 if modifiers.is_shifted() {
                     DecodedKey::Unicode('9')
-                } else if modifiers.alt_gr {
+                } else if modifiers.is_altgr() {
                     DecodedKey::Unicode('^')
                 } else {
                     DecodedKey::Unicode('ç')
@@ -109,7 +109,7 @@ impl KeyboardLayout for Azerty {
             KeyCode::Key0 => {
                 if modifiers.is_shifted() {
                     DecodedKey::Unicode('0')
-                } else if modifiers.alt_gr {
+                } else if modifiers.is_altgr() {
                     DecodedKey::Unicode('@')
                 } else {
                     DecodedKey::Unicode('à')
@@ -118,7 +118,7 @@ impl KeyboardLayout for Azerty {
             KeyCode::OemMinus => {
                 if modifiers.is_shifted() {
                     DecodedKey::Unicode('°')
-                } else if modifiers.alt_gr {
+                } else if modifiers.is_altgr() {
                     DecodedKey::Unicode(']')
                 } else {
                     DecodedKey::Unicode(')')
@@ -127,7 +127,7 @@ impl KeyboardLayout for Azerty {
             KeyCode::OemPlus => {
                 if modifiers.is_shifted() {
                     DecodedKey::Unicode('+')
-                } else if modifiers.alt_gr {
+                } else if modifiers.is_altgr() {
                     DecodedKey::Unicode('}')
                 } else {
                     DecodedKey::Unicode('=')
@@ -228,7 +228,7 @@ impl KeyboardLayout for Azerty {
             KeyCode::Oem4 => {
                 if modifiers.is_shifted() {
                     DecodedKey::Unicode('¨')
-                } else if modifiers.alt_gr {
+                } else if modifiers.is_altgr() {
                     DecodedKey::Unicode('ˇ')
                 } else {
                     DecodedKey::Unicode('^')
@@ -237,7 +237,7 @@ impl KeyboardLayout for Azerty {
             KeyCode::Oem6 => {
                 if modifiers.is_shifted() {
                     DecodedKey::Unicode('£')
-                } else if modifiers.alt_gr {
+                } else if modifiers.is_altgr() {
                     DecodedKey::Unicode('¤')
                 } else {
                     DecodedKey::Unicode('$')

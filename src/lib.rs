@@ -434,8 +434,10 @@ pub struct Modifiers {
     pub numlock: bool,
     /// The caps lock toggle is on
     pub capslock: bool,
-    /// The RAlt key is down
-    pub alt_gr: bool,
+    /// The left alt key is down
+    pub lalt: bool,
+    /// The right alt key is down
+    pub ralt: bool,
     /// Special 'hidden' control key is down (used when you press Pause)
     pub rctrl2: bool,
 }
@@ -654,7 +656,8 @@ where
                 rctrl: false,
                 numlock: true,
                 capslock: false,
-                alt_gr: false,
+                lalt: false,
+                ralt: false,
                 rctrl2: false,
             },
             layout,
@@ -757,17 +760,31 @@ where
                 None
             }
             KeyEvent {
+                code: KeyCode::LAlt,
+                state: KeyState::Down,
+            } => {
+                self.modifiers.lalt = true;
+                Some(DecodedKey::RawKey(KeyCode::LAlt))
+            }
+            KeyEvent {
+                code: KeyCode::LAlt,
+                state: KeyState::Up,
+            } => {
+                self.modifiers.lalt = false;
+                None
+            }
+            KeyEvent {
                 code: KeyCode::RAltGr,
                 state: KeyState::Down,
             } => {
-                self.modifiers.alt_gr = true;
+                self.modifiers.ralt = true;
                 Some(DecodedKey::RawKey(KeyCode::RAltGr))
             }
             KeyEvent {
                 code: KeyCode::RAltGr,
                 state: KeyState::Up,
             } => {
-                self.modifiers.alt_gr = false;
+                self.modifiers.ralt = false;
                 None
             }
             KeyEvent {
@@ -825,8 +842,16 @@ impl Modifiers {
         self.lctrl | self.rctrl
     }
 
+    pub const fn is_alt(&self) -> bool {
+        self.lalt | self.ralt
+    }
+
+    pub const fn is_altgr(&self) -> bool {
+        self.ralt | (self.lalt & self.is_ctrl())
+    }
+
     pub const fn is_caps(&self) -> bool {
-        (self.lshift | self.rshift) ^ self.capslock
+        self.is_shifted() ^ self.capslock
     }
 }
 

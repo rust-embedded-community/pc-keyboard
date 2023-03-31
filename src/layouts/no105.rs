@@ -1,15 +1,13 @@
-//! German keyboard support
+//! Norwegian keyboard support
 
 use crate::{DecodedKey, HandleControl, KeyCode, KeyboardLayout, Modifiers};
 
-/// A standard German 102-key (or 105-key including Windows keys) keyboard.
-///
-/// The top row spells `QWERTZ`.
+/// A standard Norwegian 102-key (or 105-key including Windows keys) keyboard.
 ///
 /// Has a 2-row high Enter key, with Oem5 next to the left shift (ISO format).
-pub struct De105Key;
+pub struct No105Key;
 
-impl KeyboardLayout for De105Key {
+impl KeyboardLayout for No105Key {
     fn map_keycode(
         &self,
         keycode: KeyCode,
@@ -21,9 +19,9 @@ impl KeyboardLayout for De105Key {
             KeyCode::Escape => DecodedKey::Unicode(0x1B.into()),
             KeyCode::Oem8 => {
                 if modifiers.is_shifted() {
-                    DecodedKey::Unicode('°')
+                    DecodedKey::Unicode('§')
                 } else {
-                    DecodedKey::Unicode('^')
+                    DecodedKey::Unicode('|')
                 }
             }
             KeyCode::Key1 => {
@@ -36,19 +34,25 @@ impl KeyboardLayout for De105Key {
             KeyCode::Key2 => {
                 if modifiers.is_shifted() {
                     DecodedKey::Unicode('"')
+                } else if modifiers.is_altgr() {
+                    DecodedKey::Unicode('@')
                 } else {
                     DecodedKey::Unicode('2')
                 }
             }
             KeyCode::Key3 => {
                 if modifiers.is_shifted() {
-                    DecodedKey::Unicode('§')
+                    DecodedKey::Unicode('#')
+                } else if modifiers.is_altgr() {
+                    DecodedKey::Unicode('£')
                 } else {
                     DecodedKey::Unicode('3')
                 }
             }
             KeyCode::Key4 => {
                 if modifiers.is_shifted() {
+                    DecodedKey::Unicode('¤')
+                } else if modifiers.is_altgr() {
                     DecodedKey::Unicode('$')
                 } else {
                     DecodedKey::Unicode('4')
@@ -57,6 +61,8 @@ impl KeyboardLayout for De105Key {
             KeyCode::Key5 => {
                 if modifiers.is_shifted() {
                     DecodedKey::Unicode('%')
+                } else if modifiers.is_altgr() {
+                    DecodedKey::Unicode('€')
                 } else {
                     DecodedKey::Unicode('5')
                 }
@@ -71,6 +77,8 @@ impl KeyboardLayout for De105Key {
             KeyCode::Key7 => {
                 if modifiers.is_shifted() {
                     DecodedKey::Unicode('/')
+                } else if modifiers.is_altgr() {
+                    DecodedKey::Unicode('{')
                 } else {
                     DecodedKey::Unicode('7')
                 }
@@ -78,6 +86,8 @@ impl KeyboardLayout for De105Key {
             KeyCode::Key8 => {
                 if modifiers.is_shifted() {
                     DecodedKey::Unicode('(')
+                } else if modifiers.is_altgr() {
+                    DecodedKey::Unicode('[')
                 } else {
                     DecodedKey::Unicode('8')
                 }
@@ -85,6 +95,8 @@ impl KeyboardLayout for De105Key {
             KeyCode::Key9 => {
                 if modifiers.is_shifted() {
                     DecodedKey::Unicode(')')
+                } else if modifiers.is_altgr() {
+                    DecodedKey::Unicode(']')
                 } else {
                     DecodedKey::Unicode('9')
                 }
@@ -92,6 +104,8 @@ impl KeyboardLayout for De105Key {
             KeyCode::Key0 => {
                 if modifiers.is_shifted() {
                     DecodedKey::Unicode('=')
+                } else if modifiers.is_altgr() {
+                    DecodedKey::Unicode('}')
                 } else {
                     DecodedKey::Unicode('0')
                 }
@@ -100,29 +114,20 @@ impl KeyboardLayout for De105Key {
                 if modifiers.is_shifted() {
                     DecodedKey::Unicode('?')
                 } else {
-                    DecodedKey::Unicode('ß')
+                    DecodedKey::Unicode('+')
                 }
             }
             KeyCode::OemPlus => {
                 if modifiers.is_shifted() {
                     DecodedKey::Unicode('`')
-                } else {
+                } else if modifiers.is_altgr() {
                     DecodedKey::Unicode('´')
+                } else {
+                    DecodedKey::Unicode('\\')
                 }
             }
             KeyCode::Backspace => DecodedKey::Unicode(0x08.into()),
             KeyCode::Tab => DecodedKey::Unicode(0x09.into()),
-            KeyCode::Q => {
-                if map_to_unicode && modifiers.is_ctrl() {
-                    DecodedKey::Unicode('\u{0011}')
-                } else if modifiers.is_altgr() {
-                    DecodedKey::Unicode('@')
-                } else if modifiers.is_caps() {
-                    DecodedKey::Unicode('Q')
-                } else {
-                    DecodedKey::Unicode('q')
-                }
-            }
             KeyCode::E => {
                 if map_to_unicode && modifiers.is_ctrl() {
                     DecodedKey::Unicode('\u{0005}')
@@ -134,60 +139,42 @@ impl KeyboardLayout for De105Key {
                     DecodedKey::Unicode('e')
                 }
             }
-            KeyCode::Y => {
-                if map_to_unicode && modifiers.is_ctrl() {
-                    DecodedKey::Unicode('\u{0014}')
-                } else if modifiers.is_caps() {
-                    DecodedKey::Unicode('Z')
-                } else {
-                    DecodedKey::Unicode('z')
-                }
-            }
             KeyCode::Oem4 => {
                 if modifiers.is_caps() {
-                    DecodedKey::Unicode('Ü')
+                    DecodedKey::Unicode('Å')
                 } else {
-                    DecodedKey::Unicode('ü')
+                    DecodedKey::Unicode('å')
                 }
             }
             KeyCode::Oem6 => {
                 if modifiers.is_altgr() {
                     DecodedKey::Unicode('~')
-                } else if modifiers.is_caps() {
-                    DecodedKey::Unicode('*')
+                } else if modifiers.is_shifted() {
+                    DecodedKey::Unicode('^')
                 } else {
-                    DecodedKey::Unicode('+')
+                    DecodedKey::Unicode('¨')
                 }
             }
             KeyCode::Return => DecodedKey::Unicode(10.into()),
             KeyCode::Oem7 => {
                 if modifiers.is_shifted() {
-                    DecodedKey::Unicode('\'')
+                    DecodedKey::Unicode('*')
                 } else {
-                    DecodedKey::Unicode('#')
+                    DecodedKey::Unicode('\'')
                 }
             }
             KeyCode::Oem1 => {
-                if modifiers.is_shifted() {
-                    DecodedKey::Unicode('Ö')
+                if modifiers.is_caps() {
+                    DecodedKey::Unicode('Ø')
                 } else {
-                    DecodedKey::Unicode('ö')
+                    DecodedKey::Unicode('ø')
                 }
             }
             KeyCode::Oem3 => {
-                if modifiers.is_shifted() {
-                    DecodedKey::Unicode('Ä')
+                if modifiers.is_caps() {
+                    DecodedKey::Unicode('Æ')
                 } else {
-                    DecodedKey::Unicode('ä')
-                }
-            }
-            KeyCode::Z => {
-                if map_to_unicode && modifiers.is_ctrl() {
-                    DecodedKey::Unicode('\u{001A}')
-                } else if modifiers.is_caps() {
-                    DecodedKey::Unicode('Y')
-                } else {
-                    DecodedKey::Unicode('y')
+                    DecodedKey::Unicode('æ')
                 }
             }
             KeyCode::OemComma => {
@@ -214,8 +201,6 @@ impl KeyboardLayout for De105Key {
             KeyCode::Oem5 => {
                 if modifiers.is_shifted() {
                     DecodedKey::Unicode('>')
-                } else if modifiers.is_altgr() {
-                    DecodedKey::Unicode('|')
                 } else {
                     DecodedKey::Unicode('<')
                 }

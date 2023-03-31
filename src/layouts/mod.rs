@@ -28,6 +28,9 @@ pub use self::colemak::Colemak;
 mod de105;
 pub use self::de105::De105Key;
 
+mod no105;
+pub use self::no105::No105Key;
+
 /// A enum of all the supported keyboard layouts.
 pub enum AnyLayout {
     DVP104Key(DVP104Key),
@@ -38,6 +41,7 @@ pub enum AnyLayout {
     Azerty(Azerty),
     Colemak(Colemak),
     De105Key(De105Key),
+    No105Key(No105Key),
 }
 
 impl super::KeyboardLayout for AnyLayout {
@@ -56,6 +60,7 @@ impl super::KeyboardLayout for AnyLayout {
             AnyLayout::Azerty(inner) => inner.map_keycode(keycode, modifiers, handle_ctrl),
             AnyLayout::Colemak(inner) => inner.map_keycode(keycode, modifiers, handle_ctrl),
             AnyLayout::De105Key(inner) => inner.map_keycode(keycode, modifiers, handle_ctrl),
+            AnyLayout::No105Key(inner) => inner.map_keycode(keycode, modifiers, handle_ctrl),
         }
     }
 }
@@ -76,6 +81,7 @@ impl super::KeyboardLayout for &AnyLayout {
             AnyLayout::Azerty(inner) => inner.map_keycode(keycode, modifiers, handle_ctrl),
             AnyLayout::Colemak(inner) => inner.map_keycode(keycode, modifiers, handle_ctrl),
             AnyLayout::De105Key(inner) => inner.map_keycode(keycode, modifiers, handle_ctrl),
+            AnyLayout::No105Key(inner) => inner.map_keycode(keycode, modifiers, handle_ctrl),
         }
     }
 }
