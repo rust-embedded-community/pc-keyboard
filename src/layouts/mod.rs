@@ -31,6 +31,9 @@ pub use self::de105::De105Key;
 mod no105;
 pub use self::no105::No105Key;
 
+mod fi_se105;
+pub use self::fi_se105::FiSe105Key;
+
 /// A enum of all the supported keyboard layouts.
 pub enum AnyLayout {
     DVP104Key(DVP104Key),
