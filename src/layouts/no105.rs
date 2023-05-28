@@ -216,6 +216,13 @@ impl KeyboardLayout for No105Key {
                     DecodedKey::Unicode('<')
                 }
             }
+            KeyCode::NumpadPeriod => {
+                if modifiers.numlock {
+                    DecodedKey::Unicode(',')
+                } else {
+                    DecodedKey::Unicode(127.into())
+                }
+            }
             e => {
                 let us = super::Us104Key;
                 us.map_keycode(e, modifiers, handle_ctrl)
