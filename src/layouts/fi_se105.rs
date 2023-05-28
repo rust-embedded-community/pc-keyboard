@@ -220,10 +220,7 @@ impl KeyboardLayout for FiSe105Key {
                     fallback.map_keycode(keycode, modifiers, handle_ctrl)
                 }
             }
-            e => {
-                let us = super::Us104Key;
-                us.map_keycode(e, modifiers, handle_ctrl)
-            }
+            e => fallback.map_keycode(e, modifiers, handle_ctrl),
         }
     }
 }
