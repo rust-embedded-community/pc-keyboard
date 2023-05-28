@@ -177,6 +177,17 @@ impl KeyboardLayout for No105Key {
                     DecodedKey::Unicode('æ')
                 }
             }
+            KeyCode::M => {
+                if map_to_unicode && modifiers.is_ctrl() {
+                    DecodedKey::Unicode('\u{000D}')
+                } else if modifiers.is_altgr() {
+                    DecodedKey::Unicode('µ')
+                } else if modifiers.is_caps() {
+                    DecodedKey::Unicode('M')
+                } else {
+                    DecodedKey::Unicode('m')
+                }
+            }
             KeyCode::OemComma => {
                 if modifiers.is_shifted() {
                     DecodedKey::Unicode(';')
