@@ -45,6 +45,7 @@ pub enum AnyLayout {
     Colemak(Colemak),
     De105Key(De105Key),
     No105Key(No105Key),
+    FiSe105Key(FiSe105Key),
 }
 
 impl super::KeyboardLayout for AnyLayout {
@@ -64,6 +65,7 @@ impl super::KeyboardLayout for AnyLayout {
             AnyLayout::Colemak(inner) => inner.map_keycode(keycode, modifiers, handle_ctrl),
             AnyLayout::De105Key(inner) => inner.map_keycode(keycode, modifiers, handle_ctrl),
             AnyLayout::No105Key(inner) => inner.map_keycode(keycode, modifiers, handle_ctrl),
+            AnyLayout::FiSe105Key(inner) => inner.map_keycode(keycode, modifiers, handle_ctrl),
         }
     }
 }
@@ -85,6 +87,7 @@ impl super::KeyboardLayout for &AnyLayout {
             AnyLayout::Colemak(inner) => inner.map_keycode(keycode, modifiers, handle_ctrl),
             AnyLayout::De105Key(inner) => inner.map_keycode(keycode, modifiers, handle_ctrl),
             AnyLayout::No105Key(inner) => inner.map_keycode(keycode, modifiers, handle_ctrl),
+            AnyLayout::FiSe105Key(inner) => inner.map_keycode(keycode, modifiers, handle_ctrl),
         }
     }
 }
