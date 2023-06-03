@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+* Add 102/105-key Finnish/Swedish layout
 * Add 102/105-key Norwegian layout
 
 ## v0.7.0 (12 Feb 2022)
