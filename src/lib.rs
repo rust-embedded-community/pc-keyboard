@@ -420,7 +420,7 @@ pub trait ScancodeSet {
 }
 
 /// The set of modifier keys you have on a keyboard.
-#[derive(Debug, Default)]
+#[derive(Debug, Default, Clone, Eq, PartialEq, Hash)]
 pub struct Modifiers {
     /// The left shift key is down
     pub lshift: bool,
@@ -503,6 +503,11 @@ where
             scancode_set,
             event_decoder: EventDecoder::new(layout, handle_ctrl),
         }
+    }
+
+    /// Get the current key modifier states.
+    pub const fn get_modifiers(&self) -> &Modifiers {
+        &self.event_decoder.modifiers
     }
 
     /// Change the Ctrl key mapping.
@@ -1593,6 +1598,28 @@ mod test {
         ];
 
         process_keyevents(&mut k, &test_sequence);
+    }
+
+    #[test]
+    fn test_modifier_state_shift() {
+        let mut k = Keyboard::new(
+            ScancodeSet2::new(),
+            layouts::Uk105Key,
+            HandleControl::MapLettersToUnicode,
+        );
+        assert!(!k.get_modifiers().lshift);
+
+        k.process_keyevent(KeyEvent {
+            code: KeyCode::LShift,
+            state: KeyState::Down,
+        });
+        assert!(k.get_modifiers().lshift);
+
+        k.process_keyevent(KeyEvent {
+            code: KeyCode::LShift,
+            state: KeyState::Up,
+        });
+        assert!(!k.get_modifiers().lshift);
     }
 }
 
