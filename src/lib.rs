@@ -420,7 +420,7 @@ pub trait ScancodeSet {
 }
 
 /// The set of modifier keys you have on a keyboard.
-#[derive(Debug, Default, Copy, Clone, Eq, PartialEq, Hash)]
+#[derive(Debug, Default, Clone, Eq, PartialEq, Hash)]
 pub struct Modifiers {
     /// The left shift key is down
     pub lshift: bool,
@@ -1611,13 +1611,13 @@ mod test {
 
         k.process_keyevent(KeyEvent {
             code: KeyCode::LShift,
-            state: KeyState::Down
+            state: KeyState::Down,
         });
         assert!(k.get_modifiers().lshift);
 
         k.process_keyevent(KeyEvent {
             code: KeyCode::LShift,
-            state: KeyState::Up
+            state: KeyState::Up,
         });
         assert!(!k.get_modifiers().lshift);
     }
