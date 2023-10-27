@@ -22,9 +22,9 @@ impl KeyboardLayout for Azerty {
             KeyCode::Oem8 => DecodedKey::Unicode('²'),
             KeyCode::Oem5 => {
                 if modifiers.is_shifted() {
-                    DecodedKey::Unicode('µ')
+                    DecodedKey::Unicode('>')
                 } else {
-                    DecodedKey::Unicode('*')
+                    DecodedKey::Unicode('<')
                 }
             }
             KeyCode::Key1 => {
@@ -533,6 +533,10 @@ mod test {
         );
         assert_eq!(
             k.process_keyevent(KeyEvent::new(KeyCode::NumpadMultiply, KeyState::Down)),
+            Some(DecodedKey::Unicode('*'))
+        );
+        assert_eq!(
+            k.process_keyevent(KeyEvent::new(KeyCode::Oem5, KeyState::Down)),
             Some(DecodedKey::Unicode('*'))
         );
         assert_eq!(
