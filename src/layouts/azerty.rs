@@ -22,9 +22,9 @@ impl KeyboardLayout for Azerty {
             KeyCode::Oem8 => DecodedKey::Unicode('²'),
             KeyCode::Oem5 => {
                 if modifiers.is_shifted() {
-                    DecodedKey::Unicode('>')
+                    DecodedKey::Unicode('µ')
                 } else {
-                    DecodedKey::Unicode('<')
+                    DecodedKey::Unicode('*')
                 }
             }
             KeyCode::Key1 => {
@@ -349,6 +349,13 @@ impl KeyboardLayout for Azerty {
             }
             // Enter gives LF, not CRLF or CR
             KeyCode::Return => DecodedKey::Unicode(10.into()),
+            KeyCode::Oem10 => {
+                if modifiers.is_shifted() {
+                    DecodedKey::Unicode('>')
+                } else {
+                    DecodedKey::Unicode('<')
+                }
+            }
             KeyCode::Z => {
                 if map_to_unicode && modifiers.is_ctrl() {
                     DecodedKey::Unicode('\u{0017}')
