@@ -7,6 +7,8 @@ use crate::{DecodedKey, HandleControl, KeyCode, KeyboardLayout, Modifiers};
 /// The top row spells `AZERTY`.
 ///
 /// Has a 2-row high Enter key, with Oem5 next to the left shift (ISO format).
+/// 
+/// NB: no "dead key" support for now
 pub struct Azerty;
 
 impl KeyboardLayout for Azerty {
@@ -19,12 +21,12 @@ impl KeyboardLayout for Azerty {
         let map_to_unicode = handle_ctrl == HandleControl::MapLettersToUnicode;
         match keycode {
             KeyCode::Escape => DecodedKey::Unicode(0x1B.into()),
-            // Works with Unicode & 850 code page, not 437
+            // Works with Unicode & 850 code page, not 437 that has neither ¹ or ³
             KeyCode::Oem8 => {
                 if modifiers.is_shifted() {
-                    DecodedKey::Unicode('³') // Not in 437 code page
+                    DecodedKey::Unicode('³')
                 } else if modifiers.is_altgr() {
-                    DecodedKey::Unicode('¹') // Not in 437 code page
+                    DecodedKey::Unicode('¹')
                 } else {
                     DecodedKey::Unicode('²')
                 }
@@ -46,6 +48,7 @@ impl KeyboardLayout for Azerty {
                 }
             }
             KeyCode::Key1 => {
+                // NB: ˇ & ˛ dead keys with AltGr (+ Shift)
                 if modifiers.is_shifted() {
                     DecodedKey::Unicode('1')
                 } else {
@@ -63,6 +66,7 @@ impl KeyboardLayout for Azerty {
                 }
             }
             KeyCode::Key3 => {
+                // NB: ˘ dead key with AltGr + Shift
                 if modifiers.is_shifted() {
                     DecodedKey::Unicode('3')
                 } else if modifiers.is_altgr() {
@@ -264,6 +268,7 @@ impl KeyboardLayout for Azerty {
                 }
             }
             KeyCode::Oem4 => {
+                // NB: these should be dead keys
                 if modifiers.is_shifted() {
                     DecodedKey::Unicode('¨')
                 } else if modifiers.is_altgr() {
@@ -283,6 +288,7 @@ impl KeyboardLayout for Azerty {
                 }
             }
             KeyCode::Oem7 => {
+                // NB: ´ & ¯ dead keys can be done with AltGr (+ Shift)
                 if modifiers.is_shifted() {
                     DecodedKey::Unicode('µ')
                 } else {
@@ -390,6 +396,7 @@ impl KeyboardLayout for Azerty {
                 }
             }
             KeyCode::Oem3 => {
+                // NB: ´ dead key & Ù can be done with AltGr (+ Shift), but no Ù in code page 437
                 if modifiers.is_shifted() {
                     DecodedKey::Unicode('%')
                 } else {
@@ -493,9 +500,15 @@ impl KeyboardLayout for Azerty {
             }
             KeyCode::Spacebar => DecodedKey::Unicode(' '),
             KeyCode::Delete => DecodedKey::Unicode(127.into()),
+            // NB: these ones give respectively ÷, × & − with AltGr
             KeyCode::NumpadDivide => DecodedKey::Unicode('/'),
             KeyCode::NumpadMultiply => DecodedKey::Unicode('*'),
             KeyCode::NumpadSubtract => DecodedKey::Unicode('-'),
+            // NB: this is interesting with AltGr or AltGr+Shift, but Unicode only
+            // 7: ↖⇖ 8: ↑⇑ 9:↗⇗
+            // 4: ←⇐ 5: ↔⇔ 6:→⇒
+            // 1: ↙⇙ 2: ↓⇓ 3:↘⇘
+            // 0: ↕⇕ .: , (space: e2 80 af in UTF-8)
             KeyCode::Numpad7 => {
                 if modifiers.numlock {
                     DecodedKey::Unicode('7')
@@ -517,6 +530,7 @@ impl KeyboardLayout for Azerty {
                     DecodedKey::RawKey(KeyCode::PageUp)
                 }
             }
+            // NB: this one gives nothing different with AltGr
             KeyCode::NumpadAdd => DecodedKey::Unicode('+'),
             KeyCode::Numpad4 => {
                 if modifiers.numlock {
@@ -601,6 +615,10 @@ mod test {
         assert_eq!(
             k.process_keyevent(KeyEvent::new(KeyCode::Key4, KeyState::Down)),
             Some(DecodedKey::Unicode('\''))
+        );
+        assert_eq!(
+            k.process_keyevent(KeyEvent::new(KeyCode::Oem5, KeyState::Down)),
+            Some(DecodedKey::Unicode('<'))
         );
         assert_eq!(
             k.process_keyevent(KeyEvent::new(KeyCode::Oem7, KeyState::Down)),
