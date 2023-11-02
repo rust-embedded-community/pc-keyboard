@@ -7,7 +7,7 @@ use crate::{DecodedKey, HandleControl, KeyCode, KeyboardLayout, Modifiers};
 /// The top row spells `AZERTY`.
 ///
 /// Has a 2-row high Enter key, with Oem5 next to the left shift (ISO format).
-/// 
+///
 /// NB: no "dead key" support for now
 pub struct Azerty;
 
@@ -436,7 +436,7 @@ impl KeyboardLayout for Azerty {
                 }
             }
             KeyCode::V => {
-                // NB: ' ' & ← can be done with AltGr (+ Shift), but '' is Unicode NARROW UNBREAKABLE SPACE 
+                // NB: ' ' & ← can be done with AltGr (+ Shift), but '' is Unicode NARROW UNBREAKABLE SPACE
                 //                                               and ← is 0x1B with 437 and 850 code pages
                 if map_to_unicode && modifiers.is_ctrl() {
                     DecodedKey::Unicode('\u{0016}')
