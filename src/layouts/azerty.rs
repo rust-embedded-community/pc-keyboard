@@ -21,34 +21,15 @@ impl KeyboardLayout for Azerty {
         let map_to_unicode = handle_ctrl == HandleControl::MapLettersToUnicode;
         match keycode {
             KeyCode::Escape => DecodedKey::Unicode(0x1B.into()),
-            // Works with Unicode & 850 code page, not 437 that has neither ¹ or ³
-            KeyCode::Oem8 => {
-                if modifiers.is_shifted() {
-                    DecodedKey::Unicode('³')
-                } else if modifiers.is_altgr() {
-                    DecodedKey::Unicode('¹')
-                } else {
-                    DecodedKey::Unicode('²')
-                }
-            }
-            // Works with Unicode, 437 & 850 code pages
+            KeyCode::Oem8 => DecodedKey::Unicode('²'),
             KeyCode::Oem5 => {
                 if modifiers.is_shifted() {
-                    if modifiers.is_altgr() {
-                        DecodedKey::Unicode('≥')
-                    } else {
-                        DecodedKey::Unicode('>')
-                    }
+                    DecodedKey::Unicode('>')
                 } else {
-                    if modifiers.is_altgr() {
-                        DecodedKey::Unicode('≤')
-                    } else {
-                        DecodedKey::Unicode('<')
-                    }
+                    DecodedKey::Unicode('<')
                 }
             }
             KeyCode::Key1 => {
-                // NB: ˇ & ˛ dead keys with AltGr (+ Shift)
                 if modifiers.is_shifted() {
                     DecodedKey::Unicode('1')
                 } else {
@@ -56,7 +37,6 @@ impl KeyboardLayout for Azerty {
                 }
             }
             KeyCode::Key2 => {
-                // NB: É can be done with AltGr + Shift
                 if modifiers.is_shifted() {
                     DecodedKey::Unicode('2')
                 } else if modifiers.is_altgr() {
@@ -66,7 +46,6 @@ impl KeyboardLayout for Azerty {
                 }
             }
             KeyCode::Key3 => {
-                // NB: ˘ dead key with AltGr + Shift
                 if modifiers.is_shifted() {
                     DecodedKey::Unicode('3')
                 } else if modifiers.is_altgr() {
@@ -76,7 +55,6 @@ impl KeyboardLayout for Azerty {
                 }
             }
             KeyCode::Key4 => {
-                // NB: — (not -) can be done with AltGr + Shift, but is Unicode only
                 if modifiers.is_shifted() {
                     DecodedKey::Unicode('4')
                 } else if modifiers.is_altgr() {
@@ -86,7 +64,6 @@ impl KeyboardLayout for Azerty {
                 }
             }
             KeyCode::Key5 => {
-                // NB: – (not -) can be done with AltGr + Shift, but is Unicode only
                 if modifiers.is_shifted() {
                     DecodedKey::Unicode('5')
                 } else if modifiers.is_altgr() {
@@ -96,7 +73,6 @@ impl KeyboardLayout for Azerty {
                 }
             }
             KeyCode::Key6 => {
-                // NB: ‑ (not -) can be done with AltGr + Shift, but is Unicode only
                 if modifiers.is_shifted() {
                     DecodedKey::Unicode('6')
                 } else if modifiers.is_altgr() {
@@ -106,7 +82,6 @@ impl KeyboardLayout for Azerty {
                 }
             }
             KeyCode::Key7 => {
-                // NB: È can be done with AltGr + Shift
                 if modifiers.is_shifted() {
                     DecodedKey::Unicode('7')
                 } else if modifiers.is_altgr() {
@@ -116,7 +91,6 @@ impl KeyboardLayout for Azerty {
                 }
             }
             KeyCode::Key8 => {
-                // NB: ™ can be done with AltGr + Shift
                 if modifiers.is_shifted() {
                     DecodedKey::Unicode('8')
                 } else if modifiers.is_altgr() {
@@ -126,7 +100,6 @@ impl KeyboardLayout for Azerty {
                 }
             }
             KeyCode::Key9 => {
-                // NB: Ç can be done with AltGr + Shift
                 if modifiers.is_shifted() {
                     DecodedKey::Unicode('9')
                 } else if modifiers.is_altgr() {
@@ -136,7 +109,6 @@ impl KeyboardLayout for Azerty {
                 }
             }
             KeyCode::Key0 => {
-                // NB: À can be done with AltGr + Shift
                 if modifiers.is_shifted() {
                     DecodedKey::Unicode('0')
                 } else if modifiers.is_altgr() {
@@ -146,7 +118,6 @@ impl KeyboardLayout for Azerty {
                 }
             }
             KeyCode::OemMinus => {
-                // NB: ≠ can be done with AltGr + Shift, but is Unicode only
                 if modifiers.is_shifted() {
                     DecodedKey::Unicode('°')
                 } else if modifiers.is_altgr() {
@@ -156,7 +127,6 @@ impl KeyboardLayout for Azerty {
                 }
             }
             KeyCode::OemPlus => {
-                // NB: ± can be done with AltGr + Shift
                 if modifiers.is_shifted() {
                     DecodedKey::Unicode('+')
                 } else if modifiers.is_altgr() {
@@ -168,7 +138,6 @@ impl KeyboardLayout for Azerty {
             KeyCode::Backspace => DecodedKey::Unicode(0x08.into()),
             KeyCode::Tab => DecodedKey::Unicode(0x09.into()),
             KeyCode::Q => {
-                // NB: æ & Æ can be done with AltGr (+ Shift)
                 if map_to_unicode && modifiers.is_ctrl() {
                     DecodedKey::Unicode('\u{0001}')
                 } else if modifiers.is_caps() {
@@ -178,7 +147,6 @@ impl KeyboardLayout for Azerty {
                 }
             }
             KeyCode::W => {
-                // NB: â & Â can be done with AltGr (+ Shift), but no Â in code page 437
                 if map_to_unicode && modifiers.is_ctrl() {
                     DecodedKey::Unicode('\u{001A}')
                 } else if modifiers.is_caps() {
@@ -188,7 +156,6 @@ impl KeyboardLayout for Azerty {
                 }
             }
             KeyCode::E => {
-                // NB: € & ¢ can be done with AltGr (+ Shift), but not with code page 437
                 if map_to_unicode && modifiers.is_ctrl() {
                     DecodedKey::Unicode('\u{0005}')
                 } else if modifiers.is_caps() {
@@ -198,7 +165,6 @@ impl KeyboardLayout for Azerty {
                 }
             }
             KeyCode::R => {
-                // NB: ê & Ê can be done with AltGr (+ Shift), but no Ê in code page 437
                 if map_to_unicode && modifiers.is_ctrl() {
                     DecodedKey::Unicode('\u{0012}')
                 } else if modifiers.is_caps() {
@@ -208,7 +174,6 @@ impl KeyboardLayout for Azerty {
                 }
             }
             KeyCode::T => {
-                // NB: þ & Þ can be done with AltGr (+ Shift), but not with code page 437
                 if map_to_unicode && modifiers.is_ctrl() {
                     DecodedKey::Unicode('\u{0014}')
                 } else if modifiers.is_caps() {
@@ -218,7 +183,6 @@ impl KeyboardLayout for Azerty {
                 }
             }
             KeyCode::Y => {
-                // NB: ÿ & Ÿ can be done with AltGr (+ Shift), but no Ÿ in code page 437
                 if map_to_unicode && modifiers.is_ctrl() {
                     DecodedKey::Unicode('\u{0019}')
                 } else if modifiers.is_caps() {
@@ -228,7 +192,6 @@ impl KeyboardLayout for Azerty {
                 }
             }
             KeyCode::U => {
-                // NB: û & Û can be done with AltGr (+ Shift), but no Û in code page 437
                 if map_to_unicode && modifiers.is_ctrl() {
                     DecodedKey::Unicode('\u{0015}')
                 } else if modifiers.is_caps() {
@@ -238,7 +201,6 @@ impl KeyboardLayout for Azerty {
                 }
             }
             KeyCode::I => {
-                // NB: î & Î can be done with AltGr (+ Shift), but no Î in code page 437
                 if map_to_unicode && modifiers.is_ctrl() {
                     DecodedKey::Unicode('\u{0009}')
                 } else if modifiers.is_caps() {
@@ -248,7 +210,6 @@ impl KeyboardLayout for Azerty {
                 }
             }
             KeyCode::O => {
-                // NB: œ & Œ can be done with AltGr (+ Shift), but not with code page 437
                 if map_to_unicode && modifiers.is_ctrl() {
                     DecodedKey::Unicode('\u{000F}')
                 } else if modifiers.is_caps() {
@@ -258,7 +219,6 @@ impl KeyboardLayout for Azerty {
                 }
             }
             KeyCode::P => {
-                // NB: ô & Ô can be done with AltGr (+ Shift), but no Ô in code page 437
                 if map_to_unicode && modifiers.is_ctrl() {
                     DecodedKey::Unicode('\u{0010}')
                 } else if modifiers.is_caps() {
@@ -268,7 +228,6 @@ impl KeyboardLayout for Azerty {
                 }
             }
             KeyCode::Oem4 => {
-                // NB: these should be dead keys
                 if modifiers.is_shifted() {
                     DecodedKey::Unicode('¨')
                 } else if modifiers.is_altgr() {
@@ -278,7 +237,6 @@ impl KeyboardLayout for Azerty {
                 }
             }
             KeyCode::Oem6 => {
-                // NB: ø & Ø can be done with AltGr (+ Shift), but not with code page 437
                 if modifiers.is_shifted() {
                     DecodedKey::Unicode('£')
                 } else if modifiers.is_altgr() {
@@ -288,7 +246,6 @@ impl KeyboardLayout for Azerty {
                 }
             }
             KeyCode::Oem7 => {
-                // NB: ´ & ¯ dead keys can be done with AltGr (+ Shift)
                 if modifiers.is_shifted() {
                     DecodedKey::Unicode('µ')
                 } else {
@@ -296,7 +253,6 @@ impl KeyboardLayout for Azerty {
                 }
             }
             KeyCode::A => {
-                // NB: ä & Ä can be done with AltGr (+ Shift)
                 if map_to_unicode && modifiers.is_ctrl() {
                     DecodedKey::Unicode('\u{0011}')
                 } else if modifiers.is_caps() {
@@ -306,7 +262,6 @@ impl KeyboardLayout for Azerty {
                 }
             }
             KeyCode::S => {
-                // NB: ß & „ can be done with AltGr (+ Shift), but „ is Unicode only
                 if map_to_unicode && modifiers.is_ctrl() {
                     DecodedKey::Unicode('\u{0013}')
                 } else if modifiers.is_caps() {
@@ -316,7 +271,6 @@ impl KeyboardLayout for Azerty {
                 }
             }
             KeyCode::D => {
-                // NB: ë & Ë can be done with AltGr (+ Shift), but no Ë in code page 437
                 if map_to_unicode && modifiers.is_ctrl() {
                     DecodedKey::Unicode('\u{0004}')
                 } else if modifiers.is_caps() {
@@ -326,7 +280,6 @@ impl KeyboardLayout for Azerty {
                 }
             }
             KeyCode::F => {
-                // NB: ‘ & ‚ can be done with AltGr (+ Shift), but are Unicode only
                 if map_to_unicode && modifiers.is_ctrl() {
                     DecodedKey::Unicode('\u{0006}')
                 } else if modifiers.is_caps() {
@@ -336,7 +289,6 @@ impl KeyboardLayout for Azerty {
                 }
             }
             KeyCode::G => {
-                // NB: ’ & ¥ can be done with AltGr (+ Shift), but no ’ in code page 437
                 if map_to_unicode && modifiers.is_ctrl() {
                     DecodedKey::Unicode('\u{0007}')
                 } else if modifiers.is_caps() {
@@ -346,7 +298,6 @@ impl KeyboardLayout for Azerty {
                 }
             }
             KeyCode::H => {
-                // NB: ð & Ð can be done with AltGr (+ Shift), but not with code page 437
                 if map_to_unicode && modifiers.is_ctrl() {
                     DecodedKey::Unicode('\u{0008}')
                 } else if modifiers.is_caps() {
@@ -356,7 +307,6 @@ impl KeyboardLayout for Azerty {
                 }
             }
             KeyCode::J => {
-                // NB: ü & Ü can be done with AltGr (+ Shift)
                 if map_to_unicode && modifiers.is_ctrl() {
                     DecodedKey::Unicode('\u{000A}')
                 } else if modifiers.is_caps() {
@@ -366,7 +316,6 @@ impl KeyboardLayout for Azerty {
                 }
             }
             KeyCode::K => {
-                // NB: ï & Ï can be done with AltGr (+ Shift), but no Ï in code page 437
                 if map_to_unicode && modifiers.is_ctrl() {
                     DecodedKey::Unicode('\u{000B}')
                 } else if modifiers.is_caps() {
@@ -376,7 +325,6 @@ impl KeyboardLayout for Azerty {
                 }
             }
             KeyCode::L => {
-                // NB: ŀ & Ŀ can be done with AltGr (+ Shift), but are Unicode only
                 if map_to_unicode && modifiers.is_ctrl() {
                     DecodedKey::Unicode('\u{000C}')
                 } else if modifiers.is_caps() {
@@ -386,7 +334,6 @@ impl KeyboardLayout for Azerty {
                 }
             }
             KeyCode::Oem1 => {
-                // NB: ö & Ö can be done with AltGr (+ Shift)
                 if map_to_unicode && modifiers.is_ctrl() {
                     DecodedKey::Unicode('\u{000D}')
                 } else if modifiers.is_caps() {
@@ -396,7 +343,6 @@ impl KeyboardLayout for Azerty {
                 }
             }
             KeyCode::Oem3 => {
-                // NB: ´ dead key & Ù can be done with AltGr (+ Shift), but no Ù in code page 437
                 if modifiers.is_shifted() {
                     DecodedKey::Unicode('%')
                 } else {
@@ -406,7 +352,6 @@ impl KeyboardLayout for Azerty {
             // Enter gives LF, not CRLF or CR
             KeyCode::Return => DecodedKey::Unicode(10.into()),
             KeyCode::Z => {
-                // NB: « & “ can be done with AltGr (+ Shift), but no “ in code page 437
                 if map_to_unicode && modifiers.is_ctrl() {
                     DecodedKey::Unicode('\u{0017}')
                 } else if modifiers.is_caps() {
@@ -416,7 +361,6 @@ impl KeyboardLayout for Azerty {
                 }
             }
             KeyCode::X => {
-                // NB: » & ” can be done with AltGr (+ Shift), but no ” in code page 437
                 if map_to_unicode && modifiers.is_ctrl() {
                     DecodedKey::Unicode('\u{0018}')
                 } else if modifiers.is_caps() {
@@ -426,7 +370,6 @@ impl KeyboardLayout for Azerty {
                 }
             }
             KeyCode::C => {
-                // NB: © & ® can be done with AltGr (+ Shift), but not with code page 437
                 if map_to_unicode && modifiers.is_ctrl() {
                     DecodedKey::Unicode('\u{0003}')
                 } else if modifiers.is_caps() {
@@ -436,8 +379,6 @@ impl KeyboardLayout for Azerty {
                 }
             }
             KeyCode::V => {
-                // NB: ' ' & ← can be done with AltGr (+ Shift), but '' is Unicode NARROW UNBREAKABLE SPACE
-                //                                               and ← is 0x1B with 437 and 850 code pages
                 if map_to_unicode && modifiers.is_ctrl() {
                     DecodedKey::Unicode('\u{0016}')
                 } else if modifiers.is_caps() {
@@ -447,7 +388,6 @@ impl KeyboardLayout for Azerty {
                 }
             }
             KeyCode::B => {
-                // NB: ↓ & ↑ can be done with AltGr (+ Shift), but are 0x19 & 0x18 with 437 and 850 code pages
                 if map_to_unicode && modifiers.is_ctrl() {
                     DecodedKey::Unicode('\u{0002}')
                 } else if modifiers.is_caps() {
@@ -457,7 +397,6 @@ impl KeyboardLayout for Azerty {
                 }
             }
             KeyCode::N => {
-                // NB: ¬ & → can be done with AltGr (+ Shift), but → is 0x1A with 437 and 850 code pages
                 if map_to_unicode && modifiers.is_ctrl() {
                     DecodedKey::Unicode('\u{000E}')
                 } else if modifiers.is_caps() {
@@ -467,7 +406,6 @@ impl KeyboardLayout for Azerty {
                 }
             }
             KeyCode::M => {
-                // NB: ¿ & … can be done with AltGr (+ Shift), but no … in code page 437
                 if modifiers.is_caps() {
                     DecodedKey::Unicode('?')
                 } else {
@@ -475,7 +413,6 @@ impl KeyboardLayout for Azerty {
                 }
             }
             KeyCode::OemComma => {
-                // NB: × & ⋅ can be done with AltGr (+ Shift), but not with code page 437
                 if modifiers.is_shifted() {
                     DecodedKey::Unicode('.')
                 } else {
@@ -483,7 +420,6 @@ impl KeyboardLayout for Azerty {
                 }
             }
             KeyCode::OemPeriod => {
-                // NB: ÷ & ∕ can be done with AltGr (+ Shift), but ∕ is Unicode only
                 if modifiers.is_shifted() {
                     DecodedKey::Unicode('/')
                 } else {
@@ -491,7 +427,6 @@ impl KeyboardLayout for Azerty {
                 }
             }
             KeyCode::Oem2 => {
-                // NB: ¡ & − (not -) can be done with AltGr (+ Shift), but no − in code page 437
                 if modifiers.is_shifted() {
                     DecodedKey::Unicode('§')
                 } else {
@@ -500,15 +435,9 @@ impl KeyboardLayout for Azerty {
             }
             KeyCode::Spacebar => DecodedKey::Unicode(' '),
             KeyCode::Delete => DecodedKey::Unicode(127.into()),
-            // NB: these ones give respectively ÷, × & − with AltGr
             KeyCode::NumpadDivide => DecodedKey::Unicode('/'),
             KeyCode::NumpadMultiply => DecodedKey::Unicode('*'),
             KeyCode::NumpadSubtract => DecodedKey::Unicode('-'),
-            // NB: this is interesting with AltGr or AltGr+Shift, but Unicode only
-            // 7: ↖⇖ 8: ↑⇑ 9:↗⇗
-            // 4: ←⇐ 5: ↔⇔ 6:→⇒
-            // 1: ↙⇙ 2: ↓⇓ 3:↘⇘
-            // 0: ↕⇕ .: , (space: e2 80 af in UTF-8)
             KeyCode::Numpad7 => {
                 if modifiers.numlock {
                     DecodedKey::Unicode('7')
@@ -530,7 +459,6 @@ impl KeyboardLayout for Azerty {
                     DecodedKey::RawKey(KeyCode::PageUp)
                 }
             }
-            // NB: this one gives nothing different with AltGr
             KeyCode::NumpadAdd => DecodedKey::Unicode('+'),
             KeyCode::Numpad4 => {
                 if modifiers.numlock {
