@@ -79,9 +79,11 @@ This is the mapping of `KeyCode` to a 102/105-key ISO keyboard:
 
 The 102-key is missing `LWin`, `RWin`, and `Menu`.
 
+(Reference: <https://kbdlayout.info/KBDUK/scancodes+virtualkeys?arrangement=ISO105>)
+
 ### 101/104 key ANSI
 
-This is the mapping of `KeyCode` to a 101/104-key ANSI keyboard: 
+This is the mapping of `KeyCode` to a 101/104-key ANSI keyboard:
 
 ```text
 ┌────┐  ┌────┬────┬────┬────┐  ┌────┬────┬────┬────┐  ┌────┬────┬────┬────┐   ┌────┬────┬────┐
@@ -91,7 +93,7 @@ This is the mapping of `KeyCode` to a 101/104-key ANSI keyboard:
 ┌────┬────┬────┬────┬────┬────┬────┬────┬────┬────┬────┬────┬────┬─────────┐  ┌────┬────┬────┐  ┌────┬────┬────┬────┐
 │Oem8│Key1│Key2│Key3│Key4│Key5│Key6│Key7│Key8│Key9│Key0│Oem─│Oem+│Backspace│  │Inse│Home│PgUp│  │NumL│Num/│Num*│Num─│
 ├────┴┬───┴┬───┴┬───┴┬───┴┬───┴┬───┴┬───┴┬───┴┬───┴┬───┴┬───┴┬───┴┬────────┤  ├────+────+────┤  ├────┼────┼────┼────┤
-│ Tab │ Q  │ W  │ E  │ R  │ T  │ Y  │ U  │ I  │ O  │ P  │Oem4│Oem6│  Oem5  │  │Dele│End │PgDo│  │Num7│Num8│Num9│    │
+│ Tab │ Q  │ W  │ E  │ R  │ T  │ Y  │ U  │ I  │ O  │ P  │Oem4│Oem6│  Oem7  │  │Dele│End │PgDo│  │Num7│Num8│Num9│    │
 ├─────┴┬───┴┬───┴┬───┴┬───┴┬───┴┬───┴┬───┴┬───┴┬───┴┬───┴┬───┴┬───┴────────┤  └────┴────┴────┘  ├────┼────┼────┤Num+│
 │CapsLo│ A  │ S  │ D  │ F  │ G  │ H  │ J  │ K  │ L  │Oem1│Oem3│   Enter    │                    │Num4│Num5│Num6│    │
 ├──────┴──┬─┴──┬─┴──┬─┴──┬─┴──┬─┴──┬─┴──┬─┴──┬─┴──┬─┴──┬─┴──┬─┴────────────┤       ┌────┐       ├────┼────┼────┼────┤
@@ -101,9 +103,11 @@ This is the mapping of `KeyCode` to a 101/104-key ANSI keyboard:
 └─────┴─────┴─────┴──────────────────────────────┴─────┴─────┴──────┴──────┘  └────┴────┴────┘  └─────────┴────┴────┘
 ```
 
-Note that the `Oem7` key is missing on the 104-key ANSI keyboard.
+Note that the `Oem5` key is missing on the 104-key ANSI keyboard.
 
 The 101-key is also missing `LWin`, `RWin`, and `Menu`.
+
+(Reference: <https://kbdlayout.info/KBDUK/scancodes+virtualkeys?arrangement=ANSI104>)
 
 ### 106/109 key JIS
 
@@ -129,7 +133,9 @@ This is the mapping of `KeyCode` to a 106/109-key JIS keyboard:
 
 Note that the `Oem5` is missing on the 109-key JIS layout, but `Oem9` (Muhenkan), `Oem10` (Henkan/Zenkouho), `Oem11` (Hiragana/Katakana), `Oem12` (Backslash) and `Oem13` (¥) are added.
 
-The 106-key is also missing `LWin`, `RWin`, and `Menu`.
+The 106-key is missing `LWin`, `RWin`, and `Menu`.
+
+(Reference: <https://kbdlayout.info/KBDUK/scancodes+virtualkeys?arrangement=OADG109A>)
 
 ### Conversion Table
 
