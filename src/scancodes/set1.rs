@@ -313,6 +313,12 @@ impl ScancodeSet for ScancodeSet1 {
     }
 }
 
+impl Default for ScancodeSet1 {
+    fn default() -> Self {
+        ScancodeSet1::new()
+    }
+}
+
 #[cfg(test)]
 mod test {
     use super::*;
