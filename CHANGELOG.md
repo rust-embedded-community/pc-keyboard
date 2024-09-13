@@ -2,8 +2,13 @@
 
 ## Unreleased
 
+## v0.8.0 (13 Sep 2024)
+
 * Add 102/105-key Finnish/Swedish layout
 * Add 102/105-key Norwegian layout
+* Fix broken Backslash for Us104 layout
+* Fix `<` and `>` for Azerty layout
+* Renamed `Modifiers::alt_gr` to `Modifiers::ralt` and add `Modifiers::lalt`
 
 ## v0.7.0 (12 Feb 2022)
 
