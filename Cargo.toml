@@ -1,6 +1,6 @@
 [package]
 name = "pc-keyboard"
-version = "0.7.0"
+version = "0.8.0"
 authors = ["Jonathan 'theJPster' Pallant <github@thejpster.org.uk>", "Rust Embedded Community Contributors"]
 description = "PS/2 keyboard interface library."
 keywords = ["keyboard", "ps2", "scancode", "layout"]
