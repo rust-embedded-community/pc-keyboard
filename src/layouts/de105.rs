@@ -34,14 +34,18 @@ impl KeyboardLayout for De105Key {
                 }
             }
             KeyCode::Key2 => {
-                if modifiers.is_shifted() {
+                if modifiers.is_altgr() {
+                    DecodedKey::Unicode('²')
+                } else if modifiers.is_shifted() {
                     DecodedKey::Unicode('"')
                 } else {
                     DecodedKey::Unicode('2')
                 }
             }
             KeyCode::Key3 => {
-                if modifiers.is_shifted() {
+                if modifiers.is_altgr() {
+                    DecodedKey::Unicode('³')
+                } else if modifiers.is_shifted() {
                     DecodedKey::Unicode('§')
                 } else {
                     DecodedKey::Unicode('3')
@@ -69,35 +73,45 @@ impl KeyboardLayout for De105Key {
                 }
             }
             KeyCode::Key7 => {
-                if modifiers.is_shifted() {
+                if modifiers.is_altgr() {
+                    DecodedKey::Unicode('{')
+                } else if modifiers.is_shifted() {
                     DecodedKey::Unicode('/')
                 } else {
                     DecodedKey::Unicode('7')
                 }
             }
             KeyCode::Key8 => {
-                if modifiers.is_shifted() {
+                if modifiers.is_altgr() {
+                    DecodedKey::Unicode('[')
+                } else if modifiers.is_shifted() {
                     DecodedKey::Unicode('(')
                 } else {
                     DecodedKey::Unicode('8')
                 }
             }
             KeyCode::Key9 => {
-                if modifiers.is_shifted() {
+                if modifiers.is_altgr() {
+                    DecodedKey::Unicode(']')
+                } else if modifiers.is_shifted() {
                     DecodedKey::Unicode(')')
                 } else {
                     DecodedKey::Unicode('9')
                 }
             }
             KeyCode::Key0 => {
-                if modifiers.is_shifted() {
+                if modifiers.is_altgr() {
+                    DecodedKey::Unicode('}')
+                } else if modifiers.is_shifted() {
                     DecodedKey::Unicode('=')
                 } else {
                     DecodedKey::Unicode('0')
                 }
             }
             KeyCode::OemMinus => {
-                if modifiers.is_shifted() {
+                if modifiers.is_altgr() {
+                    DecodedKey::Unicode('\\')
+                } else if modifiers.is_shifted() {
                     DecodedKey::Unicode('?')
                 } else {
                     DecodedKey::Unicode('ß')
@@ -188,6 +202,17 @@ impl KeyboardLayout for De105Key {
                     DecodedKey::Unicode('Y')
                 } else {
                     DecodedKey::Unicode('y')
+                }
+            }
+            KeyCode::M => {
+                if map_to_unicode && modifiers.is_ctrl() {
+                    DecodedKey::Unicode('\u{001A}')
+                } else if modifiers.is_altgr() {
+                    DecodedKey::Unicode('µ')
+                } else if modifiers.is_caps() {
+                    DecodedKey::Unicode('M')
+                } else {
+                    DecodedKey::Unicode('m')
                 }
             }
             KeyCode::OemComma => {
