@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+* Fix 102/105-key German layout
+
 ## v0.8.0 (13 Sep 2024)
 
 * Add 102/105-key Finnish/Swedish layout
