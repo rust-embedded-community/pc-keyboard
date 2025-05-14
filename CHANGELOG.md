@@ -2,7 +2,7 @@
 
 ## Unreleased
 
-* Fix 102/105-key German layout
+* Fix 102/105-key German layout: Add missing Alt-Gr combinations
 
 ## v0.8.0 (13 Sep 2024)
 
