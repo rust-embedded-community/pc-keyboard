@@ -139,7 +139,7 @@ impl KeyboardLayout for Colemak {
             }
             KeyCode::R => {
                 if map_to_unicode && modifiers.is_ctrl() {
-                    DecodedKey::Unicode('\u{0012}')
+                    DecodedKey::Unicode('\u{0010}')
                 } else if modifiers.is_caps() {
                     DecodedKey::Unicode('P')
                 } else {

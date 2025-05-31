@@ -150,7 +150,7 @@ impl KeyboardLayout for De105Key {
             }
             KeyCode::Y => {
                 if map_to_unicode && modifiers.is_ctrl() {
-                    DecodedKey::Unicode('\u{0014}')
+                    DecodedKey::Unicode('\u{001A}')
                 } else if modifiers.is_caps() {
                     DecodedKey::Unicode('Z')
                 } else {
@@ -197,7 +197,7 @@ impl KeyboardLayout for De105Key {
             }
             KeyCode::Z => {
                 if map_to_unicode && modifiers.is_ctrl() {
-                    DecodedKey::Unicode('\u{001A}')
+                    DecodedKey::Unicode('\u{0019}')
                 } else if modifiers.is_caps() {
                     DecodedKey::Unicode('Y')
                 } else {
@@ -206,7 +206,7 @@ impl KeyboardLayout for De105Key {
             }
             KeyCode::M => {
                 if map_to_unicode && modifiers.is_ctrl() {
-                    DecodedKey::Unicode('\u{001A}')
+                    DecodedKey::Unicode('\u{000D}')
                 } else if modifiers.is_altgr() {
                     DecodedKey::Unicode('µ')
                 } else if modifiers.is_caps() {
