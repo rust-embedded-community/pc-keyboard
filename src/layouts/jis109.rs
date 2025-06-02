@@ -22,7 +22,7 @@ impl KeyboardLayout for Jis109Key {
                 // hankaku/zenkaku/kanji
                 DecodedKey::RawKey(KeyCode::Oem8)
             }
-            KeyCode::Escape => DecodedKey::Unicode(0x1B.into()),
+            KeyCode::Escape => DecodedKey::Unicode('\u{001B}'),
             KeyCode::Key1 => {
                 if modifiers.is_shifted() {
                     DecodedKey::Unicode('!')

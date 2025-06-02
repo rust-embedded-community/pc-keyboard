@@ -16,7 +16,7 @@ impl KeyboardLayout for No105Key {
     ) -> DecodedKey {
         let map_to_unicode = handle_ctrl == HandleControl::MapLettersToUnicode;
         match keycode {
-            KeyCode::Escape => DecodedKey::Unicode(0x1B.into()),
+            KeyCode::Escape => DecodedKey::Unicode('\u{001B}'),
             KeyCode::Oem8 => {
                 if modifiers.is_shifted() {
                     DecodedKey::Unicode('§')
@@ -126,8 +126,8 @@ impl KeyboardLayout for No105Key {
                     DecodedKey::Unicode('\\')
                 }
             }
-            KeyCode::Backspace => DecodedKey::Unicode(0x08.into()),
-            KeyCode::Tab => DecodedKey::Unicode(0x09.into()),
+            KeyCode::Backspace => DecodedKey::Unicode('\u{0008}'),
+            KeyCode::Tab => DecodedKey::Unicode('\u{0009}'),
             KeyCode::E => {
                 if map_to_unicode && modifiers.is_ctrl() {
                     DecodedKey::Unicode('\u{0005}')
@@ -155,7 +155,7 @@ impl KeyboardLayout for No105Key {
                     DecodedKey::Unicode('¨')
                 }
             }
-            KeyCode::Return => DecodedKey::Unicode(10.into()),
+            KeyCode::Return => DecodedKey::Unicode('\u{000A}'),
             KeyCode::Oem7 => {
                 if modifiers.is_shifted() {
                     DecodedKey::Unicode('*')
@@ -220,7 +220,7 @@ impl KeyboardLayout for No105Key {
                 if modifiers.numlock {
                     DecodedKey::Unicode(',')
                 } else {
-                    DecodedKey::Unicode(127.into())
+                    DecodedKey::Unicode('\u{007F}')
                 }
             }
             e => {

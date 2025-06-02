@@ -20,7 +20,7 @@ impl KeyboardLayout for Azerty {
     ) -> DecodedKey {
         let map_to_unicode = handle_ctrl == HandleControl::MapLettersToUnicode;
         match keycode {
-            KeyCode::Escape => DecodedKey::Unicode(0x1B.into()),
+            KeyCode::Escape => DecodedKey::Unicode('\u{001B}'),
             KeyCode::Oem8 => DecodedKey::Unicode('²'),
             KeyCode::Oem5 => {
                 if modifiers.is_shifted() {
@@ -135,8 +135,8 @@ impl KeyboardLayout for Azerty {
                     DecodedKey::Unicode('=')
                 }
             }
-            KeyCode::Backspace => DecodedKey::Unicode(0x08.into()),
-            KeyCode::Tab => DecodedKey::Unicode(0x09.into()),
+            KeyCode::Backspace => DecodedKey::Unicode('\u{0008}'),
+            KeyCode::Tab => DecodedKey::Unicode('\u{0009}'),
             KeyCode::Q => {
                 if map_to_unicode && modifiers.is_ctrl() {
                     DecodedKey::Unicode('\u{0001}')
@@ -350,7 +350,7 @@ impl KeyboardLayout for Azerty {
                 }
             }
             // Enter gives LF, not CRLF or CR
-            KeyCode::Return => DecodedKey::Unicode(10.into()),
+            KeyCode::Return => DecodedKey::Unicode('\u{000A}'),
             KeyCode::Z => {
                 if map_to_unicode && modifiers.is_ctrl() {
                     DecodedKey::Unicode('\u{0017}')
@@ -434,7 +434,7 @@ impl KeyboardLayout for Azerty {
                 }
             }
             KeyCode::Spacebar => DecodedKey::Unicode(' '),
-            KeyCode::Delete => DecodedKey::Unicode(127.into()),
+            KeyCode::Delete => DecodedKey::Unicode('\u{007F}'),
             KeyCode::NumpadDivide => DecodedKey::Unicode('/'),
             KeyCode::NumpadMultiply => DecodedKey::Unicode('*'),
             KeyCode::NumpadSubtract => DecodedKey::Unicode('-'),
@@ -507,10 +507,10 @@ impl KeyboardLayout for Azerty {
                 if modifiers.numlock {
                     DecodedKey::Unicode('.')
                 } else {
-                    DecodedKey::Unicode(127.into())
+                    DecodedKey::Unicode('\u{007F}')
                 }
             }
-            KeyCode::NumpadEnter => DecodedKey::Unicode(10.into()),
+            KeyCode::NumpadEnter => DecodedKey::Unicode('\u{000A}'),
             k => DecodedKey::RawKey(k),
         }
     }
