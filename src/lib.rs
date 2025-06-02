@@ -723,6 +723,96 @@ pub struct Modifiers {
     pub rctrl2: bool,
 }
 
+impl Modifiers {
+    /// Handle the standard letters
+    ///
+    /// ONLY pass 'A'..='Z' - nothing else
+    pub(crate) fn handle_alpha(&self, letter: char, handle_control: HandleControl) -> DecodedKey {
+        debug_assert!(letter.is_ascii_uppercase());
+        if handle_control == HandleControl::MapLettersToUnicode && self.is_ctrl() {
+            // Get a Control code, like Ctrl+C => U+0003
+            const ASCII_UPPERCASE_START_OFFSET: u8 = 64;
+            DecodedKey::Unicode((letter as u8 - ASCII_UPPERCASE_START_OFFSET) as char)
+        } else if self.is_caps() {
+            // Capital letter
+            DecodedKey::Unicode(letter)
+        } else {
+            // Lowercase letter
+            const ASCII_UPPER_TO_LOWER_OFFSET: u8 = 32;
+            DecodedKey::Unicode((letter as u8 + ASCII_UPPER_TO_LOWER_OFFSET) as char)
+        }
+    }
+
+    /// Handle the standard letters, with an Alt-Gr alternative
+    ///
+    /// ONLY pass 'A'..='Z' - nothing else
+    pub(crate) fn handle_alalt(
+        &self,
+        letter: char,
+        alt_letter_lower: char,
+        alt_letter_upper: char,
+        handle_control: HandleControl,
+    ) -> DecodedKey {
+        debug_assert!(letter.is_ascii_uppercase());
+        if handle_control == HandleControl::MapLettersToUnicode && self.is_ctrl() {
+            // Get a Control code, like Ctrl+C => U+0003
+            const ASCII_UPPERCASE_START_OFFSET: u8 = 64;
+            DecodedKey::Unicode((letter as u8 - ASCII_UPPERCASE_START_OFFSET) as char)
+        } else if self.ralt && self.is_caps() {
+            // Capital letter
+            DecodedKey::Unicode(alt_letter_upper)
+        } else if self.ralt {
+            // Lowercase letter
+            DecodedKey::Unicode(alt_letter_lower)
+        } else if self.is_caps() {
+            // Capital letter
+            DecodedKey::Unicode(letter)
+        } else {
+            // Lowercase letter
+            const ASCII_UPPER_TO_LOWER_OFFSET: u8 = 32;
+            DecodedKey::Unicode((letter as u8 + ASCII_UPPER_TO_LOWER_OFFSET) as char)
+        }
+    }
+
+    /// Handle numpad keys which are either a character or a raw key
+    pub(crate) fn handle_numpad(&self, letter: char, key: KeyCode) -> DecodedKey {
+        if self.numlock {
+            DecodedKey::Unicode(letter)
+        } else {
+            DecodedKey::RawKey(key)
+        }
+    }
+
+    /// Handle numpad keys which are one of two characters
+    pub(crate) fn handle_numpad_pair(&self, letter: char, other: char) -> DecodedKey {
+        if self.numlock {
+            DecodedKey::Unicode(letter)
+        } else {
+            DecodedKey::Unicode(other)
+        }
+    }
+
+    /// Handle standard two-glyph shifted keys
+    pub(crate) fn handle_shift(&self, plain: char, shifted: char) -> DecodedKey {
+        if self.is_shifted() {
+            DecodedKey::Unicode(shifted)
+        } else {
+            DecodedKey::Unicode(plain)
+        }
+    }
+
+    /// Handle standard three-glyph shifted keys
+    pub(crate) fn handle_altsh(&self, plain: char, shifted: char, alt: char) -> DecodedKey {
+        if self.is_altgr() {
+            DecodedKey::Unicode(alt)
+        } else if self.is_shifted() {
+            DecodedKey::Unicode(shifted)
+        } else {
+            DecodedKey::Unicode(plain)
+        }
+    }
+}
+
 /// Contains either a Unicode character, or a raw key code.
 #[derive(Debug, PartialEq, Eq, Copy, Clone)]
 pub enum DecodedKey {
@@ -765,6 +855,9 @@ const KEYCODE_BITS: u8 = 11;
 const EXTENDED_KEY_CODE: u8 = 0xE0;
 const EXTENDED2_KEY_CODE: u8 = 0xE1;
 const KEY_RELEASE_CODE: u8 = 0xF0;
+
+const QUO: char = '\'';
+const SLS: char = '\\';
 
 // ****************************************************************************
 //
