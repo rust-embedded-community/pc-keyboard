@@ -20,6 +20,8 @@ fn main() {
     show_kb(KeyboardKind::Iso, &pc_keyboard::layouts::Uk105Key);
     println!("Colemak:");
     show_kb(KeyboardKind::Ansi, &pc_keyboard::layouts::Colemak);
+    println!("Azerty:");
+    show_kb(KeyboardKind::Iso, &pc_keyboard::layouts::Azerty);
 }
 
 fn show_kb(kind: KeyboardKind, layout: &dyn KeyboardLayout) {

@@ -1,517 +1,191 @@
 //! French keyboard support
 
-use crate::{DecodedKey, HandleControl, KeyCode, KeyboardLayout, Modifiers};
+use crate::{DecodedKey, HandleControl, KeyCode, KeyboardLayout, Modifiers, QUO, SLS};
 
 /// A standard French 102-key (or 105-key including Windows keys) keyboard.
 ///
-/// The top row spells `AZERTY`.
-///
-/// Has a 2-row high Enter key, with Oem5 next to the left shift (ISO format).
+/// The top row spells `AZERTY`. Has a 2-row high Enter key, with Oem5 next to
+/// the left shift (ISO format).
 ///
 /// NB: no "dead key" support for now
+///
+/// These diagrams illustrate the conversion from [`KeyCode`] to Unicode. We
+/// show either a Unicode glyph, or a hex number if the glyph isn't a
+/// printable character. Blank spaces are passed through as
+/// [`DecodedKey::RawKey`]. We also show Raw outputs on keys that are
+/// sometimes Unicode and sometimes not, depending on modifiers.
+///
+/// Run the `print_keyboard` example to re-generate these images.
+///
+/// ## Unmodified
+///
+/// ```text
+/// ┌────┐  ┌────┬────┬────┬────┐  ┌────┬────┬────┬────┐  ┌────┬────┬────┬────┐   ┌────┬────┬────┐
+/// │001b│  │    │    │    │    │  │    │    │    │    │  │    │    │    │    │   │    │    │    │
+/// └────┘  └────┴────┴────┴────┘  └────┴────┴────┴────┘  └────┴────┴────┴────┘   └────┴────┴────┘
+///
+/// ┌────┬────┬────┬────┬────┬────┬────┬────┬────┬────┬────┬────┬────┬─────────┐  ┌────┬────┬────┐  ┌────┬────┬────┬────┐
+/// │ ²  │ &  │ é  │ "  │ '  │ (  │ -  │ è  │ _  │ ç  │ à  │ )  │ =  │0008     │  │    │    │    │  │    │ /  │ *  │ -  │
+/// ├────┴┬───┴┬───┴┬───┴┬───┴┬───┴┬───┴┬───┴┬───┴┬───┴┬───┴┬───┴┬───┴┬────────┤  ├────┼────┼────┤  ├────┼────┼────┼────┤
+/// │0009 │ a  │ z  │ e  │ r  │ t  │ y  │ u  │ i  │ o  │ p  │ ^  │ $  │ 000a   │  │007f│    │    │  │ 7  │ 8  │ 9  │    │
+/// ├─────┴┬───┴┬───┴┬───┴┬───┴┬───┴┬───┴┬───┴┬───┴┬───┴┬───┴┬───┴┬───┴┐       │  └────┴────┴────┘  ├────┼────┼────┤ +  │
+/// │      │ q  │ s  │ d  │ f  │ g  │ h  │ j  │ k  │ l  │ m  │ ù  │ *  │       │                    │ 4  │ 5  │ 6  │    │
+/// ├────┬─┴──┬─┴──┬─┴──┬─┴──┬─┴──┬─┴──┬─┴──┬─┴──┬─┴──┬─┴──┬─┴──┬─┴────┴───────┤       ┌────┐       ├────┼────┼────┼────┤
+/// │    │ <  │ w  │ x  │ c  │ v  │ b  │ n  │ ,  │ ;  │ :  │ !  │              │       │    │       │ 1  │ 2  │ 3  │    │
+/// ├────┴┬───┴─┬──┴──┬─┴────┴────┴────┴────┴────┴───┬┴────┼────┴┬──────┬──────┤  ┌────┼────┼────┐  ├────┴────┼────┤000a│
+/// │     │     │     │             0020             │     │     │      │      │  │    │    │    │  │ 0       │ .  │    │
+/// └─────┴─────┴─────┴──────────────────────────────┴─────┴─────┴──────┴──────┘  └────┴────┴────┘  └─────────┴────┴────┘
+/// ```
+///
+/// ## Caps Lock
+///
+/// ```text
+/// ┌────┐  ┌────┬────┬────┬────┐  ┌────┬────┬────┬────┐  ┌────┬────┬────┬────┐   ┌────┬────┬────┐
+/// │001b│  │    │    │    │    │  │    │    │    │    │  │    │    │    │    │   │    │    │    │
+/// └────┘  └────┴────┴────┴────┘  └────┴────┴────┴────┘  └────┴────┴────┴────┘   └────┴────┴────┘
+///
+/// ┌────┬────┬────┬────┬────┬────┬────┬────┬────┬────┬────┬────┬────┬─────────┐  ┌────┬────┬────┐  ┌────┬────┬────┬────┐
+/// │ ²  │ &  │ é  │ "  │ '  │ (  │ -  │ è  │ _  │ ç  │ à  │ )  │ =  │0008     │  │    │    │    │  │    │ /  │ *  │ -  │
+/// ├────┴┬───┴┬───┴┬───┴┬───┴┬───┴┬───┴┬───┴┬───┴┬───┴┬───┴┬───┴┬───┴┬────────┤  ├────┼────┼────┤  ├────┼────┼────┼────┤
+/// │0009 │ A  │ Z  │ E  │ R  │ T  │ Y  │ U  │ I  │ O  │ P  │ ^  │ $  │ 000a   │  │007f│    │    │  │ 7  │ 8  │ 9  │    │
+/// ├─────┴┬───┴┬───┴┬───┴┬───┴┬───┴┬───┴┬───┴┬───┴┬───┴┬───┴┬───┴┬───┴┐       │  └────┴────┴────┘  ├────┼────┼────┤ +  │
+/// │      │ Q  │ S  │ D  │ F  │ G  │ H  │ J  │ K  │ L  │ M  │ ù  │ *  │       │                    │ 4  │ 5  │ 6  │    │
+/// ├────┬─┴──┬─┴──┬─┴──┬─┴──┬─┴──┬─┴──┬─┴──┬─┴──┬─┴──┬─┴──┬─┴──┬─┴────┴───────┤       ┌────┐       ├────┼────┼────┼────┤
+/// │    │ <  │ W  │ X  │ C  │ V  │ B  │ N  │ ,  │ ;  │ :  │ !  │              │       │    │       │ 1  │ 2  │ 3  │    │
+/// ├────┴┬───┴─┬──┴──┬─┴────┴────┴────┴────┴────┴───┬┴────┼────┴┬──────┬──────┤  ┌────┼────┼────┐  ├────┴────┼────┤000a│
+/// │     │     │     │             0020             │     │     │      │      │  │    │    │    │  │ 0       │ .  │    │
+/// └─────┴─────┴─────┴──────────────────────────────┴─────┴─────┴──────┴──────┘  └────┴────┴────┘  └─────────┴────┴────┘
+/// ```
+///
+/// ## Shifted
+///
+/// ```text
+/// ┌────┐  ┌────┬────┬────┬────┐  ┌────┬────┬────┬────┐  ┌────┬────┬────┬────┐   ┌────┬────┬────┐
+/// │001b│  │    │    │    │    │  │    │    │    │    │  │    │    │    │    │   │    │    │    │
+/// └────┘  └────┴────┴────┴────┘  └────┴────┴────┴────┘  └────┴────┴────┴────┘   └────┴────┴────┘
+///
+/// ┌────┬────┬────┬────┬────┬────┬────┬────┬────┬────┬────┬────┬────┬─────────┐  ┌────┬────┬────┐  ┌────┬────┬────┬────┐
+/// │ ²  │ 1  │ 2  │ 3  │ 4  │ 5  │ 6  │ 7  │ 8  │ 9  │ 0  │ °  │ +  │0008     │  │    │    │    │  │    │ /  │ *  │ -  │
+/// ├────┴┬───┴┬───┴┬───┴┬───┴┬───┴┬───┴┬───┴┬───┴┬───┴┬───┴┬───┴┬───┴┬────────┤  ├────┼────┼────┤  ├────┼────┼────┼────┤
+/// │0009 │ A  │ Z  │ E  │ R  │ T  │ Y  │ U  │ I  │ O  │ P  │ ¨  │ £  │ 000a   │  │007f│    │    │  │ 7  │ 8  │ 9  │    │
+/// ├─────┴┬───┴┬───┴┬───┴┬───┴┬───┴┬───┴┬───┴┬───┴┬───┴┬───┴┬───┴┬───┴┐       │  └────┴────┴────┘  ├────┼────┼────┤ +  │
+/// │      │ Q  │ S  │ D  │ F  │ G  │ H  │ J  │ K  │ L  │ M  │ %  │ µ  │       │                    │ 4  │ 5  │ 6  │    │
+/// ├────┬─┴──┬─┴──┬─┴──┬─┴──┬─┴──┬─┴──┬─┴──┬─┴──┬─┴──┬─┴──┬─┴──┬─┴────┴───────┤       ┌────┐       ├────┼────┼────┼────┤
+/// │    │ >  │ W  │ X  │ C  │ V  │ B  │ N  │ ?  │ .  │ /  │ §  │              │       │    │       │ 1  │ 2  │ 3  │    │
+/// ├────┴┬───┴─┬──┴──┬─┴────┴────┴────┴────┴────┴───┬┴────┼────┴┬──────┬──────┤  ┌────┼────┼────┐  ├────┴────┼────┤000a│
+/// │     │     │     │             0020             │     │     │      │      │  │    │    │    │  │ 0       │ .  │    │
+/// └─────┴─────┴─────┴──────────────────────────────┴─────┴─────┴──────┴──────┘  └────┴────┴────┘  └─────────┴────┴────┘
+/// ```
+///
+/// ## Control
+///
+/// ```text
+/// ┌────┐  ┌────┬────┬────┬────┐  ┌────┬────┬────┬────┐  ┌────┬────┬────┬────┐   ┌────┬────┬────┐
+/// │001b│  │    │    │    │    │  │    │    │    │    │  │    │    │    │    │   │    │    │    │
+/// └────┘  └────┴────┴────┴────┘  └────┴────┴────┴────┘  └────┴────┴────┴────┘   └────┴────┴────┘
+///
+/// ┌────┬────┬────┬────┬────┬────┬────┬────┬────┬────┬────┬────┬────┬─────────┐  ┌────┬────┬────┐  ┌────┬────┬────┬────┐
+/// │ ²  │ &  │ é  │ "  │ '  │ (  │ -  │ è  │ _  │ ç  │ à  │ )  │ =  │0008     │  │    │    │    │  │    │ /  │ *  │ -  │
+/// ├────┴┬───┴┬───┴┬───┴┬───┴┬───┴┬───┴┬───┴┬───┴┬───┴┬───┴┬───┴┬───┴┬────────┤  ├────┼────┼────┤  ├────┼────┼────┼────┤
+/// │0009 │0001│001a│0005│0012│0014│0019│0015│0009│000f│0010│ ^  │ $  │ 000a   │  │007f│    │    │  │ 7  │ 8  │ 9  │    │
+/// ├─────┴┬───┴┬───┴┬───┴┬───┴┬───┴┬───┴┬───┴┬───┴┬───┴┬───┴┬───┴┬───┴┐       │  └────┴────┴────┘  ├────┼────┼────┤ +  │
+/// │      │0011│0013│0004│0006│0007│0008│000a│000b│000c│000d│ ù  │ *  │       │                    │ 4  │ 5  │ 6  │    │
+/// ├────┬─┴──┬─┴──┬─┴──┬─┴──┬─┴──┬─┴──┬─┴──┬─┴──┬─┴──┬─┴──┬─┴──┬─┴────┴───────┤       ┌────┐       ├────┼────┼────┼────┤
+/// │    │ <  │0017│0018│0003│0016│0002│000e│ ,  │ ;  │ :  │ !  │              │       │    │       │ 1  │ 2  │ 3  │    │
+/// ├────┴┬───┴─┬──┴──┬─┴────┴────┴────┴────┴────┴───┬┴────┼────┴┬──────┬──────┤  ┌────┼────┼────┐  ├────┴────┼────┤000a│
+/// │     │     │     │             0020             │     │     │      │      │  │    │    │    │  │ 0       │ .  │    │
+/// └─────┴─────┴─────┴──────────────────────────────┴─────┴─────┴──────┴──────┘  └────┴────┴────┘  └─────────┴────┴────┘
+/// ```
+///
+/// ## AltGr
+///
+/// ```text
+/// ┌────┐  ┌────┬────┬────┬────┐  ┌────┬────┬────┬────┐  ┌────┬────┬────┬────┐   ┌────┬────┬────┐
+/// │001b│  │    │    │    │    │  │    │    │    │    │  │    │    │    │    │   │    │    │    │
+/// └────┘  └────┴────┴────┴────┘  └────┴────┴────┴────┘  └────┴────┴────┴────┘   └────┴────┴────┘
+///
+/// ┌────┬────┬────┬────┬────┬────┬────┬────┬────┬────┬────┬────┬────┬─────────┐  ┌────┬────┬────┐  ┌────┬────┬────┬────┐
+/// │ ²  │ &  │ ~  │ #  │ {  │ [  │ |  │ `  │ \  │ ^  │ @  │ ]  │ }  │0008     │  │    │    │    │  │    │ /  │ *  │ -  │
+/// ├────┴┬───┴┬───┴┬───┴┬───┴┬───┴┬───┴┬───┴┬───┴┬───┴┬───┴┬───┴┬───┴┬────────┤  ├────┼────┼────┤  ├────┼────┼────┼────┤
+/// │0009 │ a  │ z  │ €  │ r  │ t  │ y  │ u  │ i  │ o  │ p  │ ^  │ ¤  │ 000a   │  │007f│    │    │  │ 7  │ 8  │ 9  │    │
+/// ├─────┴┬───┴┬───┴┬───┴┬───┴┬───┴┬───┴┬───┴┬───┴┬───┴┬───┴┬───┴┬───┴┐       │  └────┴────┴────┘  ├────┼────┼────┤ +  │
+/// │      │ q  │ s  │ d  │ f  │ g  │ h  │ j  │ k  │ l  │ m  │ ù  │ *  │       │                    │ 4  │ 5  │ 6  │    │
+/// ├────┬─┴──┬─┴──┬─┴──┬─┴──┬─┴──┬─┴──┬─┴──┬─┴──┬─┴──┬─┴──┬─┴──┬─┴────┴───────┤       ┌────┐       ├────┼────┼────┼────┤
+/// │    │ <  │ w  │ x  │ c  │ v  │ b  │ n  │ ,  │ ;  │ :  │ !  │              │       │    │       │ 1  │ 2  │ 3  │    │
+/// ├────┴┬───┴─┬──┴──┬─┴────┴────┴────┴────┴────┴───┬┴────┼────┴┬──────┬──────┤  ┌────┼────┼────┐  ├────┴────┼────┤000a│
+/// │     │     │     │             0020             │     │     │      │      │  │    │    │    │  │ 0       │ .  │    │
+/// └─────┴─────┴─────┴──────────────────────────────┴─────┴─────┴──────┴──────┘  └────┴────┴────┘  └─────────┴────┴────┘
+/// ```
+///
+/// ## Shift AltGr
+///
+/// ```text
+/// ┌────┐  ┌────┬────┬────┬────┐  ┌────┬────┬────┬────┐  ┌────┬────┬────┬────┐   ┌────┬────┬────┐
+/// │001b│  │    │    │    │    │  │    │    │    │    │  │    │    │    │    │   │    │    │    │
+/// └────┘  └────┴────┴────┴────┘  └────┴────┴────┴────┘  └────┴────┴────┴────┘   └────┴────┴────┘
+///
+/// ┌────┬────┬────┬────┬────┬────┬────┬────┬────┬────┬────┬────┬────┬─────────┐  ┌────┬────┬────┐  ┌────┬────┬────┬────┐
+/// │ ²  │ 1  │ ~  │ #  │ {  │ [  │ |  │ `  │ \  │ ^  │ @  │ ]  │ }  │0008     │  │    │    │    │  │    │ /  │ *  │ -  │
+/// ├────┴┬───┴┬───┴┬───┴┬───┴┬───┴┬───┴┬───┴┬───┴┬───┴┬───┴┬───┴┬───┴┬────────┤  ├────┼────┼────┤  ├────┼────┼────┼────┤
+/// │0009 │ A  │ Z  │ €  │ R  │ T  │ Y  │ U  │ I  │ O  │ P  │ ¨  │ ¤  │ 000a   │  │007f│    │    │  │ 7  │ 8  │ 9  │    │
+/// ├─────┴┬───┴┬───┴┬───┴┬───┴┬───┴┬───┴┬───┴┬───┴┬───┴┬───┴┬───┴┬───┴┐       │  └────┴────┴────┘  ├────┼────┼────┤ +  │
+/// │      │ Q  │ S  │ D  │ F  │ G  │ H  │ J  │ K  │ L  │ M  │ %  │ µ  │       │                    │ 4  │ 5  │ 6  │    │
+/// ├────┬─┴──┬─┴──┬─┴──┬─┴──┬─┴──┬─┴──┬─┴──┬─┴──┬─┴──┬─┴──┬─┴──┬─┴────┴───────┤       ┌────┐       ├────┼────┼────┼────┤
+/// │    │ >  │ W  │ X  │ C  │ V  │ B  │ N  │ ?  │ .  │ /  │ §  │              │       │    │       │ 1  │ 2  │ 3  │    │
+/// ├────┴┬───┴─┬──┴──┬─┴────┴────┴────┴────┴────┴───┬┴────┼────┴┬──────┬──────┤  ┌────┼────┼────┐  ├────┴────┼────┤000a│
+/// │     │     │     │             0020             │     │     │      │      │  │    │    │    │  │ 0       │ .  │    │
+/// └─────┴─────┴─────┴──────────────────────────────┴─────┴─────┴──────┴──────┘  └────┴────┴────┘  └─────────┴────┴────┘
+/// ```
+///
 pub struct Azerty;
 
 impl KeyboardLayout for Azerty {
+    #[rustfmt::skip]
     fn map_keycode(
         &self,
         keycode: KeyCode,
         modifiers: &Modifiers,
         handle_ctrl: HandleControl,
     ) -> DecodedKey {
-        let map_to_unicode = handle_ctrl == HandleControl::MapLettersToUnicode;
         match keycode {
-            KeyCode::Escape => DecodedKey::Unicode('\u{001B}'),
-            KeyCode::Oem8 => DecodedKey::Unicode('²'),
-            KeyCode::Oem5 => {
-                if modifiers.is_shifted() {
-                    DecodedKey::Unicode('>')
-                } else {
-                    DecodedKey::Unicode('<')
-                }
-            }
-            KeyCode::Key1 => {
-                if modifiers.is_shifted() {
-                    DecodedKey::Unicode('1')
-                } else {
-                    DecodedKey::Unicode('&')
-                }
-            }
-            KeyCode::Key2 => {
-                if modifiers.is_shifted() {
-                    DecodedKey::Unicode('2')
-                } else if modifiers.is_altgr() {
-                    DecodedKey::Unicode('~')
-                } else {
-                    DecodedKey::Unicode('é')
-                }
-            }
-            KeyCode::Key3 => {
-                if modifiers.is_shifted() {
-                    DecodedKey::Unicode('3')
-                } else if modifiers.is_altgr() {
-                    DecodedKey::Unicode('#')
-                } else {
-                    DecodedKey::Unicode('"')
-                }
-            }
-            KeyCode::Key4 => {
-                if modifiers.is_shifted() {
-                    DecodedKey::Unicode('4')
-                } else if modifiers.is_altgr() {
-                    DecodedKey::Unicode('{')
-                } else {
-                    DecodedKey::Unicode('\'')
-                }
-            }
-            KeyCode::Key5 => {
-                if modifiers.is_shifted() {
-                    DecodedKey::Unicode('5')
-                } else if modifiers.is_altgr() {
-                    DecodedKey::Unicode('[')
-                } else {
-                    DecodedKey::Unicode('(')
-                }
-            }
-            KeyCode::Key6 => {
-                if modifiers.is_shifted() {
-                    DecodedKey::Unicode('6')
-                } else if modifiers.is_altgr() {
-                    DecodedKey::Unicode('|')
-                } else {
-                    DecodedKey::Unicode('-')
-                }
-            }
-            KeyCode::Key7 => {
-                if modifiers.is_shifted() {
-                    DecodedKey::Unicode('7')
-                } else if modifiers.is_altgr() {
-                    DecodedKey::Unicode('`')
-                } else {
-                    DecodedKey::Unicode('è')
-                }
-            }
-            KeyCode::Key8 => {
-                if modifiers.is_shifted() {
-                    DecodedKey::Unicode('8')
-                } else if modifiers.is_altgr() {
-                    DecodedKey::Unicode('\\')
-                } else {
-                    DecodedKey::Unicode('_')
-                }
-            }
-            KeyCode::Key9 => {
-                if modifiers.is_shifted() {
-                    DecodedKey::Unicode('9')
-                } else if modifiers.is_altgr() {
-                    DecodedKey::Unicode('^')
-                } else {
-                    DecodedKey::Unicode('ç')
-                }
-            }
-            KeyCode::Key0 => {
-                if modifiers.is_shifted() {
-                    DecodedKey::Unicode('0')
-                } else if modifiers.is_altgr() {
-                    DecodedKey::Unicode('@')
-                } else {
-                    DecodedKey::Unicode('à')
-                }
-            }
-            KeyCode::OemMinus => {
-                if modifiers.is_shifted() {
-                    DecodedKey::Unicode('°')
-                } else if modifiers.is_altgr() {
-                    DecodedKey::Unicode(']')
-                } else {
-                    DecodedKey::Unicode(')')
-                }
-            }
-            KeyCode::OemPlus => {
-                if modifiers.is_shifted() {
-                    DecodedKey::Unicode('+')
-                } else if modifiers.is_altgr() {
-                    DecodedKey::Unicode('}')
-                } else {
-                    DecodedKey::Unicode('=')
-                }
-            }
-            KeyCode::Backspace => DecodedKey::Unicode('\u{0008}'),
-            KeyCode::Tab => DecodedKey::Unicode('\u{0009}'),
-            KeyCode::Q => {
-                if map_to_unicode && modifiers.is_ctrl() {
-                    DecodedKey::Unicode('\u{0001}')
-                } else if modifiers.is_caps() {
-                    DecodedKey::Unicode('A')
-                } else {
-                    DecodedKey::Unicode('a')
-                }
-            }
-            KeyCode::W => {
-                if map_to_unicode && modifiers.is_ctrl() {
-                    DecodedKey::Unicode('\u{001A}')
-                } else if modifiers.is_caps() {
-                    DecodedKey::Unicode('Z')
-                } else {
-                    DecodedKey::Unicode('z')
-                }
-            }
-            KeyCode::E => {
-                if map_to_unicode && modifiers.is_ctrl() {
-                    DecodedKey::Unicode('\u{0005}')
-                } else if modifiers.is_caps() {
-                    DecodedKey::Unicode('E')
-                } else {
-                    DecodedKey::Unicode('e')
-                }
-            }
-            KeyCode::R => {
-                if map_to_unicode && modifiers.is_ctrl() {
-                    DecodedKey::Unicode('\u{0012}')
-                } else if modifiers.is_caps() {
-                    DecodedKey::Unicode('R')
-                } else {
-                    DecodedKey::Unicode('r')
-                }
-            }
-            KeyCode::T => {
-                if map_to_unicode && modifiers.is_ctrl() {
-                    DecodedKey::Unicode('\u{0014}')
-                } else if modifiers.is_caps() {
-                    DecodedKey::Unicode('T')
-                } else {
-                    DecodedKey::Unicode('t')
-                }
-            }
-            KeyCode::Y => {
-                if map_to_unicode && modifiers.is_ctrl() {
-                    DecodedKey::Unicode('\u{0019}')
-                } else if modifiers.is_caps() {
-                    DecodedKey::Unicode('Y')
-                } else {
-                    DecodedKey::Unicode('y')
-                }
-            }
-            KeyCode::U => {
-                if map_to_unicode && modifiers.is_ctrl() {
-                    DecodedKey::Unicode('\u{0015}')
-                } else if modifiers.is_caps() {
-                    DecodedKey::Unicode('U')
-                } else {
-                    DecodedKey::Unicode('u')
-                }
-            }
-            KeyCode::I => {
-                if map_to_unicode && modifiers.is_ctrl() {
-                    DecodedKey::Unicode('\u{0009}')
-                } else if modifiers.is_caps() {
-                    DecodedKey::Unicode('I')
-                } else {
-                    DecodedKey::Unicode('i')
-                }
-            }
-            KeyCode::O => {
-                if map_to_unicode && modifiers.is_ctrl() {
-                    DecodedKey::Unicode('\u{000F}')
-                } else if modifiers.is_caps() {
-                    DecodedKey::Unicode('O')
-                } else {
-                    DecodedKey::Unicode('o')
-                }
-            }
-            KeyCode::P => {
-                if map_to_unicode && modifiers.is_ctrl() {
-                    DecodedKey::Unicode('\u{0010}')
-                } else if modifiers.is_caps() {
-                    DecodedKey::Unicode('P')
-                } else {
-                    DecodedKey::Unicode('p')
-                }
-            }
-            KeyCode::Oem4 => {
-                if modifiers.is_shifted() {
-                    DecodedKey::Unicode('¨')
-                } else if modifiers.is_altgr() {
-                    DecodedKey::Unicode('ˇ')
-                } else {
-                    DecodedKey::Unicode('^')
-                }
-            }
-            KeyCode::Oem6 => {
-                if modifiers.is_shifted() {
-                    DecodedKey::Unicode('£')
-                } else if modifiers.is_altgr() {
-                    DecodedKey::Unicode('¤')
-                } else {
-                    DecodedKey::Unicode('$')
-                }
-            }
-            KeyCode::Oem7 => {
-                if modifiers.is_shifted() {
-                    DecodedKey::Unicode('µ')
-                } else {
-                    DecodedKey::Unicode('*')
-                }
-            }
-            KeyCode::A => {
-                if map_to_unicode && modifiers.is_ctrl() {
-                    DecodedKey::Unicode('\u{0011}')
-                } else if modifiers.is_caps() {
-                    DecodedKey::Unicode('Q')
-                } else {
-                    DecodedKey::Unicode('q')
-                }
-            }
-            KeyCode::S => {
-                if map_to_unicode && modifiers.is_ctrl() {
-                    DecodedKey::Unicode('\u{0013}')
-                } else if modifiers.is_caps() {
-                    DecodedKey::Unicode('S')
-                } else {
-                    DecodedKey::Unicode('s')
-                }
-            }
-            KeyCode::D => {
-                if map_to_unicode && modifiers.is_ctrl() {
-                    DecodedKey::Unicode('\u{0004}')
-                } else if modifiers.is_caps() {
-                    DecodedKey::Unicode('D')
-                } else {
-                    DecodedKey::Unicode('d')
-                }
-            }
-            KeyCode::F => {
-                if map_to_unicode && modifiers.is_ctrl() {
-                    DecodedKey::Unicode('\u{0006}')
-                } else if modifiers.is_caps() {
-                    DecodedKey::Unicode('F')
-                } else {
-                    DecodedKey::Unicode('f')
-                }
-            }
-            KeyCode::G => {
-                if map_to_unicode && modifiers.is_ctrl() {
-                    DecodedKey::Unicode('\u{0007}')
-                } else if modifiers.is_caps() {
-                    DecodedKey::Unicode('G')
-                } else {
-                    DecodedKey::Unicode('g')
-                }
-            }
-            KeyCode::H => {
-                if map_to_unicode && modifiers.is_ctrl() {
-                    DecodedKey::Unicode('\u{0008}')
-                } else if modifiers.is_caps() {
-                    DecodedKey::Unicode('H')
-                } else {
-                    DecodedKey::Unicode('h')
-                }
-            }
-            KeyCode::J => {
-                if map_to_unicode && modifiers.is_ctrl() {
-                    DecodedKey::Unicode('\u{000A}')
-                } else if modifiers.is_caps() {
-                    DecodedKey::Unicode('J')
-                } else {
-                    DecodedKey::Unicode('j')
-                }
-            }
-            KeyCode::K => {
-                if map_to_unicode && modifiers.is_ctrl() {
-                    DecodedKey::Unicode('\u{000B}')
-                } else if modifiers.is_caps() {
-                    DecodedKey::Unicode('K')
-                } else {
-                    DecodedKey::Unicode('k')
-                }
-            }
-            KeyCode::L => {
-                if map_to_unicode && modifiers.is_ctrl() {
-                    DecodedKey::Unicode('\u{000C}')
-                } else if modifiers.is_caps() {
-                    DecodedKey::Unicode('L')
-                } else {
-                    DecodedKey::Unicode('l')
-                }
-            }
-            KeyCode::Oem1 => {
-                if map_to_unicode && modifiers.is_ctrl() {
-                    DecodedKey::Unicode('\u{000D}')
-                } else if modifiers.is_caps() {
-                    DecodedKey::Unicode('M')
-                } else {
-                    DecodedKey::Unicode('m')
-                }
-            }
-            KeyCode::Oem3 => {
-                if modifiers.is_shifted() {
-                    DecodedKey::Unicode('%')
-                } else {
-                    DecodedKey::Unicode('ù')
-                }
-            }
-            // Enter gives LF, not CRLF or CR
-            KeyCode::Return => DecodedKey::Unicode('\u{000A}'),
-            KeyCode::Z => {
-                if map_to_unicode && modifiers.is_ctrl() {
-                    DecodedKey::Unicode('\u{0017}')
-                } else if modifiers.is_caps() {
-                    DecodedKey::Unicode('W')
-                } else {
-                    DecodedKey::Unicode('w')
-                }
-            }
-            KeyCode::X => {
-                if map_to_unicode && modifiers.is_ctrl() {
-                    DecodedKey::Unicode('\u{0018}')
-                } else if modifiers.is_caps() {
-                    DecodedKey::Unicode('X')
-                } else {
-                    DecodedKey::Unicode('x')
-                }
-            }
-            KeyCode::C => {
-                if map_to_unicode && modifiers.is_ctrl() {
-                    DecodedKey::Unicode('\u{0003}')
-                } else if modifiers.is_caps() {
-                    DecodedKey::Unicode('C')
-                } else {
-                    DecodedKey::Unicode('c')
-                }
-            }
-            KeyCode::V => {
-                if map_to_unicode && modifiers.is_ctrl() {
-                    DecodedKey::Unicode('\u{0016}')
-                } else if modifiers.is_caps() {
-                    DecodedKey::Unicode('V')
-                } else {
-                    DecodedKey::Unicode('v')
-                }
-            }
-            KeyCode::B => {
-                if map_to_unicode && modifiers.is_ctrl() {
-                    DecodedKey::Unicode('\u{0002}')
-                } else if modifiers.is_caps() {
-                    DecodedKey::Unicode('B')
-                } else {
-                    DecodedKey::Unicode('b')
-                }
-            }
-            KeyCode::N => {
-                if map_to_unicode && modifiers.is_ctrl() {
-                    DecodedKey::Unicode('\u{000E}')
-                } else if modifiers.is_caps() {
-                    DecodedKey::Unicode('N')
-                } else {
-                    DecodedKey::Unicode('n')
-                }
-            }
-            KeyCode::M => {
-                if modifiers.is_caps() {
-                    DecodedKey::Unicode('?')
-                } else {
-                    DecodedKey::Unicode(',')
-                }
-            }
-            KeyCode::OemComma => {
-                if modifiers.is_shifted() {
-                    DecodedKey::Unicode('.')
-                } else {
-                    DecodedKey::Unicode(';')
-                }
-            }
-            KeyCode::OemPeriod => {
-                if modifiers.is_shifted() {
-                    DecodedKey::Unicode('/')
-                } else {
-                    DecodedKey::Unicode(':')
-                }
-            }
-            KeyCode::Oem2 => {
-                if modifiers.is_shifted() {
-                    DecodedKey::Unicode('§')
-                } else {
-                    DecodedKey::Unicode('!')
-                }
-            }
-            KeyCode::Spacebar => DecodedKey::Unicode(' '),
-            KeyCode::Delete => DecodedKey::Unicode('\u{007F}'),
-            KeyCode::NumpadDivide => DecodedKey::Unicode('/'),
-            KeyCode::NumpadMultiply => DecodedKey::Unicode('*'),
-            KeyCode::NumpadSubtract => DecodedKey::Unicode('-'),
-            KeyCode::Numpad7 => {
-                if modifiers.numlock {
-                    DecodedKey::Unicode('7')
-                } else {
-                    DecodedKey::RawKey(KeyCode::Home)
-                }
-            }
-            KeyCode::Numpad8 => {
-                if modifiers.numlock {
-                    DecodedKey::Unicode('8')
-                } else {
-                    DecodedKey::RawKey(KeyCode::ArrowUp)
-                }
-            }
-            KeyCode::Numpad9 => {
-                if modifiers.numlock {
-                    DecodedKey::Unicode('9')
-                } else {
-                    DecodedKey::RawKey(KeyCode::PageUp)
-                }
-            }
-            KeyCode::NumpadAdd => DecodedKey::Unicode('+'),
-            KeyCode::Numpad4 => {
-                if modifiers.numlock {
-                    DecodedKey::Unicode('4')
-                } else {
-                    DecodedKey::RawKey(KeyCode::ArrowLeft)
-                }
-            }
-            KeyCode::Numpad5 => DecodedKey::Unicode('5'),
-            KeyCode::Numpad6 => {
-                if modifiers.numlock {
-                    DecodedKey::Unicode('6')
-                } else {
-                    DecodedKey::RawKey(KeyCode::ArrowRight)
-                }
-            }
-            KeyCode::Numpad1 => {
-                if modifiers.numlock {
-                    DecodedKey::Unicode('1')
-                } else {
-                    DecodedKey::RawKey(KeyCode::End)
-                }
-            }
-            KeyCode::Numpad2 => {
-                if modifiers.numlock {
-                    DecodedKey::Unicode('2')
-                } else {
-                    DecodedKey::RawKey(KeyCode::ArrowDown)
-                }
-            }
-            KeyCode::Numpad3 => {
-                if modifiers.numlock {
-                    DecodedKey::Unicode('3')
-                } else {
-                    DecodedKey::RawKey(KeyCode::PageDown)
-                }
-            }
-            KeyCode::Numpad0 => {
-                if modifiers.numlock {
-                    DecodedKey::Unicode('0')
-                } else {
-                    DecodedKey::RawKey(KeyCode::Insert)
-                }
-            }
-            KeyCode::NumpadPeriod => {
-                if modifiers.numlock {
-                    DecodedKey::Unicode('.')
-                } else {
-                    DecodedKey::Unicode('\u{007F}')
-                }
-            }
-            KeyCode::NumpadEnter => DecodedKey::Unicode('\u{000A}'),
-            k => DecodedKey::RawKey(k),
+            // ========= Row 2 (the numbers) =========
+            KeyCode::Oem8      => DecodedKey::Unicode('²'),
+            KeyCode::Key1      => modifiers.handle_shift('&', '1'),
+            KeyCode::Key2      => modifiers.handle_altsh('é', '2', '~'),
+            KeyCode::Key3      => modifiers.handle_altsh('"', '3', '#'),
+            KeyCode::Key4      => modifiers.handle_altsh(QUO, '4', '{'),
+            KeyCode::Key5      => modifiers.handle_altsh('(', '5', '['),
+            KeyCode::Key6      => modifiers.handle_altsh('-', '6', '|'),
+            KeyCode::Key7      => modifiers.handle_altsh('è', '7', '`'),
+            KeyCode::Key8      => modifiers.handle_altsh('_', '8', SLS),
+            KeyCode::Key9      => modifiers.handle_altsh('ç', '9', '^'),
+            KeyCode::Key0      => modifiers.handle_altsh('à', '0', '@'),
+            KeyCode::OemMinus  => modifiers.handle_altsh(')', '°', ']'),
+            KeyCode::OemPlus   => modifiers.handle_altsh('=', '+', '}'),
+
+            // ========= Row 3 (QWERTY) =========
+            KeyCode::Q         => modifiers.handle_alpha('A', handle_ctrl),
+            KeyCode::W         => modifiers.handle_alpha('Z', handle_ctrl),
+            KeyCode::E         => modifiers.handle_alalt('E', '€', '€', handle_ctrl),
+            KeyCode::Oem4      => modifiers.handle_shift('^', '¨'),
+            KeyCode::Oem6      => modifiers.handle_altsh('$', '£', '¤'),
+
+            // ========= Row 4 (ASDFG) =========
+            KeyCode::A         => modifiers.handle_alpha('Q', handle_ctrl),
+            KeyCode::Oem1      => modifiers.handle_alpha('M', handle_ctrl),
+            KeyCode::Oem3      => modifiers.handle_shift('ù', '%'),
+            KeyCode::Oem7      => modifiers.handle_shift('*', 'µ'),
+
+            // ========= Row 5 (ZXCVB) =========
+            KeyCode::Oem5      => modifiers.handle_shift('<', '>'),
+            KeyCode::Z         => modifiers.handle_alpha('W', handle_ctrl),
+            KeyCode::M         => modifiers.handle_shift(',', '?'),
+            KeyCode::OemComma  => modifiers.handle_shift(';', '.'),
+            KeyCode::OemPeriod => modifiers.handle_shift(':', '/'),
+            KeyCode::Oem2      => modifiers.handle_shift('!', '§'),
+
+            // ========= Fallback =========
+            e => super::Us104Key.map_keycode(e, modifiers, handle_ctrl),
         }
     }
 }

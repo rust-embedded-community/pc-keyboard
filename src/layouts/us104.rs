@@ -180,7 +180,7 @@ impl KeyboardLayout for Us104Key {
             KeyCode::Numpad0         => modifiers.handle_numpad('0', KeyCode::Insert),
             KeyCode::NumpadPeriod    => modifiers.handle_numpad_pair('.', '\u{007f}'),
             KeyCode::NumpadEnter     => DecodedKey::Unicode('\u{000A}'),
-            // ========= Fallack =========
+            // ========= Fallback =========
             k                        => DecodedKey::RawKey(k),
         }
     }
