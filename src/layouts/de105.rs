@@ -1,6 +1,6 @@
 //! German keyboard support
 
-use crate::{DecodedKey, HandleControl, KeyCode, KeyboardLayout, Modifiers};
+use crate::{DecodedKey, HandleControl, KeyCode, KeyboardLayout, Modifiers, PhysicalKeyboard, QUO};
 
 /// A standard German 102-key (or 105-key including Windows keys) keyboard.
 ///
@@ -250,5 +250,8 @@ impl KeyboardLayout for De105Key {
                 us.map_keycode(e, modifiers, handle_ctrl)
             }
         }
+    }
+    fn get_physical(&self) -> PhysicalKeyboard {
+        PhysicalKeyboard::Iso
     }
 }

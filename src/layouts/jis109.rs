@@ -1,6 +1,6 @@
 //! JIS keyboard support
 
-use crate::{DecodedKey, HandleControl, KeyCode, KeyboardLayout, Modifiers};
+use crate::{DecodedKey, HandleControl, KeyCode, KeyboardLayout, Modifiers, PhysicalKeyboard};
 
 /// A standard Japan 106-key (or 109-key including Windows keys) keyboard.
 ///
@@ -174,5 +174,9 @@ impl KeyboardLayout for Jis109Key {
                 us.map_keycode(e, modifiers, handle_ctrl)
             }
         }
+    }
+
+    fn get_physical(&self) -> PhysicalKeyboard {
+        PhysicalKeyboard::Jis
     }
 }

@@ -60,7 +60,7 @@
 //! come from one of three supported keyboards: 102/105 key ISO, 101/104 key
 //! ANSI and 106/109-key JIS.
 //!
-//! ### 102/105 key ISO
+//! ### 102/105 key [ISO](PhysicalKeyboard::Iso)
 //!
 //! This is the mapping of `KeyCode` to a 102/105-key ISO keyboard:
 //!
@@ -86,7 +86,7 @@
 //!
 //! (Reference: <https://kbdlayout.info/KBDUK/scancodes+virtualkeys?arrangement=ISO105>)
 //!
-//! ### 101/104 key ANSI
+//! ### 101/104 key [ANSI](PhysicalKeyboard::Ansi)
 //!
 //! This is the mapping of `KeyCode` to a 101/104-key ANSI keyboard:
 //!
@@ -114,7 +114,7 @@
 //!
 //! (Reference: <https://kbdlayout.info/KBDUK/scancodes+virtualkeys?arrangement=ANSI104>)
 //!
-//! ### 106/109 key JIS
+//! ### 106/109 key [JIS](PhysicalKeyboard::Jis)
 //!
 //! This is the mapping of `KeyCode` to a 106/109-key JIS keyboard:
 //!
@@ -676,6 +676,16 @@ pub struct KeyEvent {
     pub state: KeyState,
 }
 
+/// Describes a physical keyboard
+pub enum PhysicalKeyboard {
+    /// 102 or 105 key ISO, as used by UK English keyboards (and others)
+    Iso,
+    /// 101 or 104 key ANSI, as used by US English keyboards (and others)
+    Ansi,
+    /// 106 or 109 key JIS, as used by Japanese keyboards (and others)
+    Jis,
+}
+
 /// Describes a Keyboard Layout.
 ///
 /// Layouts might include "en_US", or "en_GB", or "de_GR".
@@ -690,6 +700,9 @@ pub trait KeyboardLayout {
         modifiers: &Modifiers,
         handle_ctrl: HandleControl,
     ) -> DecodedKey;
+
+    /// Which physical keyboard does this layout work on?
+    fn get_physical(&self) -> PhysicalKeyboard;
 }
 
 /// A mechanism to convert bytes from a Keyboard into [`KeyCode`] values.
@@ -771,6 +784,15 @@ impl Modifiers {
             // Lowercase letter
             const ASCII_UPPER_TO_LOWER_OFFSET: u8 = 32;
             DecodedKey::Unicode((letter as u8 + ASCII_UPPER_TO_LOWER_OFFSET) as char)
+        }
+    }
+
+    /// Handle accented letters
+    pub(crate) fn handle_accen(&self, lower: char, upper: char) -> DecodedKey {
+        if self.is_caps() {
+            DecodedKey::Unicode(upper)
+        } else {
+            DecodedKey::Unicode(lower)
         }
     }
 

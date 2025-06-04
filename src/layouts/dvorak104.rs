@@ -1,6 +1,6 @@
 //! Dvorak keyboard support
 
-use crate::{DecodedKey, HandleControl, KeyCode, KeyboardLayout, Modifiers};
+use crate::{DecodedKey, HandleControl, KeyCode, KeyboardLayout, Modifiers, PhysicalKeyboard};
 
 /// A Dvorak 101-key (or 104-key including Windows keys) keyboard.
 ///
@@ -300,5 +300,9 @@ impl KeyboardLayout for Dvorak104Key {
                 us.map_keycode(e, modifiers, handle_ctrl)
             }
         }
+    }
+
+    fn get_physical(&self) -> PhysicalKeyboard {
+        PhysicalKeyboard::Ansi
     }
 }

@@ -1,6 +1,6 @@
 //! Finnish/Swedish keyboard support
 
-use crate::{DecodedKey, HandleControl, KeyCode, KeyboardLayout, Modifiers};
+use crate::{DecodedKey, HandleControl, KeyCode, KeyboardLayout, Modifiers, PhysicalKeyboard};
 
 /// A standard Finnish/Swedish 102-key (or 105-key including Windows keys) keyboard.
 ///
@@ -222,5 +222,9 @@ impl KeyboardLayout for FiSe105Key {
             }
             e => fallback.map_keycode(e, modifiers, handle_ctrl),
         }
+    }
+
+    fn get_physical(&self) -> PhysicalKeyboard {
+        PhysicalKeyboard::Iso
     }
 }

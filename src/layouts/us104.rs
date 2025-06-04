@@ -1,6 +1,8 @@
 //! # United States keyboard support
 
-use crate::{DecodedKey, HandleControl, KeyCode, KeyboardLayout, Modifiers, QUO, SLS};
+use crate::{
+    DecodedKey, HandleControl, KeyCode, KeyboardLayout, Modifiers, PhysicalKeyboard, QUO, SLS,
+};
 
 /// A standard United States 101-key (or 104-key including Windows keys) keyboard.
 ///
@@ -183,6 +185,10 @@ impl KeyboardLayout for Us104Key {
             // ========= Fallback =========
             k                        => DecodedKey::RawKey(k),
         }
+    }
+
+    fn get_physical(&self) -> PhysicalKeyboard {
+        PhysicalKeyboard::Ansi
     }
 }
 

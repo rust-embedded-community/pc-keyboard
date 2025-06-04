@@ -4,27 +4,53 @@ use std::collections::HashMap;
 
 use pc_keyboard::{DecodedKey, KeyCode, KeyboardLayout, Modifiers};
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-enum KeyboardKind {
-    Ansi,
-    Iso,
-}
-
 fn main() {
     println!("Keyboard Layouts");
     println!("================");
     println!();
-    println!("Us104Key:");
-    show_kb(KeyboardKind::Ansi, &pc_keyboard::layouts::Us104Key);
-    println!("Uk105Key:");
-    show_kb(KeyboardKind::Iso, &pc_keyboard::layouts::Uk105Key);
-    println!("Colemak:");
-    show_kb(KeyboardKind::Ansi, &pc_keyboard::layouts::Colemak);
-    println!("Azerty:");
-    show_kb(KeyboardKind::Iso, &pc_keyboard::layouts::Azerty);
+    println!("/// ****************************************");
+    println!("/// # Azerty");
+    println!("///");
+    show_kb(&pc_keyboard::layouts::Azerty);
+    println!("/// ****************************************");
+    println!("/// # Colemak");
+    println!("///");
+    show_kb(&pc_keyboard::layouts::Colemak);
+    println!("/// ****************************************");
+    println!("/// # De105Key");
+    println!("///");
+    show_kb(&pc_keyboard::layouts::De105Key);
+    println!("/// ****************************************");
+    println!("/// # Dvorak104Key");
+    println!("///");
+    show_kb(&pc_keyboard::layouts::Dvorak104Key);
+    println!("/// ****************************************");
+    println!("/// # DVP104Key");
+    println!("///");
+    show_kb(&pc_keyboard::layouts::DVP104Key);
+    println!("/// ****************************************");
+    println!("/// # FiSe105Key");
+    println!("///");
+    show_kb(&pc_keyboard::layouts::FiSe105Key);
+    // println!("/// ****************************************");
+    // println!("/// # Jis109Key");
+    // println!("///");
+    // show_kb(&pc_keyboard::layouts::Jis109Key);
+    println!("/// ****************************************");
+    println!("/// # No105Key");
+    println!("///");
+    show_kb(&pc_keyboard::layouts::No105Key);
+    println!("/// ****************************************");
+    println!("/// # Uk105Key");
+    println!("///");
+    show_kb(&pc_keyboard::layouts::Uk105Key);
+    println!("/// ****************************************");
+    println!("/// # Us104Key");
+    println!("///");
+    show_kb(&pc_keyboard::layouts::Us104Key);
 }
 
-fn show_kb(kind: KeyboardKind, layout: &dyn KeyboardLayout) {
+fn show_kb(layout: &dyn KeyboardLayout) {
     let mut modifiers = Modifiers {
         lshift: false,
         rshift: false,
@@ -37,37 +63,37 @@ fn show_kb(kind: KeyboardKind, layout: &dyn KeyboardLayout) {
         rctrl2: false,
     };
     println!("/// ## Unmodified");
-    show_kb_modifiers(kind, layout, &modifiers);
+    show_kb_modifiers(layout, &modifiers);
 
     modifiers.capslock = true;
     println!("/// ## Caps Lock");
-    show_kb_modifiers(kind, layout, &modifiers);
+    show_kb_modifiers(layout, &modifiers);
     modifiers.capslock = false;
 
     modifiers.lshift = true;
     println!("/// ## Shifted");
-    show_kb_modifiers(kind, layout, &modifiers);
+    show_kb_modifiers(layout, &modifiers);
     modifiers.lshift = false;
 
     modifiers.rctrl = true;
     println!("/// ## Control");
-    show_kb_modifiers(kind, layout, &modifiers);
+    show_kb_modifiers(layout, &modifiers);
     modifiers.rctrl = false;
 
     modifiers.ralt = true;
     println!("/// ## AltGr");
-    show_kb_modifiers(kind, layout, &modifiers);
+    show_kb_modifiers(layout, &modifiers);
     modifiers.ralt = false;
 
     modifiers.ralt = true;
     modifiers.lshift = true;
     println!("/// ## Shift AltGr");
-    show_kb_modifiers(kind, layout, &modifiers);
+    show_kb_modifiers(layout, &modifiers);
     modifiers.ralt = false;
     modifiers.lshift = false;
 }
 
-fn show_kb_modifiers(kind: KeyboardKind, layout: &dyn KeyboardLayout, modifiers: &Modifiers) {
+fn show_kb_modifiers(layout: &dyn KeyboardLayout, modifiers: &Modifiers) {
     let mut map = Map::new(modifiers);
     map.insert("esc", KeyCode::Escape, layout);
     map.insert("oem8", KeyCode::Oem8, layout);
@@ -138,11 +164,17 @@ fn show_kb_modifiers(kind: KeyboardKind, layout: &dyn KeyboardLayout, modifiers:
     map.insert("b", KeyCode::B, layout);
     map.insert("n", KeyCode::N, layout);
     map.insert("m", KeyCode::M, layout);
-    if kind == KeyboardKind::Iso {
-        map.insert("oem5", KeyCode::Oem5, layout);
-        map.print_iso();
-    } else {
-        map.print_ansi();
+    match layout.get_physical() {
+        pc_keyboard::PhysicalKeyboard::Iso => {
+            map.insert("oem5", KeyCode::Oem5, layout);
+            map.print_iso();
+        }
+        pc_keyboard::PhysicalKeyboard::Ansi => {
+            map.print_ansi();
+        }
+        pc_keyboard::PhysicalKeyboard::Jis => {
+            todo!()
+        }
     }
 }
 
@@ -262,7 +294,7 @@ impl Map {
 /// └────┘  └────┴────┴────┴────┘  └────┴────┴────┴────┘  └────┴────┴────┴────┘   └────┴────┴────┘
 ///
 /// ┌────┬────┬────┬────┬────┬────┬────┬────┬────┬────┬────┬────┬────┬─────────┐  ┌────┬────┬────┐  ┌────┬────┬────┬────┐
-/// │{o8}│{k1}│{k2}│{k3}│{k4}│{k5}│{k6}│{k7}│{k8}│{k9}│{k0}│{om}│{ol}│{bs}     │  │    │    │    │  │    │{nd}│{nm}│{ns}│
+/// │{o8}│{k1}│{k2}│{k3}│{k4}│{k5}│{k6}│{k7}│{k8}│{k9}│{k0}│{om}│{ol}│  {bs}   │  │    │    │    │  │    │{nd}│{nm}│{ns}│
 /// ├────┴┬───┴┬───┴┬───┴┬───┴┬───┴┬───┴┬───┴┬───┴┬───┴┬───┴┬───┴┬───┴┬────────┤  ├────┼────┼────┤  ├────┼────┼────┼────┤
 /// │{tb} │{kq}│{kw}│{ke}│{kr}│{kt}│{ky}│{ku}│{ki}│{ko}│{kp}│{o4}│{o6}│  {o7}  │  │{de}│    │    │  │{n7}│{n8}│{n9}│    │
 /// ├─────┴┬───┴┬───┴┬───┴┬───┴┬───┴┬───┴┬───┴┬───┴┬───┴┬───┴┬───┴┬───┴────────┤  └────┴────┴────┘  ├────┼────┼────┤{nl}│
@@ -358,9 +390,9 @@ impl Map {
 /// └────┘  └────┴────┴────┴────┘  └────┴────┴────┴────┘  └────┴────┴────┴────┘   └────┴────┴────┘
 ///
 /// ┌────┬────┬────┬────┬────┬────┬────┬────┬────┬────┬────┬────┬────┬─────────┐  ┌────┬────┬────┐  ┌────┬────┬────┬────┐
-/// │{o8}│{k1}│{k2}│{k3}│{k4}│{k5}│{k6}│{k7}│{k8}│{k9}│{k0}│{om}│{ol}│{bs}     │  │    │    │    │  │    │{nd}│{nm}│{ns}│
+/// │{o8}│{k1}│{k2}│{k3}│{k4}│{k5}│{k6}│{k7}│{k8}│{k9}│{k0}│{om}│{ol}│   {bs}  │  │    │    │    │  │    │{nd}│{nm}│{ns}│
 /// ├────┴┬───┴┬───┴┬───┴┬───┴┬───┴┬───┴┬───┴┬───┴┬───┴┬───┴┬───┴┬───┴┬────────┤  ├────┼────┼────┤  ├────┼────┼────┼────┤
-/// │{tb} │{kq}│{kw}│{ke}│{kr}│{kt}│{ky}│{ku}│{ki}│{ko}│{kp}│{o4}│{o6}│ {en}   │  │{de}│    │    │  │{n7}│{n8}│{n9}│    │
+/// │{tb} │{kq}│{kw}│{ke}│{kr}│{kt}│{ky}│{ku}│{ki}│{ko}│{kp}│{o4}│{o6}│  {en}  │  │{de}│    │    │  │{n7}│{n8}│{n9}│    │
 /// ├─────┴┬───┴┬───┴┬───┴┬───┴┬───┴┬───┴┬───┴┬───┴┬───┴┬───┴┬───┴┬───┴┐       │  └────┴────┴────┘  ├────┼────┼────┤{nl}│
 /// │      │{ka}│{ks}│{kd}│{kf}│{kg}│{kh}│{kj}│{kk}│{kl}│{o1}│{o3}│{o7}│       │                    │{n4}│{n5}│{n6}│    │
 /// ├────┬─┴──┬─┴──┬─┴──┬─┴──┬─┴──┬─┴──┬─┴──┬─┴──┬─┴──┬─┴──┬─┴──┬─┴────┴───────┤       ┌────┐       ├────┼────┼────┼────┤
