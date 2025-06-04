@@ -1,6 +1,6 @@
 //! Dvorak Programmer keyboard support
 
-use crate::{DecodedKey, HandleControl, KeyCode, KeyboardLayout, Modifiers};
+use crate::{DecodedKey, HandleControl, KeyCode, KeyboardLayout, Modifiers, PhysicalKeyboard};
 
 /// A Dvorak Programmer 101-key (or 104-key including Windows keys) keyboard.
 ///
@@ -481,5 +481,9 @@ impl KeyboardLayout for DVP104Key {
             KeyCode::NumpadEnter => DecodedKey::Unicode('\u{000A}'),
             k => DecodedKey::RawKey(k),
         }
+    }
+
+    fn get_physical(&self) -> PhysicalKeyboard {
+        PhysicalKeyboard::Ansi
     }
 }

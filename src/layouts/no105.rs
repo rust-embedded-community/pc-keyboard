@@ -1,6 +1,6 @@
 //! Norwegian keyboard support
 
-use crate::{DecodedKey, HandleControl, KeyCode, KeyboardLayout, Modifiers};
+use crate::{DecodedKey, HandleControl, KeyCode, KeyboardLayout, Modifiers, PhysicalKeyboard};
 
 /// A standard Norwegian 102-key (or 105-key including Windows keys) keyboard.
 ///
@@ -228,5 +228,9 @@ impl KeyboardLayout for No105Key {
                 us.map_keycode(e, modifiers, handle_ctrl)
             }
         }
+    }
+
+    fn get_physical(&self) -> PhysicalKeyboard {
+        PhysicalKeyboard::Iso
     }
 }

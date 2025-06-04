@@ -5,6 +5,8 @@
 //! see [`Uk105Key`] and [`Us104Key`] as an example of that.
 
 mod dvorak_programmer104;
+use crate::PhysicalKeyboard;
+
 pub use self::dvorak_programmer104::DVP104Key;
 
 mod dvorak104;
@@ -68,6 +70,21 @@ impl super::KeyboardLayout for AnyLayout {
             AnyLayout::FiSe105Key(inner) => inner.map_keycode(keycode, modifiers, handle_ctrl),
         }
     }
+
+    fn get_physical(&self) -> PhysicalKeyboard {
+        match self {
+            AnyLayout::DVP104Key(inner) => inner.get_physical(),
+            AnyLayout::Dvorak104Key(inner) => inner.get_physical(),
+            AnyLayout::Us104Key(inner) => inner.get_physical(),
+            AnyLayout::Uk105Key(inner) => inner.get_physical(),
+            AnyLayout::Jis109Key(inner) => inner.get_physical(),
+            AnyLayout::Azerty(inner) => inner.get_physical(),
+            AnyLayout::Colemak(inner) => inner.get_physical(),
+            AnyLayout::De105Key(inner) => inner.get_physical(),
+            AnyLayout::No105Key(inner) => inner.get_physical(),
+            AnyLayout::FiSe105Key(inner) => inner.get_physical(),
+        }
+    }
 }
 
 impl super::KeyboardLayout for &AnyLayout {
@@ -88,6 +105,21 @@ impl super::KeyboardLayout for &AnyLayout {
             AnyLayout::De105Key(inner) => inner.map_keycode(keycode, modifiers, handle_ctrl),
             AnyLayout::No105Key(inner) => inner.map_keycode(keycode, modifiers, handle_ctrl),
             AnyLayout::FiSe105Key(inner) => inner.map_keycode(keycode, modifiers, handle_ctrl),
+        }
+    }
+
+    fn get_physical(&self) -> PhysicalKeyboard {
+        match self {
+            AnyLayout::DVP104Key(inner) => inner.get_physical(),
+            AnyLayout::Dvorak104Key(inner) => inner.get_physical(),
+            AnyLayout::Us104Key(inner) => inner.get_physical(),
+            AnyLayout::Uk105Key(inner) => inner.get_physical(),
+            AnyLayout::Jis109Key(inner) => inner.get_physical(),
+            AnyLayout::Azerty(inner) => inner.get_physical(),
+            AnyLayout::Colemak(inner) => inner.get_physical(),
+            AnyLayout::De105Key(inner) => inner.get_physical(),
+            AnyLayout::No105Key(inner) => inner.get_physical(),
+            AnyLayout::FiSe105Key(inner) => inner.get_physical(),
         }
     }
 }

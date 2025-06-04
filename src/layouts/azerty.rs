@@ -1,6 +1,8 @@
 //! French keyboard support
 
-use crate::{DecodedKey, HandleControl, KeyCode, KeyboardLayout, Modifiers, QUO, SLS};
+use crate::{
+    DecodedKey, HandleControl, KeyCode, KeyboardLayout, Modifiers, PhysicalKeyboard, QUO, SLS,
+};
 
 /// A standard French 102-key (or 105-key including Windows keys) keyboard.
 ///
@@ -187,6 +189,10 @@ impl KeyboardLayout for Azerty {
             // ========= Fallback =========
             e => super::Us104Key.map_keycode(e, modifiers, handle_ctrl),
         }
+    }
+
+    fn get_physical(&self) -> PhysicalKeyboard {
+        PhysicalKeyboard::Iso
     }
 }
 
