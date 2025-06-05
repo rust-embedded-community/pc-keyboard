@@ -742,12 +742,16 @@ pub struct Modifiers {
 }
 
 impl Modifiers {
-    /// Handle the standard letters
+    /// Handle letter keys with standard ASCII 'A'..'Z' keycaps.
     ///
-    /// ONLY pass 'A'..='Z' - nothing else
-    pub(crate) fn handle_alpha(&self, letter: char, handle_control: HandleControl) -> DecodedKey {
+    /// ONLY pass 'A'..='Z' - nothing else.
+    ///
+    /// You will get a `DecodedKey::Unicode` value with the appropriate lower
+    /// or upper case letter, according to state of the the Caps Lock and
+    /// Shift modifiers.
+    pub(crate) fn handle_ascii_2(&self, letter: char, handle_ctrl: HandleControl) -> DecodedKey {
         debug_assert!(letter.is_ascii_uppercase());
-        if handle_control == HandleControl::MapLettersToUnicode && self.is_ctrl() {
+        if handle_ctrl == HandleControl::MapLettersToUnicode && self.is_ctrl() {
             // Get a Control code, like Ctrl+C => U+0003
             const ASCII_UPPERCASE_START_OFFSET: u8 = 64;
             DecodedKey::Unicode((letter as u8 - ASCII_UPPERCASE_START_OFFSET) as char)
@@ -761,21 +765,83 @@ impl Modifiers {
         }
     }
 
-    /// Handle the standard letters, with an Alt-Gr alternative
+    /// Handle letter keys with just two variants (lower and upper case).
+    ///
+    /// Designed for non-ASCII keys, this does not produce control codes.
+    ///
+    /// You will get a `DecodedKey::Unicode` value with the appropriate lower
+    /// or upper case letter, according to state of the the Caps Lock and
+    /// Shift modifiers.
+    ///
+    /// We make you pass both upper and lower case variants to avoid having to
+    /// use the `char::to_lowercase` function.
+    pub(crate) fn handle_letter2(&self, letter_lower: char, letter_upper: char) -> DecodedKey {
+        if self.is_caps() {
+            DecodedKey::Unicode(letter_upper)
+        } else {
+            DecodedKey::Unicode(letter_lower)
+        }
+    }
+
+    /// Handle letter keys with standard ASCII 'A'..'Z' keycaps with two extra symbols.
     ///
     /// ONLY pass 'A'..='Z' - nothing else
-    pub(crate) fn handle_alalt(
+    ///
+    /// You will get a `DecodedKey::Unicode` value with the appropriate lower
+    /// or upper case letter, according to state of the the Caps Lock and
+    /// Shift modifiers. Or, if AltGr is held, you get either the alternate
+    /// character. Useful if your alternate character is e.g. `€`.
+    ///
+    /// We make you pass both upper and lower case variants to avoid having to
+    /// use the `char::to_lowercase` function.
+    pub(crate) fn handle_ascii_3(
         &self,
-        letter: char,
-        alt_letter_lower: char,
-        alt_letter_upper: char,
-        handle_control: HandleControl,
+        letter_upper: char,
+        alt: char,
+        handle_ctrl: HandleControl,
     ) -> DecodedKey {
-        debug_assert!(letter.is_ascii_uppercase());
-        if handle_control == HandleControl::MapLettersToUnicode && self.is_ctrl() {
+        debug_assert!(letter_upper.is_ascii_uppercase());
+        if handle_ctrl == HandleControl::MapLettersToUnicode && self.is_ctrl() {
             // Get a Control code, like Ctrl+C => U+0003
             const ASCII_UPPERCASE_START_OFFSET: u8 = 64;
-            DecodedKey::Unicode((letter as u8 - ASCII_UPPERCASE_START_OFFSET) as char)
+            DecodedKey::Unicode((letter_upper as u8 - ASCII_UPPERCASE_START_OFFSET) as char)
+        } else if self.ralt {
+            // Alternate character
+            DecodedKey::Unicode(alt)
+        } else if self.is_caps() {
+            // Capital letter
+            DecodedKey::Unicode(letter_upper)
+        } else {
+            // Lowercase letter
+            const ASCII_UPPER_TO_LOWER_OFFSET: u8 = 32;
+            DecodedKey::Unicode((letter_upper as u8 + ASCII_UPPER_TO_LOWER_OFFSET) as char)
+        }
+    }
+
+    /// Handle letter keys with standard ASCII 'A'..'Z' keycaps with two extra symbols.
+    ///
+    /// ONLY pass 'A'..='Z' - nothing else
+    ///
+    /// You will get a `DecodedKey::Unicode` value with the appropriate lower
+    /// or upper case letter, according to state of the the Caps Lock and
+    /// Shift modifiers. Or, if AltGr is held, you get either the upper or
+    /// lower case alternate character. Useful if your alternate character is
+    /// e.g. `é` (or `É` if Shift or Caps Lock is enabled).
+    ///
+    /// We make you pass both upper and lower case variants to avoid having to
+    /// use the `char::to_lowercase` function.
+    pub(crate) fn handle_ascii_4(
+        &self,
+        letter_upper: char,
+        alt_letter_lower: char,
+        alt_letter_upper: char,
+        handle_ctrl: HandleControl,
+    ) -> DecodedKey {
+        debug_assert!(letter_upper.is_ascii_uppercase());
+        if handle_ctrl == HandleControl::MapLettersToUnicode && self.is_ctrl() {
+            // Get a Control code, like Ctrl+C => U+0003
+            const ASCII_UPPERCASE_START_OFFSET: u8 = 64;
+            DecodedKey::Unicode((letter_upper as u8 - ASCII_UPPERCASE_START_OFFSET) as char)
         } else if self.ralt && self.is_caps() {
             // Capital letter
             DecodedKey::Unicode(alt_letter_upper)
@@ -784,25 +850,16 @@ impl Modifiers {
             DecodedKey::Unicode(alt_letter_lower)
         } else if self.is_caps() {
             // Capital letter
-            DecodedKey::Unicode(letter)
+            DecodedKey::Unicode(letter_upper)
         } else {
             // Lowercase letter
             const ASCII_UPPER_TO_LOWER_OFFSET: u8 = 32;
-            DecodedKey::Unicode((letter as u8 + ASCII_UPPER_TO_LOWER_OFFSET) as char)
-        }
-    }
-
-    /// Handle accented letters
-    pub(crate) fn handle_accen(&self, lower: char, upper: char) -> DecodedKey {
-        if self.is_caps() {
-            DecodedKey::Unicode(upper)
-        } else {
-            DecodedKey::Unicode(lower)
+            DecodedKey::Unicode((letter_upper as u8 + ASCII_UPPER_TO_LOWER_OFFSET) as char)
         }
     }
 
     /// Handle numpad keys which are either a character or a raw key
-    pub(crate) fn handle_numpad(&self, letter: char, key: KeyCode) -> DecodedKey {
+    pub(crate) fn handle_num_pad(&self, letter: char, key: KeyCode) -> DecodedKey {
         if self.numlock {
             DecodedKey::Unicode(letter)
         } else {
@@ -810,8 +867,10 @@ impl Modifiers {
         }
     }
 
-    /// Handle numpad keys which are one of two characters
-    pub(crate) fn handle_numpad_pair(&self, letter: char, other: char) -> DecodedKey {
+    /// Handle numpad keys which produce a pair of characters
+    ///
+    /// This is usually just for Numpad Delete.
+    pub(crate) fn handle_num_del(&self, letter: char, other: char) -> DecodedKey {
         if self.numlock {
             DecodedKey::Unicode(letter)
         } else {
@@ -820,7 +879,9 @@ impl Modifiers {
     }
 
     /// Handle standard two-glyph shifted keys
-    pub(crate) fn handle_shift(&self, plain: char, shifted: char) -> DecodedKey {
+    ///
+    /// Caps Lock is ignored here - only shift matters.
+    pub(crate) fn handle_symbol2(&self, plain: char, shifted: char) -> DecodedKey {
         if self.is_shifted() {
             DecodedKey::Unicode(shifted)
         } else {
@@ -829,7 +890,10 @@ impl Modifiers {
     }
 
     /// Handle standard three-glyph shifted keys
-    pub(crate) fn handle_altsh(&self, plain: char, shifted: char, alt: char) -> DecodedKey {
+    ///
+    /// Caps Lock is ignored here - only shift matters. AltGr gets you the
+    /// alternate letter, regardless of Shift status.
+    pub(crate) fn handle_symbol3(&self, plain: char, shifted: char, alt: char) -> DecodedKey {
         if self.is_altgr() {
             DecodedKey::Unicode(alt)
         } else if self.is_shifted() {
