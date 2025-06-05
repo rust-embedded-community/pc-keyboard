@@ -146,25 +146,25 @@ impl KeyboardLayout for Colemak {
     ) -> DecodedKey {
         match keycode {
             // ========= Row 3 (QWERTY) =========
-            KeyCode::E    => modifiers.handle_alpha('F', handle_ctrl),
-            KeyCode::R    => modifiers.handle_alpha('P', handle_ctrl),
-            KeyCode::T    => modifiers.handle_alpha('G', handle_ctrl),
-            KeyCode::Y    => modifiers.handle_alpha('J', handle_ctrl),
-            KeyCode::U    => modifiers.handle_alpha('L', handle_ctrl),
-            KeyCode::I    => modifiers.handle_alpha('U', handle_ctrl),
-            KeyCode::O    => modifiers.handle_alpha('Y', handle_ctrl),
-            KeyCode::P    => modifiers.handle_shift(';', ':'),
+            KeyCode::E    => modifiers.handle_ascii_2('F', handle_ctrl),
+            KeyCode::R    => modifiers.handle_ascii_2('P', handle_ctrl),
+            KeyCode::T    => modifiers.handle_ascii_2('G', handle_ctrl),
+            KeyCode::Y    => modifiers.handle_ascii_2('J', handle_ctrl),
+            KeyCode::U    => modifiers.handle_ascii_2('L', handle_ctrl),
+            KeyCode::I    => modifiers.handle_ascii_2('U', handle_ctrl),
+            KeyCode::O    => modifiers.handle_ascii_2('Y', handle_ctrl),
+            KeyCode::P    => modifiers.handle_symbol2(';', ':'),
             // ========= Row 4 (ASDFG) =========
-            KeyCode::S    => modifiers.handle_alpha('R', handle_ctrl),
-            KeyCode::D    => modifiers.handle_alpha('S', handle_ctrl),
-            KeyCode::F    => modifiers.handle_alpha('T', handle_ctrl),
-            KeyCode::G    => modifiers.handle_alpha('D', handle_ctrl),
-            KeyCode::J    => modifiers.handle_alpha('N', handle_ctrl),
-            KeyCode::K    => modifiers.handle_alpha('E', handle_ctrl),
-            KeyCode::L    => modifiers.handle_alpha('I', handle_ctrl),
-            KeyCode::Oem1 => modifiers.handle_alpha('O', handle_ctrl),
+            KeyCode::S    => modifiers.handle_ascii_2('R', handle_ctrl),
+            KeyCode::D    => modifiers.handle_ascii_2('S', handle_ctrl),
+            KeyCode::F    => modifiers.handle_ascii_2('T', handle_ctrl),
+            KeyCode::G    => modifiers.handle_ascii_2('D', handle_ctrl),
+            KeyCode::J    => modifiers.handle_ascii_2('N', handle_ctrl),
+            KeyCode::K    => modifiers.handle_ascii_2('E', handle_ctrl),
+            KeyCode::L    => modifiers.handle_ascii_2('I', handle_ctrl),
+            KeyCode::Oem1 => modifiers.handle_ascii_2('O', handle_ctrl),
             // ========= Row 5 (ZXCVB) =========
-            KeyCode::N    => modifiers.handle_alpha('K', handle_ctrl),
+            KeyCode::N    => modifiers.handle_ascii_2('K', handle_ctrl),
             // ========= Fallback ========= 
             e => super::Us104Key.map_keycode(e, modifiers, handle_ctrl),
         }

@@ -146,60 +146,60 @@ impl KeyboardLayout for Us104Key {
     ) -> DecodedKey {
         match keycode {
             // ========= Row 2 (the numbers) =========
-            KeyCode::Oem8            => modifiers.handle_shift('`', '~'),
+            KeyCode::Oem8            => modifiers.handle_symbol2('`', '~'),
             KeyCode::Escape          => DecodedKey::Unicode('\u{001B}'),
-            KeyCode::Key1            => modifiers.handle_shift('1', '!'),
-            KeyCode::Key2            => modifiers.handle_shift('2', '@'),
-            KeyCode::Key3            => modifiers.handle_shift('3', '#'),
-            KeyCode::Key4            => modifiers.handle_shift('4', '$'),
-            KeyCode::Key5            => modifiers.handle_shift('5', '%'),
-            KeyCode::Key6            => modifiers.handle_shift('6', '^'),
-            KeyCode::Key7            => modifiers.handle_shift('7', '&'),
-            KeyCode::Key8            => modifiers.handle_shift('8', '*'),
-            KeyCode::Key9            => modifiers.handle_shift('9', '('),
-            KeyCode::Key0            => modifiers.handle_shift('0', ')'),
-            KeyCode::OemMinus        => modifiers.handle_shift('-', '_'),
-            KeyCode::OemPlus         => modifiers.handle_shift('=', '+'),
+            KeyCode::Key1            => modifiers.handle_symbol2('1', '!'),
+            KeyCode::Key2            => modifiers.handle_symbol2('2', '@'),
+            KeyCode::Key3            => modifiers.handle_symbol2('3', '#'),
+            KeyCode::Key4            => modifiers.handle_symbol2('4', '$'),
+            KeyCode::Key5            => modifiers.handle_symbol2('5', '%'),
+            KeyCode::Key6            => modifiers.handle_symbol2('6', '^'),
+            KeyCode::Key7            => modifiers.handle_symbol2('7', '&'),
+            KeyCode::Key8            => modifiers.handle_symbol2('8', '*'),
+            KeyCode::Key9            => modifiers.handle_symbol2('9', '('),
+            KeyCode::Key0            => modifiers.handle_symbol2('0', ')'),
+            KeyCode::OemMinus        => modifiers.handle_symbol2('-', '_'),
+            KeyCode::OemPlus         => modifiers.handle_symbol2('=', '+'),
             KeyCode::Backspace       => DecodedKey::Unicode('\u{0008}'),
             // ========= Row 3 (QWERTY) =========
             KeyCode::Tab             => DecodedKey::Unicode('\u{0009}'),
-            KeyCode::Q               => modifiers.handle_alpha('Q', handle_ctrl),
-            KeyCode::W               => modifiers.handle_alpha('W', handle_ctrl),
-            KeyCode::E               => modifiers.handle_alpha('E', handle_ctrl),
-            KeyCode::R               => modifiers.handle_alpha('R', handle_ctrl),
-            KeyCode::T               => modifiers.handle_alpha('T', handle_ctrl),
-            KeyCode::Y               => modifiers.handle_alpha('Y', handle_ctrl),
-            KeyCode::U               => modifiers.handle_alpha('U', handle_ctrl),
-            KeyCode::I               => modifiers.handle_alpha('I', handle_ctrl),
-            KeyCode::O               => modifiers.handle_alpha('O', handle_ctrl),
-            KeyCode::P               => modifiers.handle_alpha('P', handle_ctrl),
-            KeyCode::Oem4            => modifiers.handle_shift('[', '{'),
-            KeyCode::Oem6            => modifiers.handle_shift(']', '}'),
-            KeyCode::Oem7            => modifiers.handle_shift(SLS, '|'),
+            KeyCode::Q               => modifiers.handle_ascii_2('Q', handle_ctrl),
+            KeyCode::W               => modifiers.handle_ascii_2('W', handle_ctrl),
+            KeyCode::E               => modifiers.handle_ascii_2('E', handle_ctrl),
+            KeyCode::R               => modifiers.handle_ascii_2('R', handle_ctrl),
+            KeyCode::T               => modifiers.handle_ascii_2('T', handle_ctrl),
+            KeyCode::Y               => modifiers.handle_ascii_2('Y', handle_ctrl),
+            KeyCode::U               => modifiers.handle_ascii_2('U', handle_ctrl),
+            KeyCode::I               => modifiers.handle_ascii_2('I', handle_ctrl),
+            KeyCode::O               => modifiers.handle_ascii_2('O', handle_ctrl),
+            KeyCode::P               => modifiers.handle_ascii_2('P', handle_ctrl),
+            KeyCode::Oem4            => modifiers.handle_symbol2('[', '{'),
+            KeyCode::Oem6            => modifiers.handle_symbol2(']', '}'),
+            KeyCode::Oem7            => modifiers.handle_symbol2(SLS, '|'),
             // ========= Row 4 (ASDFG) =========
-            KeyCode::A               => modifiers.handle_alpha('A', handle_ctrl),
-            KeyCode::S               => modifiers.handle_alpha('S', handle_ctrl),
-            KeyCode::D               => modifiers.handle_alpha('D', handle_ctrl),
-            KeyCode::F               => modifiers.handle_alpha('F', handle_ctrl),
-            KeyCode::G               => modifiers.handle_alpha('G', handle_ctrl),
-            KeyCode::H               => modifiers.handle_alpha('H', handle_ctrl),
-            KeyCode::J               => modifiers.handle_alpha('J', handle_ctrl),
-            KeyCode::K               => modifiers.handle_alpha('K', handle_ctrl),
-            KeyCode::L               => modifiers.handle_alpha('L', handle_ctrl),
-            KeyCode::Oem1            => modifiers.handle_shift(';', ':'),
-            KeyCode::Oem3            => modifiers.handle_shift(QUO, '"'),
+            KeyCode::A               => modifiers.handle_ascii_2('A', handle_ctrl),
+            KeyCode::S               => modifiers.handle_ascii_2('S', handle_ctrl),
+            KeyCode::D               => modifiers.handle_ascii_2('D', handle_ctrl),
+            KeyCode::F               => modifiers.handle_ascii_2('F', handle_ctrl),
+            KeyCode::G               => modifiers.handle_ascii_2('G', handle_ctrl),
+            KeyCode::H               => modifiers.handle_ascii_2('H', handle_ctrl),
+            KeyCode::J               => modifiers.handle_ascii_2('J', handle_ctrl),
+            KeyCode::K               => modifiers.handle_ascii_2('K', handle_ctrl),
+            KeyCode::L               => modifiers.handle_ascii_2('L', handle_ctrl),
+            KeyCode::Oem1            => modifiers.handle_symbol2(';', ':'),
+            KeyCode::Oem3            => modifiers.handle_symbol2(QUO, '"'),
             KeyCode::Return          => DecodedKey::Unicode('\u{000A}'),
             // ========= Row 5 (ZXCVB) =========
-            KeyCode::Z               => modifiers.handle_alpha('Z', handle_ctrl),
-            KeyCode::X               => modifiers.handle_alpha('X', handle_ctrl),
-            KeyCode::C               => modifiers.handle_alpha('C', handle_ctrl),
-            KeyCode::V               => modifiers.handle_alpha('V', handle_ctrl),
-            KeyCode::B               => modifiers.handle_alpha('B', handle_ctrl),
-            KeyCode::N               => modifiers.handle_alpha('N', handle_ctrl),
-            KeyCode::M               => modifiers.handle_alpha('M', handle_ctrl),
-            KeyCode::OemComma        => modifiers.handle_shift(',', '<'),
-            KeyCode::OemPeriod       => modifiers.handle_shift('.', '>'),
-            KeyCode::Oem2            => modifiers.handle_shift('/', '?'),
+            KeyCode::Z               => modifiers.handle_ascii_2('Z', handle_ctrl),
+            KeyCode::X               => modifiers.handle_ascii_2('X', handle_ctrl),
+            KeyCode::C               => modifiers.handle_ascii_2('C', handle_ctrl),
+            KeyCode::V               => modifiers.handle_ascii_2('V', handle_ctrl),
+            KeyCode::B               => modifiers.handle_ascii_2('B', handle_ctrl),
+            KeyCode::N               => modifiers.handle_ascii_2('N', handle_ctrl),
+            KeyCode::M               => modifiers.handle_ascii_2('M', handle_ctrl),
+            KeyCode::OemComma        => modifiers.handle_symbol2(',', '<'),
+            KeyCode::OemPeriod       => modifiers.handle_symbol2('.', '>'),
+            KeyCode::Oem2            => modifiers.handle_symbol2('/', '?'),
             // ========= Unicode Specials =========
             KeyCode::Spacebar        => DecodedKey::Unicode(' '),
             KeyCode::Delete          => DecodedKey::Unicode('\u{007f}'),
@@ -207,18 +207,18 @@ impl KeyboardLayout for Us104Key {
             KeyCode::NumpadDivide    => DecodedKey::Unicode('/'),
             KeyCode::NumpadMultiply  => DecodedKey::Unicode('*'),
             KeyCode::NumpadSubtract  => DecodedKey::Unicode('-'),
-            KeyCode::Numpad7         => modifiers.handle_numpad('7', KeyCode::Home),
-            KeyCode::Numpad8         => modifiers.handle_numpad('8', KeyCode::ArrowUp),
-            KeyCode::Numpad9         => modifiers.handle_numpad('9', KeyCode::PageUp),
+            KeyCode::Numpad7         => modifiers.handle_num_pad('7', KeyCode::Home),
+            KeyCode::Numpad8         => modifiers.handle_num_pad('8', KeyCode::ArrowUp),
+            KeyCode::Numpad9         => modifiers.handle_num_pad('9', KeyCode::PageUp),
             KeyCode::NumpadAdd       => DecodedKey::Unicode('+'),
-            KeyCode::Numpad4         => modifiers.handle_numpad('4', KeyCode::ArrowLeft),
+            KeyCode::Numpad4         => modifiers.handle_num_pad('4', KeyCode::ArrowLeft),
             KeyCode::Numpad5         => DecodedKey::Unicode('5'),
-            KeyCode::Numpad6         => modifiers.handle_numpad('6', KeyCode::ArrowRight),
-            KeyCode::Numpad1         => modifiers.handle_numpad('1', KeyCode::End),
-            KeyCode::Numpad2         => modifiers.handle_numpad('2', KeyCode::ArrowDown),
-            KeyCode::Numpad3         => modifiers.handle_numpad('3', KeyCode::PageDown),
-            KeyCode::Numpad0         => modifiers.handle_numpad('0', KeyCode::Insert),
-            KeyCode::NumpadPeriod    => modifiers.handle_numpad_pair('.', '\u{007f}'),
+            KeyCode::Numpad6         => modifiers.handle_num_pad('6', KeyCode::ArrowRight),
+            KeyCode::Numpad1         => modifiers.handle_num_pad('1', KeyCode::End),
+            KeyCode::Numpad2         => modifiers.handle_num_pad('2', KeyCode::ArrowDown),
+            KeyCode::Numpad3         => modifiers.handle_num_pad('3', KeyCode::PageDown),
+            KeyCode::Numpad0         => modifiers.handle_num_pad('0', KeyCode::Insert),
+            KeyCode::NumpadPeriod    => modifiers.handle_num_del('.', '\u{007f}'),
             KeyCode::NumpadEnter     => DecodedKey::Unicode('\u{000A}'),
             // ========= Fallback =========
             k                        => DecodedKey::RawKey(k),
@@ -311,7 +311,7 @@ mod test {
             rshift: false,
         };
         assert_eq!(
-            modifiers.handle_alpha('A', HandleControl::MapLettersToUnicode),
+            modifiers.handle_ascii_2('A', HandleControl::MapLettersToUnicode),
             DecodedKey::Unicode('a')
         );
     }
@@ -330,7 +330,7 @@ mod test {
             rshift: false,
         };
         assert_eq!(
-            modifiers.handle_alpha('A', HandleControl::MapLettersToUnicode),
+            modifiers.handle_ascii_2('A', HandleControl::MapLettersToUnicode),
             DecodedKey::Unicode('A')
         );
     }
@@ -349,7 +349,7 @@ mod test {
             rshift: false,
         };
         assert_eq!(
-            modifiers.handle_alpha('A', HandleControl::MapLettersToUnicode),
+            modifiers.handle_ascii_2('A', HandleControl::MapLettersToUnicode),
             DecodedKey::Unicode('A')
         );
     }
@@ -368,7 +368,7 @@ mod test {
             rshift: false,
         };
         assert_eq!(
-            modifiers.handle_alpha('A', HandleControl::MapLettersToUnicode),
+            modifiers.handle_ascii_2('A', HandleControl::MapLettersToUnicode),
             DecodedKey::Unicode('a')
         );
     }
@@ -387,7 +387,7 @@ mod test {
             rshift: false,
         };
         assert_eq!(
-            modifiers.handle_alpha('A', HandleControl::MapLettersToUnicode),
+            modifiers.handle_ascii_2('A', HandleControl::MapLettersToUnicode),
             DecodedKey::Unicode('\u{0001}')
         );
     }
