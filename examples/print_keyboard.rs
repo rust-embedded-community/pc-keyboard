@@ -32,10 +32,10 @@ fn main() {
     println!("/// # FiSe105Key");
     println!("///");
     show_kb(&pc_keyboard::layouts::FiSe105Key);
-    // println!("/// ****************************************");
-    // println!("/// # Jis109Key");
-    // println!("///");
-    // show_kb(&pc_keyboard::layouts::Jis109Key);
+    println!("/// ****************************************");
+    println!("/// # Jis109Key");
+    println!("///");
+    show_kb(&pc_keyboard::layouts::Jis109Key);
     println!("/// ****************************************");
     println!("/// # No105Key");
     println!("///");
@@ -96,7 +96,6 @@ fn show_kb(layout: &dyn KeyboardLayout) {
 fn show_kb_modifiers(layout: &dyn KeyboardLayout, modifiers: &Modifiers) {
     let mut map = Map::new(modifiers);
     map.insert("esc", KeyCode::Escape, layout);
-    map.insert("oem8", KeyCode::Oem8, layout);
     map.insert("key1", KeyCode::Key1, layout);
     map.insert("key2", KeyCode::Key2, layout);
     map.insert("key3", KeyCode::Key3, layout);
@@ -166,14 +165,18 @@ fn show_kb_modifiers(layout: &dyn KeyboardLayout, modifiers: &Modifiers) {
     map.insert("m", KeyCode::M, layout);
     match layout.get_physical() {
         pc_keyboard::PhysicalKeyboard::Iso => {
+            map.insert("oem8", KeyCode::Oem8, layout);
             map.insert("oem5", KeyCode::Oem5, layout);
             map.print_iso();
         }
         pc_keyboard::PhysicalKeyboard::Ansi => {
+            map.insert("oem8", KeyCode::Oem8, layout);
             map.print_ansi();
         }
         pc_keyboard::PhysicalKeyboard::Jis => {
-            todo!()
+            map.insert("oem12", KeyCode::Oem12, layout);
+            map.insert("oem13", KeyCode::Oem13, layout);
+            map.print_jis();
         }
     }
 }
@@ -400,6 +403,102 @@ impl Map {
 /// ├────┴┬───┴─┬──┴──┬─┴────┴────┴────┴────┴────┴───┬┴────┼────┴┬──────┬──────┤  ┌────┼────┼────┐  ├────┴────┼────┤{ne}│
 /// │     │     │     │             {sp}             │     │     │      │      │  │    │    │    │  │{n0}     │{np}│    │
 /// └─────┴─────┴─────┴──────────────────────────────┴─────┴─────┴──────┴──────┘  └────┴────┴────┘  └─────────┴────┴────┘
+/// ```
+///"#
+        );
+    }
+
+    fn print_jis(&self) {
+        let es = self.get("esc");
+        let k1 = self.get("key1");
+        let k2 = self.get("key2");
+        let k3 = self.get("key3");
+        let k4 = self.get("key4");
+        let k5 = self.get("key5");
+        let k6 = self.get("key6");
+        let k7 = self.get("key7");
+        let k8 = self.get("key8");
+        let k9 = self.get("key9");
+        let k0 = self.get("key0");
+        let om = self.get("oem_minus");
+        let ol = self.get("oem_plus");
+        let bs = self.get("backspace");
+        let nd = self.get("numpad_divide");
+        let nm = self.get("numpad_multiply");
+        let ns = self.get("numpad_subtract");
+        let tb = self.get("tab");
+        let o4 = self.get("oem4");
+        let o6 = self.get("oem6");
+        let o7 = self.get("oem7");
+        let de = self.get("delete");
+        let n7 = self.get("numpad7");
+        let n8 = self.get("numpad8");
+        let n9 = self.get("numpad9");
+        let nl = self.get("numpadl");
+        let o1 = self.get("oem1");
+        let o3 = self.get("oem3");
+        let en = self.get("enter");
+        let n4 = self.get("numpad4");
+        let n5 = self.get("numpad5");
+        let n6 = self.get("numpad6");
+        let oc = self.get("oem_comma");
+        let op = self.get("oem_period");
+        let o2 = self.get("oem2");
+        let n1 = self.get("numpad1");
+        let n2 = self.get("numpad2");
+        let n3 = self.get("numpad3");
+        let ne = self.get("numpade");
+        let sp = self.get("space");
+        let n0 = self.get("numpad0");
+        let np = self.get("numpad_period");
+        let od = self.get("oem12");
+        let oe = self.get("oem13");
+
+        let kq = self.get("q");
+        let kw = self.get("w");
+        let ke = self.get("e");
+        let kr = self.get("r");
+        let kt = self.get("t");
+        let ky = self.get("y");
+        let ku = self.get("u");
+        let ki = self.get("i");
+        let ko = self.get("o");
+        let kp = self.get("p");
+        let ka = self.get("a");
+        let ks = self.get("s");
+        let kd = self.get("d");
+        let kf = self.get("f");
+        let kg = self.get("g");
+        let kh = self.get("h");
+        let kj = self.get("j");
+        let kk = self.get("k");
+        let kl = self.get("l");
+        let kz = self.get("z");
+        let kx = self.get("x");
+        let kc = self.get("c");
+        let kv = self.get("v");
+        let kb = self.get("b");
+        let kn = self.get("n");
+        let km = self.get("m");
+
+        println!(
+            r#"///
+/// ```text
+/// ┌────┐  ┌────┬────┬────┬────┐  ┌────┬────┬────┬────┐  ┌────┬────┬────┬────┐   ┌────┬────┬────┐
+/// │{es}│  │    │    │    │    │  │    │    │    │    │  │    │    │    │    │   │    │    │    │
+/// └────┘  └────┴────┴────┴────┘  └────┴────┴────┴────┘  └────┴────┴────┴────┘   └────┴────┴────┘
+///
+/// ┌────┬────┬────┬────┬────┬────┬────┬────┬────┬────┬────┬────┬────┬────┬────┐  ┌────┬────┬────┐  ┌────┬────┬────┬────┐
+/// │    │{k1}│{k2}│{k3}│{k4}│{k5}│{k6}│{k7}│{k8}│{k9}│{k0}│{om}│{ol}│{oe}│{bs}│  │    │    │    │  │    │{nd}│{nm}│{ns}│
+/// ├────┴┬───┴┬───┴┬───┴┬───┴┬───┴┬───┴┬───┴┬───┴┬───┴┬───┴┬───┴┬───┴┬────────┤  ├────┼────┼────┤  ├────┼────┼────┼────┤
+/// │{tb} │{kq}│{kw}│{ke}│{kr}│{kt}│{ky}│{ku}│{ki}│{ko}│{kp}│{o4}│{o6}│  {en}  │  │{de}│    │    │  │{n7}│{n8}│{n9}│    │
+/// ├─────┴┬───┴┬───┴┬───┴┬───┴┬───┴┬───┴┬───┴┬───┴┬───┴┬───┴┬───┴┬───┴┐       │  └────┴────┴────┘  ├────┼────┼────┤{nl}│
+/// │      │{ka}│{ks}│{kd}│{kf}│{kg}│{kh}│{kj}│{kk}│{kl}│{o1}│{o3}│{o7}│       │                    │{n4}│{n5}│{n6}│    │
+/// ├──────┴──┬─┴──┬─┴──┬─┴──┬─┴──┬─┴──┬─┴──┬─┴──┬─┴──┬─┴──┬─┴──┬─┴────┼───────┤       ┌────┐       ├────┼────┼────┼────┤
+/// │         │{kz}│{kx}│{kc}│{kv}│{kb}│{kn}│{km}│{oc}│{op}│{o2}│{od}  │       │       │    │       │{n1}│{n2}│{n3}│    │
+/// ├─────┬───┴─┬──┴──┬─┴───┬┴────┴────┴────┴────┴┬───┴─┬──┴──┬─┴──┬───┴┬──────┤  ┌────┼────┼────┐  ├────┴────┼────┤{ne}│
+/// │     │     │     │     │       {sp}          │     │     │    │    │      │  │    │    │    │  │{n0}     │{np}│    │
+/// └─────┴─────┴─────┴─────┴─────────────────────┴─────┴─────┴────┴────┴──────┘  └────┴────┴────┘  └─────────┴────┴────┘
 /// ```
 ///"#
         );
