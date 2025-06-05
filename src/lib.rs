@@ -57,8 +57,11 @@
 //!
 //! This crate uses symbolic keycodes to abstract over Scancode Set 1 and
 //! Scancode Set 2. They represented by the `KeyCode` enum. The scancodes can
-//! come from one of three supported keyboards: 102/105 key ISO, 101/104 key
-//! ANSI and 106/109-key JIS.
+//! come from one of three supported physical keyboard layouts: 102/105 key
+//! ISO, 101/104 key ANSI and 106/109-key JIS. Note that the symbolic
+//! keycodes for letter keys are named after how the keys are used on a US or
+//! UK English Keyboard. If you use a French AZERTY layout, the `KeyCode::Q`
+//! key will produce the Unicode character `'A'`.
 //!
 //! ### 102/105 key [ISO](PhysicalKeyboard::Iso)
 //!
@@ -136,7 +139,9 @@
 //! └─────┴─────┴─────┴─────┴─────────────────────┴─────┴─────┴────┴────┴──────┘  └────┴────┴────┘  └─────────┴────┴────┘
 //! ```
 //!
-//! Note that the `Oem5` is missing on the 109-key JIS layout, but `Oem9` (Muhenkan), `Oem10` (Henkan/Zenkouho), `Oem11` (Hiragana/Katakana), `Oem12` (Backslash) and `Oem13` (¥) are added.
+//! Note that the `Oem5` is missing on the 109-key JIS layout, but `Oem9`
+//! (Muhenkan), `Oem10` (Henkan/Zenkouho), `Oem11`
+//! (Hiragana/Katakana), `Oem12` (Backslash) and `Oem13` (¥) are added.
 //!
 //! The 106-key is missing `LWin`, `RWin`, and `Menu`.
 //!
