@@ -29,7 +29,7 @@ fn main() {
         code: KeyCode::LShift,
         state: KeyState::Down,
     });
-    assert_eq!(None, decoded_key);
+    assert_eq!(Some(DecodedKey::RawKey(KeyCode::LShift)), decoded_key);
 
     // User presses 'A' on their UK keyboard, now gets a Capital A
     let decoded_key = decoder.process_keyevent(KeyEvent {
