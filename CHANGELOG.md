@@ -4,6 +4,8 @@
 
 * Fix Ctrl combination handling for Colemak and De105Key layouts
 * Fix 102/105-key German layout: Add missing Alt-Gr combinations
+* Added tool to print keyboard layouts as ASCII-art
+* Cleaned up how layouts are implemented
 
 ## v0.8.0 (13 Sep 2024)
 
