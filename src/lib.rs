@@ -3,8 +3,6 @@
 //! Supports PS/2 Scan Code Set 1 and 2, on a variety of keyboard layouts. See
 //! [the OSDev Wiki](https://wiki.osdev.org/PS/2_Keyboard).
 //!
-//! There is also [`Keyboard`] which combines the above three functions into a single object.
-//!
 //! ## Supports:
 //!
 //! -   Scancode Set 1 (from the i8042 PC keyboard controller)
@@ -50,8 +48,6 @@
 //! single object.
 //!
 //! See the [`examples`](./examples) folder for more details.
-//!
-//! ## [Documentation](https://docs.rs/crate/pc-keyboard)
 //!
 //! ## Keycodes
 //!
