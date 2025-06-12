@@ -1136,12 +1136,6 @@ impl KeyEvent {
     }
 }
 
-// ****************************************************************************
-//
-// Keyboard Layouts
-//
-// ****************************************************************************
-
 impl Modifiers {
     pub const fn is_shifted(&self) -> bool {
         self.lshift | self.rshift
