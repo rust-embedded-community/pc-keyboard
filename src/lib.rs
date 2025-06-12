@@ -152,147 +152,146 @@
 //! any MS-DOS applications that read raw scancodes from the keyboard.
 //!
 //! This table shows the correspondence between our symbolic KeyCode, Scancode Set 1
-//! and Scancode Set 2. We may extend this in the future to also handle USB HID
-//! Scancodes. Any codes prefixed `0xE0` or `0xE1` are *extended* multi-byte
+//! and Scancode Set 2. Any codes prefixed `0xE0` or `0xE1` are *extended* multi-byte
 //! scancodes. Typically these are keys that were not on the IBM PC and PC/XT
 //! keyboards so they they were added in such a way that if you ignored the 0xE0,
 //! you got a reasonable result anyway. For example `ArrowLeft` is `0xE04B` in
 //! Scancode Set 1 because `Numpad4` is `0x4B` and that was the left-arrow key on an
 //! IBM PC or PC/XT.
 //!
-//! | Symbolic Key   | Scancode Set 1 | Scancode Set 2 |
-//! | -------------- | -------------- | -------------- |
-//! | Escape         | 0x01           | 0x76           |
-//! | F1             | 0x3B           | 0x05           |
-//! | F2             | 0x3C           | 0x06           |
-//! | F3             | 0x3D           | 0x04           |
-//! | F4             | 0x3E           | 0x0C           |
-//! | F5             | 0x3F           | 0x03           |
-//! | F6             | 0x40           | 0x0B           |
-//! | F7             | 0x41           | 0x83           |
-//! | F8             | 0x42           | 0x0A           |
-//! | F9             | 0x43           | 0x01           |
-//! | F10            | 0x44           | 0x09           |
-//! | F11            | 0x57           | 0x78           |
-//! | F12            | 0x58           | 0x07           |
-//! | PrintScreen    | 0xE037         | 0xE07C         |
-//! | SysRq          | 0x54           | 0x7F           |
-//! | ScrollLock     | 0x46           | 0x7E           |
-//! | PauseBreak     | --             | --             |
-//! | -              | --             | --             |
-//! | Oem8           | 0x29           | 0x0E           |
-//! | Key1           | 0x02           | 0x16           |
-//! | Key2           | 0x03           | 0x1E           |
-//! | Key3           | 0x04           | 0x26           |
-//! | Key4           | 0x05           | 0x25           |
-//! | Key5           | 0x06           | 0x2E           |
-//! | Key6           | 0x07           | 0x36           |
-//! | Key7           | 0x08           | 0x3D           |
-//! | Key8           | 0x09           | 0x3E           |
-//! | Key9           | 0x0A           | 0x46           |
-//! | Key0           | 0x0B           | 0x45           |
-//! | OemMinus       | 0x0C           | 0x4E           |
-//! | OemPlus        | 0x0D           | 0x55           |
-//! | Backspace      | 0x0E           | 0x66           |
-//! | Insert         | 0xE052         | 0xE070         |
-//! | Home           | 0xE047         | 0xE06C         |
-//! | PageUp         | 0xE049         | 0xE07D         |
-//! | NumpadLock     | 0x45           | 0x77           |
-//! | NumpadDivide   | 0xE035         | 0xE04A         |
-//! | NumpadMultiply | 0x37           | 0x7C           |
-//! | NumpadSubtract | 0x4A           | 0x7B           |
-//! | -              | --             | --             |
-//! | Tab            | 0x0F           | 0x0D           |
-//! | Q              | 0x10           | 0x15           |
-//! | W              | 0x11           | 0x1D           |
-//! | E              | 0x12           | 0x24           |
-//! | R              | 0x13           | 0x2D           |
-//! | T              | 0x14           | 0x2C           |
-//! | Y              | 0x15           | 0x35           |
-//! | U              | 0x16           | 0x3C           |
-//! | I              | 0x17           | 0x43           |
-//! | O              | 0x18           | 0x44           |
-//! | P              | 0x19           | 0x4D           |
-//! | Oem4           | 0x1A           | 0x54           |
-//! | Oem6           | 0x1B           | 0x5B           |
-//! | Oem5           | 0x56           | 0x61           |
-//! | Oem7           | 0x2B           | 0x5D           |
-//! | Delete         | 0xE053         | 0xE071         |
-//! | End            | 0xE04F         | 0xE069         |
-//! | PageDown       | 0xE051         | 0xE07A         |
-//! | Numpad7        | 0x47           | 0x6C           |
-//! | Numpad8        | 0x48           | 0x75           |
-//! | Numpad9        | 0x49           | 0x7D           |
-//! | NumpadAdd      | 0x4E           | 0x79           |
-//! | -              | --             | --             |
-//! | CapsLock       | 0x3A           | 0x58           |
-//! | A              | 0x1E           | 0x1C           |
-//! | S              | 0x1F           | 0x1B           |
-//! | D              | 0x20           | 0x23           |
-//! | F              | 0x21           | 0x2B           |
-//! | G              | 0x22           | 0x34           |
-//! | H              | 0x23           | 0x33           |
-//! | J              | 0x24           | 0x3B           |
-//! | K              | 0x25           | 0x42           |
-//! | L              | 0x26           | 0x4B           |
-//! | Oem1           | 0x27           | 0x4C           |
-//! | Oem3           | 0x28           | 0x52           |
-//! | Return         | 0x1C           | 0x5A           |
-//! | Numpad4        | 0x4B           | 0x6B           |
-//! | Numpad5        | 0x4C           | 0x73           |
-//! | Numpad6        | 0x4D           | 0x74           |
-//! | -              | --             | --             |
-//! | LShift         | 0x2A           | 0x12           |
-//! | Z              | 0x2C           | 0x1A           |
-//! | X              | 0x2D           | 0x22           |
-//! | C              | 0x2E           | 0x21           |
-//! | V              | 0x2F           | 0x2A           |
-//! | B              | 0x30           | 0x32           |
-//! | N              | 0x31           | 0x31           |
-//! | M              | 0x32           | 0x3A           |
-//! | OemComma       | 0x33           | 0x41           |
-//! | OemPeriod      | 0x34           | 0x49           |
-//! | Oem2           | 0x35           | 0x4A           |
-//! | RShift         | 0x36           | 0x59           |
-//! | ArrowUp        | 0xE048         | 0xE075         |
-//! | Numpad1        | 0x4F           | 0x69           |
-//! | Numpad2        | 0x50           | 0x72           |
-//! | Numpad3        | 0x51           | 0x7A           |
-//! | NumpadEnter    | 0xE01C         | 0xE075         |
-//! | -              | --             | --             |
-//! | LControl       | 0x1D           | 0x14           |
-//! | LWin           | 0xE05B         | 0xE01F         |
-//! | LAlt           | 0x38           | 0x11           |
-//! | Spacebar       | 0x39           | 0x29           |
-//! | RAltGr         | 0xE038         | 0xE011         |
-//! | RWin           | 0xE05C         | 0xE027         |
-//! | Apps           | 0xE05C         | 0xE02F         |
-//! | RControl       | 0xE01D         | 0xE014         |
-//! | ArrowLeft      | 0xE04B         | 0xE06B         |
-//! | ArrowDown      | 0xE050         | 0xE072         |
-//! | ArrowRight     | 0xE04D         | 0xE074         |
-//! | Numpad0        | 0x52           | 0x70           |
-//! | NumpadPeriod   | 0x53           | 0x71           |
-//! | -              | --             | --             |
-//! | Oem9           | 0x7B           | 0x67           |
-//! | Oem10          | 0x79           | 0x64           |
-//! | Oem11          | 0x70           | 0x13           |
-//! | Oem12          | 0x73           | 0x51           |
-//! | Oem13          | 0x7D           | 0x6A           |
-//! | -              | --             | --             |
-//! | PrevTrack      | 0xE010         | 0xE015         |
-//! | NextTrack      | 0xE019         | 0xE04D         |
-//! | Mute           | 0xE020         | 0xE023         |
-//! | Calculator     | 0xE021         | 0xE02B         |
-//! | Play           | 0xE022         | 0xE034         |
-//! | Stop           | 0xE024         | 0xE03B         |
-//! | VolumeDown     | 0xE02E         | 0xE021         |
-//! | VolumeUp       | 0xE030         | 0xE032         |
-//! | WWWHome        | 0xE032         | 0xE03A         |
-//! | TooManyKeys    | --             | 0x00           |
-//! | PowerOnTestOk  | --             | 0xAA           |
-//! | RControl2      | 0xE11D         | 0xE114         |
-//! | RAlt2          | 0xE02A         | 0xE012         |
+//! | Symbolic Key   | Scancode Set 1 | Scancode Set 2 | USB HID |
+//! | -------------- | -------------- | -------------- | ------- |
+//! | Escape         | 0x01           | 0x76           | 0x29    |
+//! | F1             | 0x3B           | 0x05           | 0x3A    |
+//! | F2             | 0x3C           | 0x06           | 0x3B    |
+//! | F3             | 0x3D           | 0x04           | 0x3C    |
+//! | F4             | 0x3E           | 0x0C           | 0x3D    |
+//! | F5             | 0x3F           | 0x03           | 0x3E    |
+//! | F6             | 0x40           | 0x0B           | 0x3F    |
+//! | F7             | 0x41           | 0x83           | 0x40    |
+//! | F8             | 0x42           | 0x0A           | 0x41    |
+//! | F9             | 0x43           | 0x01           | 0x42    |
+//! | F10            | 0x44           | 0x09           | 0x43    |
+//! | F11            | 0x57           | 0x78           | 0x44    |
+//! | F12            | 0x58           | 0x07           | 0x45    |
+//! | PrintScreen    | 0xE037         | 0xE07C         | 0x46    |
+//! | SysRq          | 0x54           | 0x7F           | --      |
+//! | ScrollLock     | 0x46           | 0x7E           | 0x47    |
+//! | PauseBreak     | --             | --             | 0x48    |
+//! | -              | --             | --             | --      |
+//! | Oem8           | 0x29           | 0x0E           | 0x35    |
+//! | Key1           | 0x02           | 0x16           | 0x1E    |
+//! | Key2           | 0x03           | 0x1E           | 0x1F    |
+//! | Key3           | 0x04           | 0x26           | 0x20    |
+//! | Key4           | 0x05           | 0x25           | 0x21    |
+//! | Key5           | 0x06           | 0x2E           | 0x22    |
+//! | Key6           | 0x07           | 0x36           | 0x23    |
+//! | Key7           | 0x08           | 0x3D           | 0x24    |
+//! | Key8           | 0x09           | 0x3E           | 0x25    |
+//! | Key9           | 0x0A           | 0x46           | 0x26    |
+//! | Key0           | 0x0B           | 0x45           | 0x27    |
+//! | OemMinus       | 0x0C           | 0x4E           | 0x2D    |
+//! | OemPlus        | 0x0D           | 0x55           | 0x2E    |
+//! | Backspace      | 0x0E           | 0x66           | 0x2A    |
+//! | Insert         | 0xE052         | 0xE070         | 0x49    |
+//! | Home           | 0xE047         | 0xE06C         | 0x4A    |
+//! | PageUp         | 0xE049         | 0xE07D         | 0x4B    |
+//! | NumpadLock     | 0x45           | 0x77           | 0x53    |
+//! | NumpadDivide   | 0xE035         | 0xE04A         | 0x54    |
+//! | NumpadMultiply | 0x37           | 0x7C           | 0x55    |
+//! | NumpadSubtract | 0x4A           | 0x7B           | 0x56    |
+//! | -              | --             | --             | --      |
+//! | Tab            | 0x0F           | 0x0D           | 0x2B    |
+//! | Q              | 0x10           | 0x15           | 0x14    |
+//! | W              | 0x11           | 0x1D           | 0x1A    |
+//! | E              | 0x12           | 0x24           | 0x08    |
+//! | R              | 0x13           | 0x2D           | 0x15    |
+//! | T              | 0x14           | 0x2C           | 0x17    |
+//! | Y              | 0x15           | 0x35           | 0x1C    |
+//! | U              | 0x16           | 0x3C           | 0x18    |
+//! | I              | 0x17           | 0x43           | 0x0C    |
+//! | O              | 0x18           | 0x44           | 0x12    |
+//! | P              | 0x19           | 0x4D           | 0x13    |
+//! | Oem4           | 0x1A           | 0x54           | 0x2F    |
+//! | Oem6           | 0x1B           | 0x5B           | 0x30    |
+//! | Oem5           | 0x56           | 0x61           | 0x64    |
+//! | Oem7           | 0x2B           | 0x5D           | 0x31    |
+//! | Delete         | 0xE053         | 0xE071         | 0x4C    |
+//! | End            | 0xE04F         | 0xE069         | 0x4D    |
+//! | PageDown       | 0xE051         | 0xE07A         | 0x4E    |
+//! | Numpad7        | 0x47           | 0x6C           | 0x5F    |
+//! | Numpad8        | 0x48           | 0x75           | 0x60    |
+//! | Numpad9        | 0x49           | 0x7D           | 0x61    |
+//! | NumpadAdd      | 0x4E           | 0x79           | 0x57    |
+//! | -              | --             | --             | --      |
+//! | CapsLock       | 0x3A           | 0x58           | 0x39    |
+//! | A              | 0x1E           | 0x1C           | 0x04    |
+//! | S              | 0x1F           | 0x1B           | 0x16    |
+//! | D              | 0x20           | 0x23           | 0x07    |
+//! | F              | 0x21           | 0x2B           | 0x09    |
+//! | G              | 0x22           | 0x34           | 0x0A    |
+//! | H              | 0x23           | 0x33           | 0x0B    |
+//! | J              | 0x24           | 0x3B           | 0x0D    |
+//! | K              | 0x25           | 0x42           | 0x0E    |
+//! | L              | 0x26           | 0x4B           | 0x0F    |
+//! | Oem1           | 0x27           | 0x4C           | 0x33    |
+//! | Oem3           | 0x28           | 0x52           | 0x34    |
+//! | Return         | 0x1C           | 0x5A           | 0x28    |
+//! | Numpad4        | 0x4B           | 0x6B           | 0x5C    |
+//! | Numpad5        | 0x4C           | 0x73           | 0x5D    |
+//! | Numpad6        | 0x4D           | 0x74           | 0x5E    |
+//! | -              | --             | --             | --      |
+//! | LShift         | 0x2A           | 0x12           | 0xE1    |
+//! | Z              | 0x2C           | 0x1A           | 0x1D    |
+//! | X              | 0x2D           | 0x22           | 0x1B    |
+//! | C              | 0x2E           | 0x21           | 0x06    |
+//! | V              | 0x2F           | 0x2A           | 0x19    |
+//! | B              | 0x30           | 0x32           | 0x05    |
+//! | N              | 0x31           | 0x31           | 0x11    |
+//! | M              | 0x32           | 0x3A           | 0x10    |
+//! | OemComma       | 0x33           | 0x41           | 0x36    |
+//! | OemPeriod      | 0x34           | 0x49           | 0x37    |
+//! | Oem2           | 0x35           | 0x4A           | 0x38    |
+//! | RShift         | 0x36           | 0x59           | 0xE5    |
+//! | ArrowUp        | 0xE048         | 0xE075         | 0x52    |
+//! | Numpad1        | 0x4F           | 0x69           | 0x59    |
+//! | Numpad2        | 0x50           | 0x72           | 0x5A    |
+//! | Numpad3        | 0x51           | 0x7A           | 0x5B    |
+//! | NumpadEnter    | 0xE01C         | 0xE075         | 0x58    |
+//! | -              | --             | --             | --      |
+//! | LControl       | 0x1D           | 0x14           | 0xE0    |
+//! | LWin           | 0xE05B         | 0xE01F         | 0xE3    |
+//! | LAlt           | 0x38           | 0x11           | 0xE2    |
+//! | Spacebar       | 0x39           | 0x29           | 0x2C    |
+//! | RAltGr         | 0xE038         | 0xE011         | 0xE6    |
+//! | RWin           | 0xE05C         | 0xE027         | 0xE7    |
+//! | Apps           | 0xE05C         | 0xE02F         | 0x65    |
+//! | RControl       | 0xE01D         | 0xE014         | 0xE4    |
+//! | ArrowLeft      | 0xE04B         | 0xE06B         | 0x50    |
+//! | ArrowDown      | 0xE050         | 0xE072         | 0x51    |
+//! | ArrowRight     | 0xE04D         | 0xE074         | 0x52    |
+//! | Numpad0        | 0x52           | 0x70           | 0x62    |
+//! | NumpadPeriod   | 0x53           | 0x71           | 0x63    |
+//! | -              | --             | --             | --      |
+//! | Oem9           | 0x7B           | 0x67           | ??      |
+//! | Oem10          | 0x79           | 0x64           | ??      |
+//! | Oem11          | 0x70           | 0x13           | ??      |
+//! | Oem12          | 0x73           | 0x51           | ??      |
+//! | Oem13          | 0x7D           | 0x6A           | ??      |
+//! | -              | --             | --             | ??      |
+//! | PrevTrack      | 0xE010         | 0xE015         | ??      |
+//! | NextTrack      | 0xE019         | 0xE04D         | ??      |
+//! | Mute           | 0xE020         | 0xE023         | ??      |
+//! | Calculator     | 0xE021         | 0xE02B         | ??      |
+//! | Play           | 0xE022         | 0xE034         | ??      |
+//! | Stop           | 0xE024         | 0xE03B         | ??      |
+//! | VolumeDown     | 0xE02E         | 0xE021         | ??      |
+//! | VolumeUp       | 0xE030         | 0xE032         | ??      |
+//! | WWWHome        | 0xE032         | 0xE03A         | ??      |
+//! | TooManyKeys    | --             | 0x00           | ??      |
+//! | PowerOnTestOk  | --             | 0xAA           | ??      |
+//! | RControl2      | 0xE11D         | 0xE114         | ??      |
+//! | RAlt2          | 0xE02A         | 0xE012         | ??      |
 //!
 //! __Note 1:__ `PauseBreak` does not have a scancode because it's something we infer from a
 //! sequence of other keypresses (`NumLock` with `RControl2` held).
@@ -311,7 +310,7 @@
 pub mod layouts;
 
 mod scancodes;
-pub use crate::scancodes::{ScancodeSet1, ScancodeSet2};
+pub use crate::scancodes::{ScancodeSet1, ScancodeSet2, UsbModifiers};
 
 // ****************************************************************************
 //
@@ -336,6 +335,42 @@ where
 pub struct Ps2Decoder {
     register: u16,
     num_bits: u8,
+}
+
+/// Encapsulates HID frame handling, and handles state transitions and key events for USB HID Keyboards
+#[derive(Debug)]
+pub struct UsbKeyboard<L>
+where
+    L: KeyboardLayout,
+{
+    event_decoder: EventDecoder<L>,
+    last_report: UsbBootKeyboardReport,
+}
+
+/// A USB HID report as received from a keyboard in Boot Mode
+#[derive(Debug, Clone, Default)]
+pub struct UsbBootKeyboardReport {
+    /// Modifier Keys - the first byte in the report
+    pub modifiers: u8,
+    /// Keycodes - the last six bytes in the report
+    pub keys: [u8; 6],
+}
+
+/// An Iterator that produces ['KeyEvent'] values
+pub struct UsbKeyEventIter<'parent, L>
+where
+    L: KeyboardLayout,
+{
+    parent: &'parent mut UsbKeyboard<L>,
+    new_report: UsbBootKeyboardReport,
+}
+
+/// An Iterator that produces ['DecodedKey'] values, using an [`EventDecoder`]
+pub struct UsbDecodedKeyIter<'parent, L>
+where
+    L: KeyboardLayout,
+{
+    inner: UsbKeyEventIter<'parent, L>,
 }
 
 /// Converts KeyEvents into Unicode, according to the current Keyboard Layout
@@ -641,6 +676,8 @@ pub enum KeyCode {
     RControl2,
     /// Used as a 'hidden' Right Alt Key (Print Screen = RAlt2 + PrntScr)
     RAlt2,
+    /// Represents a key we don't know about
+    Unknown,
 }
 
 /// The new state for a key, as part of a key event.
@@ -947,6 +984,193 @@ impl Ps2Decoder {
 impl Default for Ps2Decoder {
     fn default() -> Self {
         Ps2Decoder::new()
+    }
+}
+
+impl<L> UsbKeyboard<L>
+where
+    L: KeyboardLayout,
+{
+    /// Construct USB HID keyboard handler
+    pub fn new(layout: L, handle_ctrl: HandleControl) -> UsbKeyboard<L> {
+        UsbKeyboard {
+            event_decoder: EventDecoder::new(layout, handle_ctrl),
+            last_report: Default::default(),
+        }
+    }
+
+    /// Reset the USB HID state
+    ///
+    /// We only get changes in key state from the keyboard, so this function
+    /// resets our internal state.
+    pub fn reset_state(&mut self) {
+        self.last_report = Default::default();
+    }
+
+    /// Process a new USB HID Frame into KeyEvents
+    ///
+    /// You are given an iterator, which will process the incoming report. Do
+    /// not drop the iterator until it starts returning None.
+    pub fn handle_report_raw<'kb>(
+        &'kb mut self,
+        report: &UsbBootKeyboardReport,
+    ) -> UsbKeyEventIter<'kb, L> {
+        UsbKeyEventIter {
+            parent: self,
+            new_report: report.clone(),
+        }
+    }
+
+    /// Process a new USB HID Frame into Decoded keys
+    ///
+    /// You are given an iterator, which will process the incoming report. Do
+    /// not drop the iterator until it starts returning None.
+    pub fn handle_report<'kb>(
+        &'kb mut self,
+        report: &UsbBootKeyboardReport,
+    ) -> UsbDecodedKeyIter<'kb, L> {
+        UsbDecodedKeyIter {
+            inner: self.handle_report_raw(report),
+        }
+    }
+}
+
+impl<'kb, L> UsbKeyEventIter<'kb, L>
+where
+    L: KeyboardLayout,
+{
+    const MODIFIERS: [(KeyCode, scancodes::UsbModifiers); 8] = [
+        (KeyCode::LControl, scancodes::UsbModifiers::LCtrl),
+        (KeyCode::LShift, scancodes::UsbModifiers::LShift),
+        (KeyCode::LAlt, scancodes::UsbModifiers::LAlt),
+        (KeyCode::LWin, scancodes::UsbModifiers::LGui),
+        (KeyCode::RControl, scancodes::UsbModifiers::RCtrl),
+        (KeyCode::RShift, scancodes::UsbModifiers::RShift),
+        (KeyCode::RAltGr, scancodes::UsbModifiers::RAlt),
+        (KeyCode::RWin, scancodes::UsbModifiers::RGui),
+    ];
+
+    /// Returns true (and updates the old modifiers) if a modifier was pressed but has now been released
+    fn modifier_was_released(
+        old_modifiers: &mut u8,
+        new_modifiers: u8,
+        key: scancodes::UsbModifiers,
+    ) -> bool {
+        let key = key as u8;
+        if ((*old_modifiers & key) != 0) && ((new_modifiers & key) == 0) {
+            // was released - clear it
+            *old_modifiers &= !key;
+            true
+        } else {
+            false
+        }
+    }
+
+    /// Returns true (and updates the old modifiers) if a modifier was released but has now been pressed
+    fn modifier_was_pressed(
+        old_modifiers: &mut u8,
+        new_modifiers: u8,
+        key: scancodes::UsbModifiers,
+    ) -> bool {
+        let key = key as u8;
+        if ((*old_modifiers & key) == 0) && ((new_modifiers & key) != 0) {
+            // was pressed - set it
+            *old_modifiers |= key;
+            true
+        } else {
+            false
+        }
+    }
+}
+
+impl<'kb, L> Iterator for UsbKeyEventIter<'kb, L>
+where
+    L: KeyboardLayout,
+{
+    type Item = KeyEvent;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        // for every modifier that was on and is now off, send a key release
+        for (keycode, modifier) in Self::MODIFIERS {
+            if Self::modifier_was_released(
+                &mut self.parent.last_report.modifiers,
+                self.new_report.modifiers,
+                modifier,
+            ) {
+                return Some(KeyEvent {
+                    code: keycode,
+                    state: KeyState::Up,
+                });
+            }
+        }
+
+        // for every modifier that was off and is now on, send a key down
+        for (keycode, modifier) in Self::MODIFIERS {
+            if Self::modifier_was_pressed(
+                &mut self.parent.last_report.modifiers,
+                self.new_report.modifiers,
+                modifier,
+            ) {
+                return Some(KeyEvent {
+                    code: keycode,
+                    state: KeyState::Down,
+                });
+            }
+        }
+
+        // for every keycode that was on and is now off, send a key release
+        for old_place in self.parent.last_report.keys.iter_mut().filter(|x| **x != 0) {
+            if !self.new_report.keys.contains(old_place) {
+                // cannot find old key in new report => it has been released
+                let output = Some(KeyEvent {
+                    code: scancodes::usb_convert(*old_place),
+                    state: KeyState::Up,
+                });
+                *old_place = 0;
+                return output;
+            }
+        }
+
+        // for every keycode that was on and is now off, send a key down
+        for new_place in self.new_report.keys.iter().filter(|x| **x != 0) {
+            if !self.parent.last_report.keys.contains(new_place) {
+                // cannot find new key in old report => it has been pressed
+                let output = Some(KeyEvent {
+                    code: scancodes::usb_convert(*new_place),
+                    state: KeyState::Down,
+                });
+                // we know we must have space in the old report because if all
+                // the codes in the new report are new, then all the old
+                // codes will have been expunged already. So the unwrap is
+                // fine.
+                let old_gap = self
+                    .parent
+                    .last_report
+                    .keys
+                    .iter_mut()
+                    .find(|x| **x == 0)
+                    .unwrap();
+                *old_gap = *new_place;
+                return output;
+            }
+        }
+        None
+    }
+}
+
+impl<'kb, L> Iterator for UsbDecodedKeyIter<'kb, L>
+where
+    L: KeyboardLayout,
+{
+    type Item = DecodedKey;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        while let Some(ev) = self.inner.next() {
+            if let Some(decoded) = self.inner.parent.event_decoder.process_keyevent(ev) {
+                return Some(decoded);
+            }
+        }
+        None
     }
 }
 
@@ -2079,6 +2303,371 @@ mod test {
             state: KeyState::Up,
         });
         assert!(!k.get_modifiers().lshift);
+    }
+
+    #[test]
+    fn usb_left_control() {
+        let mut keyboard = UsbKeyboard::new(layouts::Us104Key, HandleControl::MapLettersToUnicode);
+        let iter = keyboard.handle_report_raw(&UsbBootKeyboardReport {
+            modifiers: 0x01,
+            keys: [0; 6],
+        });
+        let events: Vec<KeyEvent> = iter.collect();
+        assert_eq!(
+            &events,
+            &[KeyEvent {
+                code: KeyCode::LControl,
+                state: KeyState::Down
+            }]
+        );
+
+        let iter = keyboard.handle_report_raw(&UsbBootKeyboardReport {
+            modifiers: 0x00,
+            keys: [0; 6],
+        });
+        let events: Vec<KeyEvent> = iter.collect();
+        assert_eq!(
+            &events,
+            &[KeyEvent {
+                code: KeyCode::LControl,
+                state: KeyState::Up
+            }]
+        );
+
+        let iter = keyboard.handle_report_raw(&UsbBootKeyboardReport {
+            modifiers: 0x00,
+            keys: [0; 6],
+        });
+        let events: Vec<KeyEvent> = iter.collect();
+        assert!(events.is_empty());
+    }
+
+    #[test]
+    fn usb_right_gui() {
+        let mut keyboard = UsbKeyboard::new(layouts::Us104Key, HandleControl::MapLettersToUnicode);
+        let iter = keyboard.handle_report_raw(&UsbBootKeyboardReport {
+            modifiers: 0x80,
+            keys: [0; 6],
+        });
+        let events: Vec<KeyEvent> = iter.collect();
+        assert_eq!(
+            &events,
+            &[KeyEvent {
+                code: KeyCode::RWin,
+                state: KeyState::Down
+            }]
+        );
+
+        let iter = keyboard.handle_report_raw(&UsbBootKeyboardReport {
+            modifiers: 0x00,
+            keys: [0; 6],
+        });
+        let events: Vec<KeyEvent> = iter.collect();
+        assert_eq!(
+            &events,
+            &[KeyEvent {
+                code: KeyCode::RWin,
+                state: KeyState::Up
+            }]
+        );
+
+        let iter = keyboard.handle_report_raw(&UsbBootKeyboardReport {
+            modifiers: 0x00,
+            keys: [0; 6],
+        });
+        let events: Vec<KeyEvent> = iter.collect();
+        assert!(events.is_empty());
+    }
+
+    #[test]
+    fn usb_two_modifiers() {
+        let mut keyboard = UsbKeyboard::new(layouts::Us104Key, HandleControl::MapLettersToUnicode);
+        let iter = keyboard.handle_report_raw(&UsbBootKeyboardReport {
+            modifiers: 0x82,
+            keys: [0; 6],
+        });
+        let events: Vec<KeyEvent> = iter.collect();
+        assert_eq!(
+            &events,
+            &[
+                KeyEvent {
+                    code: KeyCode::LShift,
+                    state: KeyState::Down
+                },
+                KeyEvent {
+                    code: KeyCode::RWin,
+                    state: KeyState::Down
+                },
+            ]
+        );
+
+        let iter = keyboard.handle_report_raw(&UsbBootKeyboardReport {
+            modifiers: 0x18,
+            keys: [0; 6],
+        });
+        let events: Vec<KeyEvent> = iter.collect();
+        assert_eq!(
+            &events,
+            &[
+                KeyEvent {
+                    code: KeyCode::LShift,
+                    state: KeyState::Up
+                },
+                KeyEvent {
+                    code: KeyCode::RWin,
+                    state: KeyState::Up
+                },
+                KeyEvent {
+                    code: KeyCode::LWin,
+                    state: KeyState::Down
+                },
+                KeyEvent {
+                    code: KeyCode::RControl,
+                    state: KeyState::Down
+                },
+            ]
+        );
+
+        let iter = keyboard.handle_report_raw(&UsbBootKeyboardReport {
+            modifiers: 0x00,
+            keys: [0; 6],
+        });
+        let events: Vec<KeyEvent> = iter.collect();
+        assert_eq!(
+            &events,
+            &[
+                KeyEvent {
+                    code: KeyCode::LWin,
+                    state: KeyState::Up
+                },
+                KeyEvent {
+                    code: KeyCode::RControl,
+                    state: KeyState::Up
+                },
+            ]
+        );
+    }
+
+    #[test]
+    fn usb_change_all_letters() {
+        let mut keyboard = UsbKeyboard::new(layouts::Us104Key, HandleControl::MapLettersToUnicode);
+        let iter = keyboard.handle_report_raw(&UsbBootKeyboardReport {
+            modifiers: 0x00,
+            keys: [0x04, 0x05, 0x06, 0x07, 0x08, 0x09],
+        });
+        let events: Vec<KeyEvent> = iter.collect();
+        assert_eq!(
+            &events,
+            &[
+                KeyEvent {
+                    code: KeyCode::A,
+                    state: KeyState::Down
+                },
+                KeyEvent {
+                    code: KeyCode::B,
+                    state: KeyState::Down
+                },
+                KeyEvent {
+                    code: KeyCode::C,
+                    state: KeyState::Down
+                },
+                KeyEvent {
+                    code: KeyCode::D,
+                    state: KeyState::Down
+                },
+                KeyEvent {
+                    code: KeyCode::E,
+                    state: KeyState::Down
+                },
+                KeyEvent {
+                    code: KeyCode::F,
+                    state: KeyState::Down
+                },
+            ]
+        );
+
+        let iter = keyboard.handle_report_raw(&UsbBootKeyboardReport {
+            modifiers: 0x00,
+            keys: [0x0A, 0x0B, 0x0C, 0xD, 0xE, 0xF],
+        });
+        let events: Vec<KeyEvent> = iter.collect();
+        assert_eq!(
+            &events,
+            &[
+                KeyEvent {
+                    code: KeyCode::A,
+                    state: KeyState::Up
+                },
+                KeyEvent {
+                    code: KeyCode::B,
+                    state: KeyState::Up
+                },
+                KeyEvent {
+                    code: KeyCode::C,
+                    state: KeyState::Up
+                },
+                KeyEvent {
+                    code: KeyCode::D,
+                    state: KeyState::Up
+                },
+                KeyEvent {
+                    code: KeyCode::E,
+                    state: KeyState::Up
+                },
+                KeyEvent {
+                    code: KeyCode::F,
+                    state: KeyState::Up
+                },
+                KeyEvent {
+                    code: KeyCode::G,
+                    state: KeyState::Down
+                },
+                KeyEvent {
+                    code: KeyCode::H,
+                    state: KeyState::Down
+                },
+                KeyEvent {
+                    code: KeyCode::I,
+                    state: KeyState::Down
+                },
+                KeyEvent {
+                    code: KeyCode::J,
+                    state: KeyState::Down
+                },
+                KeyEvent {
+                    code: KeyCode::K,
+                    state: KeyState::Down
+                },
+                KeyEvent {
+                    code: KeyCode::L,
+                    state: KeyState::Down
+                },
+            ]
+        );
+
+        let iter = keyboard.handle_report_raw(&UsbBootKeyboardReport {
+            modifiers: 0x00,
+            keys: [0; 6],
+        });
+        let events: Vec<KeyEvent> = iter.collect();
+        assert_eq!(
+            &events,
+            &[
+                KeyEvent {
+                    code: KeyCode::G,
+                    state: KeyState::Up
+                },
+                KeyEvent {
+                    code: KeyCode::H,
+                    state: KeyState::Up
+                },
+                KeyEvent {
+                    code: KeyCode::I,
+                    state: KeyState::Up
+                },
+                KeyEvent {
+                    code: KeyCode::J,
+                    state: KeyState::Up
+                },
+                KeyEvent {
+                    code: KeyCode::K,
+                    state: KeyState::Up
+                },
+                KeyEvent {
+                    code: KeyCode::L,
+                    state: KeyState::Up
+                },
+            ]
+        );
+
+        let iter = keyboard.handle_report_raw(&UsbBootKeyboardReport {
+            modifiers: 0x00,
+            keys: [0; 6],
+        });
+        let events: Vec<KeyEvent> = iter.collect();
+        assert!(events.is_empty());
+    }
+
+    #[test]
+    fn usb_letters() {
+        let mut keyboard = UsbKeyboard::new(layouts::Us104Key, HandleControl::MapLettersToUnicode);
+        let iter = keyboard.handle_report_raw(&UsbBootKeyboardReport {
+            modifiers: 0x00,
+            keys: [0x04, 0x00, 0x00, 0x00, 0x00, 0x00],
+        });
+        let events: Vec<KeyEvent> = iter.collect();
+        assert_eq!(
+            &events,
+            &[KeyEvent {
+                code: KeyCode::A,
+                state: KeyState::Down
+            }]
+        );
+
+        let iter = keyboard.handle_report_raw(&UsbBootKeyboardReport {
+            modifiers: 0x00,
+            keys: [0x05, 0x04, 0x00, 0x00, 0x00, 0x00],
+        });
+        let events: Vec<KeyEvent> = iter.collect();
+        assert_eq!(
+            &events,
+            &[KeyEvent {
+                code: KeyCode::B,
+                state: KeyState::Down
+            }]
+        );
+
+        let iter = keyboard.handle_report_raw(&UsbBootKeyboardReport {
+            modifiers: 0x00,
+            keys: [0x05, 0x06, 0x00, 0x00, 0x00, 0x00],
+        });
+        let events: Vec<KeyEvent> = iter.collect();
+        assert_eq!(
+            &events,
+            &[
+                KeyEvent {
+                    code: KeyCode::A,
+                    state: KeyState::Up
+                },
+                KeyEvent {
+                    code: KeyCode::C,
+                    state: KeyState::Down
+                },
+            ]
+        );
+
+        let iter = keyboard.handle_report_raw(&UsbBootKeyboardReport {
+            modifiers: 0x00,
+            keys: [0x05, 0x00, 0x00, 0x00, 0x00, 0x00],
+        });
+        let events: Vec<KeyEvent> = iter.collect();
+        assert_eq!(
+            &events,
+            &[KeyEvent {
+                code: KeyCode::C,
+                state: KeyState::Up
+            },]
+        );
+
+        let iter = keyboard.handle_report_raw(&UsbBootKeyboardReport {
+            modifiers: 0x00,
+            keys: [0; 6],
+        });
+        let events: Vec<KeyEvent> = iter.collect();
+        assert_eq!(
+            &events,
+            &[KeyEvent {
+                code: KeyCode::B,
+                state: KeyState::Up
+            },]
+        );
+
+        let iter = keyboard.handle_report_raw(&UsbBootKeyboardReport {
+            modifiers: 0x00,
+            keys: [0; 6],
+        });
+        let events: Vec<KeyEvent> = iter.collect();
+        assert!(events.is_empty());
     }
 }
 
