@@ -4,7 +4,7 @@ A simple driver for handling PC keyboards, with both Scancode Set 1 (when
 running on a PC) and Scancode Set 2 support (when reading a PS/2 keyboard
 output directly).
 
-See <https://docs.rs/pc-keyboard> for documentation.
+See <https://docs.rs/pc-keyboard> for documentation, or read [`src/lib.rs`](./src/lib.rs).
 
 ## Minimum Supported Rust Version (MSRV)
 
