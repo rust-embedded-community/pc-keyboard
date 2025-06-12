@@ -44,7 +44,7 @@
 //!   Unicode characters (where possible) according to the currently selected
 //!   `KeyboardLayout`.
 //!
-//! There is also `Keyboard` which combines the above three functions into a
+//! There is also `PS2Keyboard` which combines the above three functions into a
 //! single object.
 //!
 //! See the [`examples`](./examples) folder for more details.
@@ -319,9 +319,9 @@ pub use crate::scancodes::{ScancodeSet1, ScancodeSet2};
 //
 // ****************************************************************************
 
-/// Encapsulates decode/sampling logic, and handles state transitions and key events.
+/// Encapsulates decode/sampling logic, and handles state transitions and key events for PS/2 Keyboards
 #[derive(Debug)]
-pub struct Keyboard<L, S>
+pub struct PS2Keyboard<L, S>
 where
     S: ScancodeSet,
     L: KeyboardLayout,
@@ -789,14 +789,14 @@ const SLS: char = '\\';
 //
 // ****************************************************************************
 
-impl<L, S> Keyboard<L, S>
+impl<L, S> PS2Keyboard<L, S>
 where
     L: KeyboardLayout,
     S: ScancodeSet,
 {
     /// Make a new Keyboard object with the given layout.
-    pub const fn new(scancode_set: S, layout: L, handle_ctrl: HandleControl) -> Keyboard<L, S> {
-        Keyboard {
+    pub const fn new(scancode_set: S, layout: L, handle_ctrl: HandleControl) -> PS2Keyboard<L, S> {
+        PS2Keyboard {
             ps2_decoder: Ps2Decoder::new(),
             scancode_set,
             event_decoder: EventDecoder::new(layout, handle_ctrl),
@@ -1329,7 +1329,7 @@ impl Modifiers {
 mod test {
     use super::*;
 
-    fn add_bytes<L, S>(keyboard: &mut Keyboard<L, S>, test_sequence: &[(u8, Option<KeyEvent>)])
+    fn add_bytes<L, S>(keyboard: &mut PS2Keyboard<L, S>, test_sequence: &[(u8, Option<KeyEvent>)])
     where
         L: KeyboardLayout,
         S: ScancodeSet,
@@ -1348,7 +1348,7 @@ mod test {
     }
 
     fn process_keyevents<L, S>(
-        keyboard: &mut Keyboard<L, S>,
+        keyboard: &mut PS2Keyboard<L, S>,
         test_sequence: &[(KeyEvent, Option<DecodedKey>)],
     ) where
         L: KeyboardLayout,
@@ -1370,7 +1370,7 @@ mod test {
 
     #[test]
     fn test_f9() {
-        let mut k = Keyboard::new(
+        let mut k = PS2Keyboard::new(
             ScancodeSet2::new(),
             layouts::Us104Key,
             HandleControl::MapLettersToUnicode,
@@ -1397,7 +1397,7 @@ mod test {
 
     #[test]
     fn test_f9_word() {
-        let mut k = Keyboard::new(
+        let mut k = PS2Keyboard::new(
             ScancodeSet2::new(),
             layouts::Us104Key,
             HandleControl::MapLettersToUnicode,
@@ -1410,7 +1410,7 @@ mod test {
 
     #[test]
     fn test_f9_byte() {
-        let mut k = Keyboard::new(
+        let mut k = PS2Keyboard::new(
             ScancodeSet2::new(),
             layouts::Us104Key,
             HandleControl::MapLettersToUnicode,
@@ -1422,7 +1422,7 @@ mod test {
 
     #[test]
     fn test_keyup_keydown() {
-        let mut k = Keyboard::new(
+        let mut k = PS2Keyboard::new(
             ScancodeSet2::new(),
             layouts::Us104Key,
             HandleControl::MapLettersToUnicode,
@@ -1438,7 +1438,7 @@ mod test {
 
     #[test]
     fn test_f5() {
-        let mut k = Keyboard::new(
+        let mut k = PS2Keyboard::new(
             ScancodeSet2::new(),
             layouts::Us104Key,
             HandleControl::MapLettersToUnicode,
@@ -1465,7 +1465,7 @@ mod test {
 
     #[test]
     fn test_f5_up() {
-        let mut k = Keyboard::new(
+        let mut k = PS2Keyboard::new(
             ScancodeSet2::new(),
             layouts::Us104Key,
             HandleControl::MapLettersToUnicode,
@@ -1512,7 +1512,7 @@ mod test {
 
     #[test]
     fn test_shift() {
-        let mut k = Keyboard::new(
+        let mut k = PS2Keyboard::new(
             ScancodeSet2::new(),
             layouts::Uk105Key,
             HandleControl::MapLettersToUnicode,
@@ -1582,7 +1582,7 @@ mod test {
 
     #[test]
     fn test_ctrl() {
-        let mut k = Keyboard::new(
+        let mut k = PS2Keyboard::new(
             ScancodeSet2::new(),
             layouts::Us104Key,
             HandleControl::MapLettersToUnicode,
@@ -1628,7 +1628,7 @@ mod test {
 
     #[test]
     fn test_numlock() {
-        let mut k = Keyboard::new(
+        let mut k = PS2Keyboard::new(
             ScancodeSet2::new(),
             layouts::Uk105Key,
             HandleControl::MapLettersToUnicode,
@@ -1659,7 +1659,7 @@ mod test {
 
     #[test]
     fn test_set_1_down_up_down() {
-        let mut k = Keyboard::new(
+        let mut k = PS2Keyboard::new(
             ScancodeSet1::new(),
             layouts::Us104Key,
             HandleControl::MapLettersToUnicode,
@@ -1675,7 +1675,7 @@ mod test {
 
     #[test]
     fn test_set_1_ext_down_up_down() {
-        let mut k = Keyboard::new(
+        let mut k = PS2Keyboard::new(
             ScancodeSet1::new(),
             layouts::Us104Key,
             HandleControl::MapLettersToUnicode,
@@ -1697,7 +1697,7 @@ mod test {
 
     #[test]
     fn test_set_2_poweron() {
-        let mut k = Keyboard::new(
+        let mut k = PS2Keyboard::new(
             ScancodeSet2::new(),
             layouts::Us104Key,
             HandleControl::MapLettersToUnicode,
@@ -1711,7 +1711,7 @@ mod test {
 
     #[test]
     fn test_set_2_toomanykeys() {
-        let mut k = Keyboard::new(
+        let mut k = PS2Keyboard::new(
             ScancodeSet2::new(),
             layouts::Us104Key,
             HandleControl::MapLettersToUnicode,
@@ -1725,7 +1725,7 @@ mod test {
 
     #[test]
     fn test_set_2_down_up() {
-        let mut k = Keyboard::new(
+        let mut k = PS2Keyboard::new(
             ScancodeSet2::new(),
             layouts::Us104Key,
             HandleControl::MapLettersToUnicode,
@@ -1746,7 +1746,7 @@ mod test {
 
     #[test]
     fn test_set_2_ext_down_up() {
-        let mut k = Keyboard::new(
+        let mut k = PS2Keyboard::new(
             ScancodeSet2::new(),
             layouts::Us104Key,
             HandleControl::MapLettersToUnicode,
@@ -1763,7 +1763,7 @@ mod test {
 
     #[test]
     fn test_pause_set1() {
-        let mut k = Keyboard::new(
+        let mut k = PS2Keyboard::new(
             ScancodeSet1::new(),
             layouts::Uk105Key,
             HandleControl::MapLettersToUnicode,
@@ -1813,7 +1813,7 @@ mod test {
 
     #[test]
     fn test_pause_set2() {
-        let mut k = Keyboard::new(
+        let mut k = PS2Keyboard::new(
             ScancodeSet2::new(),
             layouts::Uk105Key,
             HandleControl::MapLettersToUnicode,
@@ -1864,7 +1864,7 @@ mod test {
 
     #[test]
     fn test_pause_events() {
-        let mut k = Keyboard::new(
+        let mut k = PS2Keyboard::new(
             ScancodeSet2::new(),
             layouts::Uk105Key,
             HandleControl::MapLettersToUnicode,
@@ -1911,7 +1911,7 @@ mod test {
 
     #[test]
     fn test_print_screen_set1() {
-        let mut k = Keyboard::new(
+        let mut k = PS2Keyboard::new(
             ScancodeSet1::new(),
             layouts::Uk105Key,
             HandleControl::MapLettersToUnicode,
@@ -1961,7 +1961,7 @@ mod test {
 
     #[test]
     fn test_print_screen_set2() {
-        let mut k = Keyboard::new(
+        let mut k = PS2Keyboard::new(
             ScancodeSet2::new(),
             layouts::Uk105Key,
             HandleControl::MapLettersToUnicode,
@@ -2014,7 +2014,7 @@ mod test {
 
     #[test]
     fn test_print_screen_events() {
-        let mut k = Keyboard::new(
+        let mut k = PS2Keyboard::new(
             ScancodeSet2::new(),
             layouts::Uk105Key,
             HandleControl::MapLettersToUnicode,
@@ -2061,7 +2061,7 @@ mod test {
 
     #[test]
     fn test_modifier_state_shift() {
-        let mut k = Keyboard::new(
+        let mut k = PS2Keyboard::new(
             ScancodeSet2::new(),
             layouts::Uk105Key,
             HandleControl::MapLettersToUnicode,
