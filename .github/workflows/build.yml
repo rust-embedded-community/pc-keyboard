@@ -1,4 +1,4 @@
-name: Build
+name: Cargo
 
 on: [push, pull_request]
 
@@ -9,38 +9,23 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Code
-        uses: actions/checkout@v3
-        with:
-          submodules: true
+      - uses: actions/checkout@v4
+      - run: cargo build --verbose
 
-      - name: Install Rust
-        uses: actions-rs/toolchain@v1
-        with:
-          profile: minimal
-          toolchain: stable
-          override: true
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: cargo test --verbose
 
-      - name: Build Code
-        run: cargo build --verbose
+  format-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: cargo fmt --check
 
-      - name: Test Code
-        run: cargo test --verbose
-
-      - name: Get Branch Name
-        if: github.event_name == 'push' && startswith(github.ref, 'refs/tags/')
-        id: branch_name
-        run: |
-          echo ::set-output name=SOURCE_TAG::${GITHUB_REF#refs/tags/}
-
-      - name: Create Release
-        if: github.event_name == 'push' && startswith(github.ref, 'refs/tags/')
-        id: create_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: ${{ github.ref }}
-          release_name: Release ${{ steps.branch_name.outputs.SOURCE_TAG }}
-          draft: false
-          prerelease: false
+  clippy-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: cargo clippy
