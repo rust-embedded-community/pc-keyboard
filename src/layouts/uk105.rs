@@ -171,7 +171,9 @@ impl KeyboardLayout for Uk105Key {
 #[cfg(test)]
 mod test {
     use super::*;
-    use crate::{EventDecoder, HandleControl, Keyboard, ScancodeSet, ScancodeSet1, ScancodeSet2};
+    use crate::{
+        EventDecoder, HandleControl, PS2Keyboard, ScancodeSet, ScancodeSet1, ScancodeSet2,
+    };
 
     #[test]
     fn layout() {
@@ -238,7 +240,7 @@ mod test {
 
     #[test]
     fn test_hash() {
-        let mut k = Keyboard::new(
+        let mut k = PS2Keyboard::new(
             ScancodeSet2::new(),
             Uk105Key,
             HandleControl::MapLettersToUnicode,
@@ -251,7 +253,7 @@ mod test {
 
     #[test]
     fn test_backslash() {
-        let mut k = Keyboard::new(
+        let mut k = PS2Keyboard::new(
             ScancodeSet2::new(),
             Uk105Key,
             HandleControl::MapLettersToUnicode,
@@ -264,7 +266,7 @@ mod test {
 
     #[test]
     fn test_tilde() {
-        let mut k = Keyboard::new(
+        let mut k = PS2Keyboard::new(
             ScancodeSet2::new(),
             Uk105Key,
             HandleControl::MapLettersToUnicode,
@@ -279,7 +281,7 @@ mod test {
 
     #[test]
     fn test_pipe() {
-        let mut k = Keyboard::new(
+        let mut k = PS2Keyboard::new(
             ScancodeSet2::new(),
             Uk105Key,
             HandleControl::MapLettersToUnicode,

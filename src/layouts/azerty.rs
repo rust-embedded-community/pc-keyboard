@@ -193,11 +193,11 @@ impl KeyboardLayout for Azerty {
 #[cfg(test)]
 mod test {
     use super::*;
-    use crate::{KeyCode, KeyEvent, KeyState, Keyboard, ScancodeSet2};
+    use crate::{KeyCode, KeyEvent, KeyState, PS2Keyboard, ScancodeSet2};
 
     #[test]
     fn test_frazert() {
-        let mut k = Keyboard::new(
+        let mut k = PS2Keyboard::new(
             ScancodeSet2::new(),
             Azerty,
             HandleControl::MapLettersToUnicode,
