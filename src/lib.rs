@@ -2669,6 +2669,215 @@ mod test {
         let events: Vec<KeyEvent> = iter.collect();
         assert!(events.is_empty());
     }
+
+    #[test]
+    fn usb_reports() {
+        // Reports, as captured with `sudo usbhid-dump -a 1:4 -es | tee capture.log`
+        let reports = [
+            UsbBootKeyboardReport {
+                modifiers: 0x02,
+                keys: [0x00, 0x00, 0x00, 0x00, 0x00, 0x00],
+            },
+            UsbBootKeyboardReport {
+                modifiers: 0x02,
+                keys: [0x0B, 0x00, 0x00, 0x00, 0x00, 0x00],
+            },
+            UsbBootKeyboardReport {
+                modifiers: 0x02,
+                keys: [0x00, 0x00, 0x00, 0x00, 0x00, 0x00],
+            },
+            UsbBootKeyboardReport {
+                modifiers: 0x00,
+                keys: [0x00, 0x00, 0x00, 0x00, 0x00, 0x00],
+            },
+            UsbBootKeyboardReport {
+                modifiers: 0x00,
+                keys: [0x08, 0x00, 0x00, 0x00, 0x00, 0x00],
+            },
+            UsbBootKeyboardReport {
+                modifiers: 0x00,
+                keys: [0x00, 0x00, 0x00, 0x00, 0x00, 0x00],
+            },
+            UsbBootKeyboardReport {
+                modifiers: 0x00,
+                keys: [0x0F, 0x00, 0x00, 0x00, 0x00, 0x00],
+            },
+            UsbBootKeyboardReport {
+                modifiers: 0x00,
+                keys: [0x00, 0x00, 0x00, 0x00, 0x00, 0x00],
+            },
+            UsbBootKeyboardReport {
+                modifiers: 0x00,
+                keys: [0x0F, 0x00, 0x00, 0x00, 0x00, 0x00],
+            },
+            UsbBootKeyboardReport {
+                modifiers: 0x00,
+                keys: [0x00, 0x00, 0x00, 0x00, 0x00, 0x00],
+            },
+            UsbBootKeyboardReport {
+                modifiers: 0x00,
+                keys: [0x12, 0x00, 0x00, 0x00, 0x00, 0x00],
+            },
+            UsbBootKeyboardReport {
+                modifiers: 0x00,
+                keys: [0x00, 0x00, 0x00, 0x00, 0x00, 0x00],
+            },
+            UsbBootKeyboardReport {
+                modifiers: 0x00,
+                keys: [0x2C, 0x00, 0x00, 0x00, 0x00, 0x00],
+            },
+            UsbBootKeyboardReport {
+                modifiers: 0x00,
+                keys: [0x00, 0x00, 0x00, 0x00, 0x00, 0x00],
+            },
+            UsbBootKeyboardReport {
+                modifiers: 0x00,
+                keys: [0x17, 0x00, 0x00, 0x00, 0x00, 0x00],
+            },
+            UsbBootKeyboardReport {
+                modifiers: 0x00,
+                keys: [0x00, 0x00, 0x00, 0x00, 0x00, 0x00],
+            },
+            UsbBootKeyboardReport {
+                modifiers: 0x00,
+                keys: [0x0B, 0x00, 0x00, 0x00, 0x00, 0x00],
+            },
+            UsbBootKeyboardReport {
+                modifiers: 0x00,
+                keys: [0x00, 0x00, 0x00, 0x00, 0x00, 0x00],
+            },
+            UsbBootKeyboardReport {
+                modifiers: 0x00,
+                keys: [0x0C, 0x00, 0x00, 0x00, 0x00, 0x00],
+            },
+            UsbBootKeyboardReport {
+                modifiers: 0x00,
+                keys: [0x00, 0x00, 0x00, 0x00, 0x00, 0x00],
+            },
+            UsbBootKeyboardReport {
+                modifiers: 0x00,
+                keys: [0x16, 0x00, 0x00, 0x00, 0x00, 0x00],
+            },
+            UsbBootKeyboardReport {
+                modifiers: 0x00,
+                keys: [0x00, 0x00, 0x00, 0x00, 0x00, 0x00],
+            },
+            UsbBootKeyboardReport {
+                modifiers: 0x00,
+                keys: [0x2C, 0x00, 0x00, 0x00, 0x00, 0x00],
+            },
+            UsbBootKeyboardReport {
+                modifiers: 0x00,
+                keys: [0x00, 0x00, 0x00, 0x00, 0x00, 0x00],
+            },
+            UsbBootKeyboardReport {
+                modifiers: 0x00,
+                keys: [0x0C, 0x00, 0x00, 0x00, 0x00, 0x00],
+            },
+            UsbBootKeyboardReport {
+                modifiers: 0x00,
+                keys: [0x00, 0x00, 0x00, 0x00, 0x00, 0x00],
+            },
+            UsbBootKeyboardReport {
+                modifiers: 0x00,
+                keys: [0x16, 0x00, 0x00, 0x00, 0x00, 0x00],
+            },
+            UsbBootKeyboardReport {
+                modifiers: 0x00,
+                keys: [0x00, 0x00, 0x00, 0x00, 0x00, 0x00],
+            },
+            UsbBootKeyboardReport {
+                modifiers: 0x00,
+                keys: [0x2C, 0x00, 0x00, 0x00, 0x00, 0x00],
+            },
+            UsbBootKeyboardReport {
+                modifiers: 0x00,
+                keys: [0x00, 0x00, 0x00, 0x00, 0x00, 0x00],
+            },
+            UsbBootKeyboardReport {
+                modifiers: 0x00,
+                keys: [0x04, 0x00, 0x00, 0x00, 0x00, 0x00],
+            },
+            UsbBootKeyboardReport {
+                modifiers: 0x00,
+                keys: [0x00, 0x00, 0x00, 0x00, 0x00, 0x00],
+            },
+            UsbBootKeyboardReport {
+                modifiers: 0x00,
+                keys: [0x2C, 0x00, 0x00, 0x00, 0x00, 0x00],
+            },
+            UsbBootKeyboardReport {
+                modifiers: 0x00,
+                keys: [0x00, 0x00, 0x00, 0x00, 0x00, 0x00],
+            },
+            UsbBootKeyboardReport {
+                modifiers: 0x00,
+                keys: [0x17, 0x00, 0x00, 0x00, 0x00, 0x00],
+            },
+            UsbBootKeyboardReport {
+                modifiers: 0x00,
+                keys: [0x00, 0x00, 0x00, 0x00, 0x00, 0x00],
+            },
+            UsbBootKeyboardReport {
+                modifiers: 0x00,
+                keys: [0x08, 0x00, 0x00, 0x00, 0x00, 0x00],
+            },
+            UsbBootKeyboardReport {
+                modifiers: 0x00,
+                keys: [0x00, 0x00, 0x00, 0x00, 0x00, 0x00],
+            },
+            UsbBootKeyboardReport {
+                modifiers: 0x00,
+                keys: [0x16, 0x00, 0x00, 0x00, 0x00, 0x00],
+            },
+            UsbBootKeyboardReport {
+                modifiers: 0x00,
+                keys: [0x00, 0x00, 0x00, 0x00, 0x00, 0x00],
+            },
+            UsbBootKeyboardReport {
+                modifiers: 0x00,
+                keys: [0x17, 0x00, 0x00, 0x00, 0x00, 0x00],
+            },
+            UsbBootKeyboardReport {
+                modifiers: 0x00,
+                keys: [0x00, 0x00, 0x00, 0x00, 0x00, 0x00],
+            },
+            UsbBootKeyboardReport {
+                modifiers: 0x02,
+                keys: [0x00, 0x00, 0x00, 0x00, 0x00, 0x00],
+            },
+            UsbBootKeyboardReport {
+                modifiers: 0x02,
+                keys: [0x1E, 0x00, 0x00, 0x00, 0x00, 0x00],
+            },
+            UsbBootKeyboardReport {
+                modifiers: 0x02,
+                keys: [0x00, 0x00, 0x00, 0x00, 0x00, 0x00],
+            },
+            UsbBootKeyboardReport {
+                modifiers: 0x00,
+                keys: [0x00, 0x00, 0x00, 0x00, 0x00, 0x00],
+            },
+            UsbBootKeyboardReport {
+                modifiers: 0x00,
+                keys: [0x28, 0x00, 0x00, 0x00, 0x00, 0x00],
+            },
+            UsbBootKeyboardReport {
+                modifiers: 0x00,
+                keys: [0x00, 0x00, 0x00, 0x00, 0x00, 0x00],
+            },
+        ];
+        let mut output = String::new();
+        let mut keyboard = UsbKeyboard::new(layouts::Us104Key, HandleControl::MapLettersToUnicode);
+        for report in reports.iter() {
+            for ev in keyboard.handle_report(report) {
+                if let DecodedKey::Unicode(ch) = ev {
+                    output.push(ch);
+                }
+            }
+        }
+        assert_eq!("Hello this is a test!\n", output);
+    }
 }
 
 // ****************************************************************************
