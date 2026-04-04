@@ -30,6 +30,8 @@ Unless you explicitly state otherwise, any contribution intentionally
 submitted for inclusion in the work by you shall be licensed as above, without
 any additional terms or conditions.
 
+Contributions must be in accordance with the notices in [CONTRIBUTING.md](./CONTRIBUTING.md).
+
 ## Code of Conduct
 
 Contribution to this crate is organized under the terms of the [Rust Code of
