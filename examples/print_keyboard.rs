@@ -65,32 +65,66 @@ fn show_kb(layout: &dyn KeyboardLayout) {
     println!("/// ## Unmodified");
     show_kb_modifiers(layout, &modifiers);
 
+    with_capslock(&mut modifiers, |m| {
+        println!("/// ## Caps Lock");
+        show_kb_modifiers(layout, m);
+    });
+
+    with_lshift(&mut modifiers, |m| {
+        println!("/// ## Shifted");
+        show_kb_modifiers(layout, m);
+    });
+
+    with_rctrl(&mut modifiers, |m| {
+        println!("/// ## Control");
+        show_kb_modifiers(layout, m);
+    });
+
+    with_ralt(&mut modifiers, |m| {
+        println!("/// ## AltGr");
+        show_kb_modifiers(layout, m);
+
+        with_lshift(m, |m2| {
+            println!("/// ## Shift AltGr");
+            show_kb_modifiers(layout, m2);
+        });
+    });
+}
+
+fn with_capslock<F>(modifiers: &mut Modifiers, f: F)
+where
+    F: FnOnce(&mut Modifiers),
+{
     modifiers.capslock = true;
-    println!("/// ## Caps Lock");
-    show_kb_modifiers(layout, &modifiers);
+    f(modifiers);
     modifiers.capslock = false;
+}
 
+fn with_lshift<F>(modifiers: &mut Modifiers, f: F)
+where
+    F: FnOnce(&mut Modifiers),
+{
     modifiers.lshift = true;
-    println!("/// ## Shifted");
-    show_kb_modifiers(layout, &modifiers);
+    f(modifiers);
     modifiers.lshift = false;
+}
 
+fn with_rctrl<F>(modifiers: &mut Modifiers, f: F)
+where
+    F: FnOnce(&mut Modifiers),
+{
     modifiers.rctrl = true;
-    println!("/// ## Control");
-    show_kb_modifiers(layout, &modifiers);
+    f(modifiers);
     modifiers.rctrl = false;
+}
 
+fn with_ralt<F>(modifiers: &mut Modifiers, f: F)
+where
+    F: FnOnce(&mut Modifiers),
+{
     modifiers.ralt = true;
-    println!("/// ## AltGr");
-    show_kb_modifiers(layout, &modifiers);
+    f(modifiers);
     modifiers.ralt = false;
-
-    modifiers.ralt = true;
-    modifiers.lshift = true;
-    println!("/// ## Shift AltGr");
-    show_kb_modifiers(layout, &modifiers);
-    modifiers.ralt = false;
-    modifiers.lshift = false;
 }
 
 fn show_kb_modifiers(layout: &dyn KeyboardLayout, modifiers: &Modifiers) {
